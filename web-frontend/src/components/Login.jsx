@@ -22,24 +22,32 @@ export default class Login extends Component {
             <Image src="./Images/indomie.jpg" className="indomie" />
           </Row>
         </Container>
-        <InputGroup className="mb-3">
-          <InputGroup.Prepend>
-            <InputGroup.Text id="basic-addon1">
-              <FaEnvelope></FaEnvelope>
-            </InputGroup.Text>
-          </InputGroup.Prepend>
-          <FormControl placeholder="Username" />
-        </InputGroup>
-        <InputGroup className="mb-3">
-          <InputGroup.Prepend>
-            <InputGroup.Text id="basic-addon1">
-              <FaLock></FaLock>
-            </InputGroup.Text>
-          </InputGroup.Prepend>
-          <FormControl placeholder="Password" type="password" />
-        </InputGroup>
-        <Button>Login</Button>
-      </div >
+        <Container>
+          <div className="user-input">
+            <InputGroup className="mb-3">
+              <InputGroup.Prepend>
+                <InputGroup.Text id="basic-addon1">
+                  <FaEnvelope></FaEnvelope>
+                </InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl placeholder="Username" />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <InputGroup.Prepend>
+                <InputGroup.Text id="basic-addon1">
+                  <FaLock></FaLock>
+                </InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl placeholder="Password" type="password" />
+            </InputGroup>
+          </div>
+          <Button className="login-btn">LOGIN</Button>
+        </Container>
+        <Container>
+          <Image src="./Images/google-icon.png" className="social-media" />
+          <Image src="./Images/facebook-icon.png" className="social-media" />
+        </Container>
+      </div>
     );
   }
 }

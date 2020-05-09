@@ -1,7 +1,29 @@
 .logo {
-  margin-top: 10%;
   margin: 0 auto;
+  margin-top: 10%;
+  height: 180px;
 }
 
 .indomie {
+  margin: 0 auto;
+}
+
+.user-input {
+  margin: 0 auto;
+  width: 30% !important;
+}
+
+.login-btn {
+  width: 30%;
+  border-radius: 100px !important;
+  background-color: #facb1b !important;
+  color: black !important;
+  border: none !important;
+  height: 50px;
+}
+
+.social-media {
+  margin-top: 1%;
+  margin-left: 1%;
+  height: 50px;
 }
