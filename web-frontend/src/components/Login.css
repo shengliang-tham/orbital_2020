@@ -15,15 +15,27 @@
 
 .login-btn {
   width: 30%;
-  border-radius: 100px !important;
+  margin: 0 auto;
+}
+
+.login-btn Button {
+  width: 100%;
   background-color: #facb1b !important;
-  color: black !important;
   border: none !important;
-  height: 50px;
+  color: black !important;
 }
 
 .social-media {
+  width: 30%;
+  margin: 0 auto;
   margin-top: 1%;
-  margin-left: 1%;
+}
+
+.social-media-icon {
   height: 50px;
+  margin-right: 5%;
+}
+
+.sign-up {
+  margin-left: 5%;
 }

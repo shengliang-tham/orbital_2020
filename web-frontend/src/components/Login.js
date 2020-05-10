@@ -9,6 +9,7 @@ import {
 } from "react-bootstrap";
 import "./Login.css";
 import { FaEnvelope, FaLock } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default class Login extends Component {
   render() {
@@ -41,11 +42,16 @@ export default class Login extends Component {
               <FormControl placeholder="Password" type="password" />
             </InputGroup>
           </div>
-          <Button className="login-btn">LOGIN</Button>
+          <div className="login-btn">
+            <Button>LOGIN</Button>
+          </div>
         </Container>
         <Container>
-          <Image src="./Images/google-icon.png" className="social-media" />
-          <Image src="./Images/facebook-icon.png" className="social-media" />
+          <div className="social-media">
+            <Image src="./Images/google-icon.png" className="social-media-icon" />
+            <Image src="./Images/facebook-icon.png" className="social-media-icon" />
+            <Link to={'/sign-up'} className="sign-up"> or Sign up here! </Link>
+          </div>
         </Container>
       </div>
     );
