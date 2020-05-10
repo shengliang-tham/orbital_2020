@@ -5,13 +5,35 @@ import {
   Container,
   Row,
   Image,
-  Button,
+  Button
 } from "react-bootstrap";
 import "./Login.css";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-export default class Login extends Component {
+class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username:'',
+      password:''
+    };
+  }
+
+  userChange = (event) => {
+    this.setState({username: event.target.value});
+  }
+  passChange = (event) => {
+    this.setState({password: event.target.value});
+  }
+
+  formSubmit = () => {
+    if (this.state.username === '' || this.state.password === '') {
+      alert('One of your fields is missing!');
+    }
+    // else 
+  }
+
   render() {
     return (
       <div>
@@ -31,7 +53,7 @@ export default class Login extends Component {
                   <FaEnvelope></FaEnvelope>
                 </InputGroup.Text>
               </InputGroup.Prepend>
-              <FormControl placeholder="Username" />
+              <FormControl placeholder="Username" onChange={this.userChange} />
             </InputGroup>
             <InputGroup className="mb-3">
               <InputGroup.Prepend>
@@ -39,13 +61,13 @@ export default class Login extends Component {
                   <FaLock></FaLock>
                 </InputGroup.Text>
               </InputGroup.Prepend>
-              <FormControl placeholder="Password" type="password" />
+              <FormControl placeholder="Password" onChange={this.passChange} type="password" />
             </InputGroup>
           </div>
           <div className="login-btn">
-            <Link to={'/home'} >
-              <Button>LOGIN </Button>
-            </Link>
+            
+              <Button onClick={this.formSubmit} >LOGIN </Button>
+            
 
           </div>
         </Container>
@@ -60,3 +82,5 @@ export default class Login extends Component {
     );
   }
 }
+
+export default Login;
