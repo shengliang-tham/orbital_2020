@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import SideMenu from './SideMenu/SideMenu';
 
 class Home extends Component {
     render() {
         return (
             <div>
-                Home
+                <SideMenu></SideMenu>
             </div>
         );
     }
