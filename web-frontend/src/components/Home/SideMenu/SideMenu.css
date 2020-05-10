@@ -6,8 +6,13 @@
 
 .site-layout .site-layout-background {
   background: #fff;
-} */
+}
+*/
+.side-menu {
+  height: 100px;
+}
 
 .logo {
-  width: auto;
+  height: auto;
+  display: flex;
 }
