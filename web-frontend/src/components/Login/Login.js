@@ -43,7 +43,10 @@ export default class Login extends Component {
             </InputGroup>
           </div>
           <div className="login-btn">
-            <Button>LOGIN</Button>
+            <Link to={'/home'} >
+              <Button>LOGIN </Button>
+            </Link>
+
           </div>
         </Container>
         <Container>
