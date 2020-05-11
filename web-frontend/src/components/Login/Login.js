@@ -1,7 +1,6 @@
 import React, { Component, useState } from "react";
 import {
   InputGroup,
-  FormControl,
   Container,
   Row,
   Image,
@@ -79,18 +78,19 @@ function FormExample() {
 
 
 class Login extends Component {
-  
+
   render() {
     return (
       <div>
         <Container>
           <Row>
             <Image src="./Images/logo.png" className="logo" />
-            </Row>
-              <Row>
+          </Row>
+          <Row>
             <Image src="./Images/indomie.jpg" className="indomie" />
           </Row>
         </Container>
+       
 
         <FormExample />
         
