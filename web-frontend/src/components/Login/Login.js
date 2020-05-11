@@ -90,8 +90,7 @@ class Login extends Component {
             <Image src="./Images/indomie.jpg" className="indomie" />
           </Row>
         </Container>
-       
-
+      
         <FormExample />
         
         <Container>
