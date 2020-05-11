@@ -5,7 +5,9 @@
     width: 60%;
     margin: 1% auto;
   }
-  
+  a.logoLink {
+    width: 100%;
+}
   .submit-btn Button {
     width: 100%;
     background-color: #facb1b !important;

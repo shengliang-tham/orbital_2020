@@ -9,6 +9,7 @@ import {
   Form,
 } from "react-bootstrap";
 import "./Register.css";
+import { Link } from "react-router-dom";
 
 function FormExample() {
     const [validated, setValidated] = useState(false);
@@ -109,8 +110,11 @@ class Register extends Component {
     render() {
         return (
     <Container>
+        
         <Row>
+            <Link className="logoLink" to={'/'}> 
             <Image src="./Images/logo.png" className="logo" />
+            </Link>
           </Row>
           <Row>
             <Image src="./Images/indomie.jpg" className="indomie" />
