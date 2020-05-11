@@ -10,6 +10,7 @@ import {
 import { Image } from "react-bootstrap";
 import './SideMenu.css';
 import Dashboard from '../Dashboard/Dashboard';
+import Trade from '../Trade/Trade';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -58,6 +59,7 @@ class SideMenu extends Component {
                         </Breadcrumb>
                         <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
                             <Dashboard></Dashboard>
+                            {/* <Trade></Trade> */}
                         </div>
                     </Content>
                     {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
