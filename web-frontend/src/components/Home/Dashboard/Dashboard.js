@@ -4,6 +4,7 @@ import { Col, Row, Divider } from 'antd';
 import Balance from './Balance/Balance';
 import OpenPosition from './OpenPosition/OpenPosition';
 import TradeHistory from './TradeHistory/TradeHistory';
+import Bot from './Bot/Bot';
 
 
 class Dashboard extends Component {
@@ -22,6 +23,8 @@ class Dashboard extends Component {
                         <Balance></Balance>
                         <Divider />
                         <TopPair></TopPair>
+                        <Divider />
+                        <Bot></Bot>
                     </Col>
                 </Row>
             </div>
