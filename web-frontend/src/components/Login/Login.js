@@ -15,16 +15,16 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username:'',
-      password:''
+      username: '',
+      password: ''
     };
   }
 
   userChange = (event) => {
-    this.setState({username: event.target.value});
+    this.setState({ username: event.target.value });
   }
   passChange = (event) => {
-    this.setState({password: event.target.value});
+    this.setState({ password: event.target.value });
   }
 
   formSubmit = () => {
@@ -65,9 +65,9 @@ class Login extends Component {
             </InputGroup>
           </div>
           <div className="login-btn">
-            
-              <Button onClick={this.formSubmit} >LOGIN </Button>
-            
+
+            <Button onClick={this.formSubmit} >LOGIN </Button>
+
 
           </div>
         </Container>

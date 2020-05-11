@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { Image } from "react-bootstrap";
 import './SideMenu.css';
+import Dashboard from '../Dashboard/Dashboard';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -48,15 +49,15 @@ class SideMenu extends Component {
                 </Sider>
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0 }}>
-                        <Image src="./Images/logo.png" className="logo" />
+                        {/* <Image src="./Images/logo.png" className="logo" /> */}
                     </Header>
                     <Content style={{ margin: '0 16px' }}>
                         <Breadcrumb style={{ margin: '16px 0' }}>
-                            <Breadcrumb.Item>User</Breadcrumb.Item>
-                            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+                            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
+                            {/* <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
                         </Breadcrumb>
                         <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                            Bill is a cat.
+                            <Dashboard></Dashboard>
                         </div>
                     </Content>
                     {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
