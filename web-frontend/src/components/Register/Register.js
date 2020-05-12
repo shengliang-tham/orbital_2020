@@ -9,20 +9,29 @@ import {
   Form,
 } from "react-bootstrap";
 import "./Register.scss";
-import { Link } from "react-router-dom";
+import Logo from "../Logo/Logo";
 
 function FormExample() {
-  const [validated, setValidated] = useState(false);
 
+  const [validated, setValidated] = useState(false);
+  const [cpassword, currentPass] = useState("");
+  const [confirmpassword, confPass] = useState("");
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
+    if (confirmpassword != cpassword) {
+      alert("Passwords do not match");
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
     setValidated(true);
   };
+
+
 
   return (
     <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -47,7 +56,7 @@ function FormExample() {
         </Form.Group>
       </Form.Row>
       <Form.Row>
-        <Form.Group as={Col} md="12" controlId="validationCustom01">
+        <Form.Group as={Col} md="4" controlId="validationCustom01">
           <Form.Label>Email</Form.Label>
           <Form.Control
             required
@@ -58,9 +67,8 @@ function FormExample() {
             Please provide a valid email address.
             </Form.Control.Feedback>
         </Form.Group>
-      </Form.Row>
-      <Form.Row>
-        <Form.Group as={Col} md="6" controlId="validationCustom02">
+
+        <Form.Group as={Col} md="4" controlId="validationCustom02">
           <Form.Label>Trading Experience</Form.Label>
           <Form.Control as="select" value="Choose...">
             <option>Beginner</option>
@@ -70,7 +78,7 @@ function FormExample() {
           </Form.Control>
         </Form.Group>
 
-        <Form.Group as={Col} md="6" controlId="formGridState">
+        <Form.Group as={Col} md="4" controlId="formGridState">
           <Form.Label>Risk Appetite</Form.Label>
           <Form.Control as="select" value="Choose...">
             <option>Giam Siap</option>
@@ -84,14 +92,24 @@ function FormExample() {
       <Form.Row>
         <Form.Group as={Col} md="6" controlId="validationCustom03">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" required />
+          <Form.Control
+            type="password"
+            placeholder="password" required
+
+            onChange={(event) => currentPass(event.target.value)}
+
+          />
           <Form.Control.Feedback type="invalid">
             Please provide a password.
             </Form.Control.Feedback>
         </Form.Group>
+
         <Form.Group as={Col} md="6" controlId="validationCustom03">
           <Form.Label>Confirm password</Form.Label>
-          <Form.Control type="password" placeholder="Password" required />
+          <Form.Control type="password"
+            placeholder="password" required
+            onChange={(event) => confPass(event.target.value)}
+          />
           <Form.Control.Feedback type="invalid">
             Please provide a password.
             </Form.Control.Feedback>
@@ -125,18 +143,8 @@ class Register extends Component {
   render() {
     return (
       <div className="Register">
-        <Container>
-          <div className="logo-area">
-            {/* <Link className="logoLink" to={'/'}> */}
-            <Image src="./Images/logo.png" className="logo" />
-            {/* </Link> */}
-          </div>
-
-          <Row className="paddingNone">
-            <Image src="./Images/indomie.jpg" className="indomie" />
-          </Row>
-          <FormExample></FormExample>
-        </Container>
+        <Logo></Logo>
+        <FormExample></FormExample>
       </div>
 
 
