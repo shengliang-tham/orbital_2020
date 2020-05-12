@@ -8,8 +8,8 @@
 .indomie {
   margin: 0 auto;
 }
-.row{
-  padding: 0px !important;
+.paddingNone.row {
+  padding: 0% !important;
 }
 
 .user-input {
@@ -36,7 +36,7 @@
 }
 
 .social-media {
-  width: 30%;
+  width: 25%;
   margin: 0 auto;
   margin-top: 1%;
 }

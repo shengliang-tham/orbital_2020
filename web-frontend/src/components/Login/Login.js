@@ -82,11 +82,11 @@ class Login extends Component {
   render() {
     return (
       <div>
-        <Container>
-          <Row>
+        <Container fluid="sm">
+          <Row className="paddingNone">
             <Image src="./Images/logo.png" className="logo" />
           </Row>
-          <Row>
+          <Row className="paddingNone">
             <Image src="./Images/indomie.jpg" className="indomie" />
           </Row>
         </Container>

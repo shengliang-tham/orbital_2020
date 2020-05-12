@@ -109,16 +109,16 @@ function FormExample() {
 class Register extends Component {
     render() {
         return (
-    <Container>
-        
-        <Row>
+    
+      <Container>
             <Link className="logoLink" to={'/'}> 
             <Image src="./Images/logo.png" className="logo" />
             </Link>
-          </Row>
-          <Row>
+            <Row className="paddingNone">
             <Image src="./Images/indomie.jpg" className="indomie" />
-          </Row>
+          </Row>  
+  
+   
           <FormExample></FormExample>
     </Container>
     
