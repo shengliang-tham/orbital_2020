@@ -34,7 +34,7 @@ function FormExample() {
 
 
   return (
-    <Form noValidate validated={validated} onSubmit={handleSubmit}>
+    <Form className="registrationFormzz" noValidate validated={validated} onSubmit={handleSubmit}>
       <Form.Row>
         <Form.Group as={Col} md="6" controlId="validationCustom01">
           <Form.Label>First name</Form.Label>
