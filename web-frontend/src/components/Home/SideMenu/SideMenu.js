@@ -47,7 +47,7 @@ class SideMenu extends Component {
 
                     </Header>
                     <Menu theme="Light" defaultSelectedKeys={['1']} mode="inline">
-                        <Menu.Item key="1" icon={<HomeOutlined />}>
+                        <Menu.Item key="1" icon={<HomeOutlined />} onClick={() => this.onClickMenu("1")}>
                             Dashboard
                          </Menu.Item>
                         <Menu.Item key="2" icon={<LineChartOutlined />} onClick={() => this.onClickMenu("2")}>
