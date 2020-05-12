@@ -11,6 +11,7 @@ import { Image } from "react-bootstrap";
 import './SideMenu.css';
 import Dashboard from '../Dashboard/Dashboard';
 import Trade from '../Trade/Trade';
+import { withRouter } from "react-router";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -32,6 +33,9 @@ class SideMenu extends Component {
         })
     }
 
+    onClickSignout = () => {
+        this.props.history.push('/');
+    }
     render() {
 
         let components = (<Dashboard></Dashboard>);
@@ -59,7 +63,7 @@ class SideMenu extends Component {
                         <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
                             <Menu.Item key="4">Change Password</Menu.Item>
                         </SubMenu>
-                        <Menu.Item key="5" icon={<LogoutOutlined />}>
+                        <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() => this.onClickSignout()}>
                             Logout
                         </Menu.Item>
                     </Menu>
@@ -84,4 +88,4 @@ class SideMenu extends Component {
     }
 }
 
-export default SideMenu;
+export default withRouter(SideMenu);
