@@ -12,18 +12,27 @@ import "./Register.css";
 import { Link } from "react-router-dom";
 
 function FormExample() {
+
     const [validated, setValidated] = useState(false);
-  
+    const [cpassword, currentPass] = useState("");
+    const [confirmpassword, confPass] = useState("");
     const handleSubmit = (event) => {
       const form = event.currentTarget;
       if (form.checkValidity() === false) {
         event.preventDefault();
         event.stopPropagation();
       }
-  
+      if (confirmpassword != cpassword) {
+        alert("Passwords do not match");
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
       setValidated(true);
     };
   
+  
+
     return (
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Form.Row>
@@ -83,14 +92,24 @@ function FormExample() {
         <Form.Row>
           <Form.Group as={Col} md="6" controlId="validationCustom03">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="password" required />
+            <Form.Control 
+            type="password" 
+            placeholder="password" required
+
+            onChange={ (event) => currentPass(event.target.value)}
+
+            />
             <Form.Control.Feedback type="invalid">
               Please provide a password.
             </Form.Control.Feedback>
           </Form.Group>
+
           <Form.Group as={Col} md="6" controlId="validationCustom03">
             <Form.Label>Confirm password</Form.Label>
-            <Form.Control type="password" placeholder="password" required />
+            <Form.Control type="password" 
+            placeholder="password" required 
+            onChange = { (event) => confPass(event.target.value)}
+            />
             <Form.Control.Feedback type="invalid">
               Please provide a password.
             </Form.Control.Feedback>
