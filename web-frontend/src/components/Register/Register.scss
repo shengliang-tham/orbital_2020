@@ -1,70 +1,17 @@
 .Register {
-  .logo-area {
+  .ant-form-item {
+    width: 50%;
+  }
+
+  .ant-col {
     text-align: center;
   }
 
-  .logo {
-    margin: 0 auto;
-    margin-top: 20%;
-    height: 15% !important;
-    width: 15% !important;
-  }
-
-  .indomie {
+  .ant-row {
     margin: 0 auto;
   }
 
-  .back-btn {
-    width: 60% !important;
-    margin: 1% auto !important;
-  }
-
-  .back-btn a {
-    width: 100% !important;
-  }
-
-  .submit-btn {
-    width: 60%;
-    margin: 1% auto;
-  }
-
-  .submit-btn Button {
+  .ant-btn {
     width: 100%;
-    background-color: #facb1b !important;
-    border: none !important;
-    color: black !important;
-  }
-
-  @media only screen and (max-width: 1080px) {
-    .logo {
-      margin-top: 0;
-    }
-
-    .row {
-      padding: 0 !important;
-    }
-
-    .user-input {
-      width: 80% !important;
-    }
-
-    .submit-btn {
-      margin-bottom: 8%;
-    }
-
-    .social-media {
-      width: 70% !important;
-      margin-top: 4%;
-    }
-  }
-
-  @media only screen and (max-width: 820px) {
-    .logo {
-      margin-top: 0;
-    }
-
-    .submit-btn {
-      margin-bottom: 8%;
-    }
   }
 }
