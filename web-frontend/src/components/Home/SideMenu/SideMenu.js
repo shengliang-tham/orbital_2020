@@ -8,7 +8,7 @@ import {
     LogoutOutlined
 } from '@ant-design/icons';
 import { Image } from "react-bootstrap";
-import './SideMenu.css';
+import './SideMenu.scss';
 import Dashboard from '../Dashboard/Dashboard';
 import Trade from '../Trade/Trade';
 import { withRouter } from "react-router";
@@ -44,46 +44,48 @@ class SideMenu extends Component {
         }
 
         return (
-            <Layout style={{ minHeight: '100vh' }}>
-                <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-                    <Header className="site-layout-background" style={{ padding: 0 }}>
-                        <Image src="./Images/Indomie.jpg" className="logo" />
+            <div className="SideMenu">
+                <Layout style={{ minHeight: '100vh' }}>
+                    <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
+                        <Header className="site-layout-background" style={{ padding: 0 }}>
+                            <Image src="./Images/Indomie.jpg" className="logo" />
 
-                    </Header>
-                    <Menu theme="Light" defaultSelectedKeys={['1']} mode="inline">
-                        <Menu.Item key="1" icon={<HomeOutlined />} onClick={() => this.onClickMenu("1")}>
-                            Dashboard
+                        </Header>
+                        <Menu theme="Light" defaultSelectedKeys={['1']} mode="inline">
+                            <Menu.Item key="1" icon={<HomeOutlined />} onClick={() => this.onClickMenu("1")}>
+                                Dashboard
                          </Menu.Item>
-                        <Menu.Item key="2" icon={<LineChartOutlined />} onClick={() => this.onClickMenu("2")}>
-                            Trade
+                            <Menu.Item key="2" icon={<LineChartOutlined />} onClick={() => this.onClickMenu("2")}>
+                                Trade
                         </Menu.Item>
-                        <Menu.Item key="3" icon={<HistoryOutlined />}>
-                            Trade History
+                            <Menu.Item key="3" icon={<HistoryOutlined />}>
+                                Trade History
                         </Menu.Item>
-                        <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
-                            <Menu.Item key="4">Change Password</Menu.Item>
-                        </SubMenu>
-                        <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() => this.onClickSignout()}>
-                            Logout
+                            <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
+                                <Menu.Item key="4">Change Password</Menu.Item>
+                            </SubMenu>
+                            <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() => this.onClickSignout()}>
+                                Logout
                         </Menu.Item>
-                    </Menu>
-                </Sider>
-                <Layout className="site-layout">
-                    {/* <Header className="site-layout-background" style={{ padding: 0 }}>
+                        </Menu>
+                    </Sider>
+                    <Layout className="site-layout">
+                        {/* <Header className="site-layout-background" style={{ padding: 0 }}>
                         {/* <Image src="./Images/logo.png" className="logo" /> 
                     </Header> */}
-                    <Content style={{ margin: '0 16px' }}>
-                        <Breadcrumb style={{ margin: '16px 0' }}>
-                            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-                            {/* <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
-                        </Breadcrumb>
-                        <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                            {components}
-                        </div>
-                    </Content>
-                    {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
+                        <Content style={{ margin: '0 16px' }}>
+                            <Breadcrumb style={{ margin: '16px 0' }}>
+                                <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
+                                {/* <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
+                            </Breadcrumb>
+                            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+                                {components}
+                            </div>
+                        </Content>
+                        {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
+                    </Layout>
                 </Layout>
-            </Layout>
+            </div>
         );
     }
 }

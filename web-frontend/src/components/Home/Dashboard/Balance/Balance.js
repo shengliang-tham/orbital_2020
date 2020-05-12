@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Statistic, Row, Col, Divider } from 'antd';
-import './Balance.css';
+import './Balance.scss';
 
 class Balance extends Component {
     render() {
         return (
-            <div className="background">
+            <div className="Balance">
                 <Row gutter={16} justify="center">
                     <Col span={12}>
                         <Statistic title="Account Balance" value={112893} precision={2} flex="center" prefix="SGD$" />

@@ -8,7 +8,7 @@ import {
   Col,
   Form,
 } from "react-bootstrap";
-import "./Login.css";
+import "./Login.scss";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -81,7 +81,7 @@ class Login extends Component {
 
   render() {
     return (
-      <div className="login">
+      <div className="Login">
         <Container fluid="sm">
           <Row className="paddingNone">
             <Image src="./Images/logo.png" className="logo" />
