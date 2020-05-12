@@ -1,9 +1,15 @@
-.logo {
+.login .logo {
   margin: 0 auto;
   margin-top: 20%;
   height: 15% !important;
   width: 15% !important;
 }
+/* .logo {
+  margin: 0 auto;
+  margin-top: 20%;
+  height: 15% !important;
+  width: 15% !important;
+} */
 
 .indomie {
   margin: 0 auto;
@@ -51,11 +57,11 @@
 }
 
 @media only screen and (max-width: 820px) {
-  .user-input  {
+  .user-input {
     margin: 0 auto;
     width: 90% !important;
   }
-  .social-media{
+  .social-media {
     width: 70%;
     margin-top: 5%;
   }
@@ -72,12 +78,9 @@
     flex-wrap: wrap;
     width: 80%;
     margin: auto !important;
+  }
+  .social-media-icon {
+    height: 40px;
+    margin-right: 5%;
+  }
 }
-.social-media-icon {
-  height: 40px;
-  margin-right: 5%;
-}
-
-}
-
-

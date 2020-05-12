@@ -33,8 +33,8 @@ function FormExample() {
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text id="basic-addon1">
-                  <FaEnvelope></FaEnvelope>
-                </InputGroup.Text>
+                <FaEnvelope></FaEnvelope>
+              </InputGroup.Text>
             </InputGroup.Prepend>
             <Form.Control
               type="email"
@@ -49,12 +49,12 @@ function FormExample() {
         </Form.Group>
       </Form.Row>
       <Form.Row>
-      <Form.Group as={Col} controlId="validationCustomUsername">
+        <Form.Group as={Col} controlId="validationCustomUsername">
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text id="basic-addon1">
-                  <FaLock></FaLock>
-                </InputGroup.Text>
+                <FaLock></FaLock>
+              </InputGroup.Text>
             </InputGroup.Prepend>
             <Form.Control
               type="password"
@@ -69,7 +69,7 @@ function FormExample() {
         </Form.Group>
       </Form.Row>
       <div className="login-btn">
-      <Button type="submit">Submit form</Button>
+        <Button type="submit">Submit form</Button>
       </div>
     </Form>
   );
@@ -81,7 +81,7 @@ class Login extends Component {
 
   render() {
     return (
-      <div>
+      <div className="login">
         <Container fluid="sm">
           <Row className="paddingNone">
             <Image src="./Images/logo.png" className="logo" />
@@ -90,9 +90,9 @@ class Login extends Component {
             <Image src="./Images/indomie.jpg" className="indomie" />
           </Row>
         </Container>
-      
+
         <FormExample />
-        
+
         <Container>
           <div className="social-media">
             <Image src="./Images/google-icon.png" className="social-media-icon" />
