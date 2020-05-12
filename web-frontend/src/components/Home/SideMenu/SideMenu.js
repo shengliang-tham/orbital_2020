@@ -42,9 +42,12 @@ class SideMenu extends Component {
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-                    <div className="side-menu"></div>
-                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                        <Menu.Item key="1" icon={<HomeOutlined />} onClick={() => this.onClickMenu("1")}>
+                    <Header className="site-layout-background" style={{ padding: 0 }}>
+                        <Image src="./Images/Indomie.jpg" className="logo" />
+
+                    </Header>
+                    <Menu theme="Light" defaultSelectedKeys={['1']} mode="inline">
+                        <Menu.Item key="1" icon={<HomeOutlined />}>
                             Dashboard
                          </Menu.Item>
                         <Menu.Item key="2" icon={<LineChartOutlined />} onClick={() => this.onClickMenu("2")}>
@@ -62,9 +65,9 @@ class SideMenu extends Component {
                     </Menu>
                 </Sider>
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" style={{ padding: 0 }}>
-                        {/* <Image src="./Images/logo.png" className="logo" /> */}
-                    </Header>
+                    {/* <Header className="site-layout-background" style={{ padding: 0 }}>
+                        {/* <Image src="./Images/logo.png" className="logo" /> 
+                    </Header> */}
                     <Content style={{ margin: '0 16px' }}>
                         <Breadcrumb style={{ margin: '16px 0' }}>
                             <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
