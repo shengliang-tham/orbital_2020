@@ -12,6 +12,7 @@ import './SideMenu.scss';
 import Dashboard from '../Dashboard/Dashboard';
 import Trade from '../Trade/Trade';
 import { withRouter } from "react-router";
+import Profile from '../Profile/Profile';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -41,6 +42,8 @@ class SideMenu extends Component {
         let components = (<Dashboard></Dashboard>);
         if (this.state.defaultKey == 2) {
             components = (<Trade></Trade>)
+        } else if (this.state.defaultKey == 4) {
+            components = (<Profile></Profile>)
         }
 
         return (
@@ -54,16 +57,20 @@ class SideMenu extends Component {
                         <Menu theme="Light" defaultSelectedKeys={['1']} mode="inline">
                             <Menu.Item key="1" icon={<HomeOutlined />} onClick={() => this.onClickMenu("1")}>
                                 Dashboard
-                         </Menu.Item>
+                              </Menu.Item>
                             <Menu.Item key="2" icon={<LineChartOutlined />} onClick={() => this.onClickMenu("2")}>
                                 Trade
-                        </Menu.Item>
+                                </Menu.Item>
                             <Menu.Item key="3" icon={<HistoryOutlined />}>
                                 Trade History
-                        </Menu.Item>
-                            <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
+                              </Menu.Item>
+                            {/* <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
                                 <Menu.Item key="4">Change Password</Menu.Item>
-                            </SubMenu>
+                            </SubMenu> */}
+                            <Menu.Item key="4" icon={<UserOutlined />} onClick={() => this.onClickMenu("4")}>
+                                Profile
+
+                            </Menu.Item>
                             <Menu.Item key="5" icon={<LogoutOutlined />} onClick={() => this.onClickSignout()}>
                                 Logout
                         </Menu.Item>
