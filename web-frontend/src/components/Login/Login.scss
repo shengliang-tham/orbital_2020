@@ -1,4 +1,7 @@
 .Login {
+  .logo{
+    margin-top:10% !important;
+  }
   .paddingNone.row {
     padding: 0% !important;
   }
@@ -6,6 +9,9 @@
   .user-input {
     margin: 0 auto;
     width: 30% !important;
+  }
+  a.sign-up {
+    color: #000;
   }
   .form-row {
     display: flex;
