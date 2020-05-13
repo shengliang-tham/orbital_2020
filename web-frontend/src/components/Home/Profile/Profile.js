@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'antd';
+import { Col, Row, Divider } from 'antd';
+import AccountDetails from './AccountDetails/AccountDetails';
+
 
 class Profile extends Component {
     render() {
@@ -7,9 +9,8 @@ class Profile extends Component {
             <div>
                 <Row>
                     <Col span={12}>
-
+                        <AccountDetails></AccountDetails>
                     </Col>
-                    <Col span={12}>col-12</Col>
                 </Row>
             </div>
         );
