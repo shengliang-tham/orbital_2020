@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Row, Col } from 'antd';
 import { RobotOutlined } from '@ant-design/icons';
-import './Bot.css';
+import './Bot.scss';
 
 class Bot extends Component {
 
@@ -11,7 +11,7 @@ class Bot extends Component {
 
     render() {
         return (
-            <div className="background">
+            <div className="Bot">
                 <Row className="row">
                     <Col span={6}>
                         <div className="robot">

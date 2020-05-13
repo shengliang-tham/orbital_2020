@@ -1,0 +1,22 @@
+.Bot {
+  background-color: white;
+
+  .robot-icon {
+    font-size: 50px;
+    padding: 5px 5px 5px 5px;
+  }
+
+  .robot {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
+  .row {
+    padding-top: 5% !important;
+    padding-bottom: 5% !important;
+  }
+}

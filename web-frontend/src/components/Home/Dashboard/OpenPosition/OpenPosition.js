@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Tag, Space } from 'antd';
-
+import './OpenPosition.scss';
 const columns = [
     {
         title: 'Stock Name',

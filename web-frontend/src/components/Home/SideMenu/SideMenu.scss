@@ -1,0 +1,42 @@
+.SideMenu {
+  .side-menu {
+    height: 100px;
+  }
+
+  .logo {
+    height: auto;
+    display: flex;
+  }
+
+  header.ant-layout-header.site-layout-background {
+    background: #fff;
+  }
+  .side-menu {
+    background: #fff;
+  }
+  .ant-layout-sider-children {
+    background: #fff;
+  }
+  .ant-layout-sider-trigger {
+    color: #000 !important;
+    background: #facb1b !important;
+  }
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: #facb1b !important;
+    color: #000 !important;
+  }
+
+  .ant-menu-vertical .ant-menu-item::after,
+  .ant-menu-vertical-left .ant-menu-item::after,
+  .ant-menu-vertical-right .ant-menu-item::after,
+  .ant-menu-inline .ant-menu-item::after {
+    border-right: 3px solid #000 !important;
+  }
+  .ant-menuitem .ant-menu-submenu-active {
+    color: #facb1b !important;
+  }
+
+  .logo {
+    width: 100%;
+  }
+}
