@@ -6,9 +6,11 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "antd": "^4.2.0",
+    "antd": "^4.2.2",
+    "babel-plugin-import": "^1.13.0",
     "bootstrap": "^4.4.1",
     "d3": "^5.16.0",
+    "lessc": "^1.0.2",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
@@ -39,5 +41,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "antd-scss-theme-plugin": "^1.0.8",
+    "less-loader": "^6.1.0",
+    "sass-loader": "^8.0.2"
   }
 }
