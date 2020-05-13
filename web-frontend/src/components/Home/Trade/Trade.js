@@ -1,44 +1,25 @@
-import React, { Component } from 'react';
-import { TypeChooser } from "react-stockcharts/lib/helper";
-import CandleStickChart from './Candlestick/CandleStickChart';
-import { getData } from "./utils"
-import { Select } from 'antd';
+import React from 'react';
+import {render} from 'react-dom';
+import Chart from './chart';
+import {getData} from './utils';
+import {TypeChooser} from "react-stockcharts/lib/helper";
 
-const { Option, OptGroup } = Select;
-
-class Trade extends Component {
-
+class Trade extends React.Component {
     componentDidMount() {
         getData().then(data => {
-            console.log(data);
-            this.setState({ data })
+          this.setState({ data })
         })
-    }
-
-    handleChange = value => {
-        console.log(`selected ${value}`);
-    }
-
-    render() {
+      }
+      render() {
         if (this.state == null) {
-            return <div>Loading...</div>
+          return <div>Loading...</div>
         }
         return (
-            <div>
-                <Select defaultValue="lucy" style={{ width: 200 }} onChange={this.handleChange}>
-                    <OptGroup label="Stocks">
-                        <Option value="jack">Apple</Option>
-                        <Option value="lucy">Microsoft</Option>
-                    </OptGroup>
-                    <OptGroup label="Forex">
-                        <Option value="Yiminghe">USD/SGD</Option>
-                    </OptGroup>
-                </Select>
-                <CandleStickChart data={this.state.data} />
-
-            </div>
+          <TypeChooser>
+            {type => <Chart type={type} data={this.state.data} />}
+          </TypeChooser>
         )
-    }
+      }
 }
 
 export default Trade;
