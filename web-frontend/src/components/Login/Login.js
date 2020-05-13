@@ -77,7 +77,7 @@ class Login extends Component {
             </Form.Group>
           </Form.Row>
           <div className="login-btn">
-            <Button type="submit">Submit form</Button>
+            <Button type="submit">Login</Button>
           </div>
         </Form>
 
@@ -85,7 +85,7 @@ class Login extends Component {
           <div className="social-media">
             <Image src="./Images/google-icon.png" className="social-media-icon" />
             <Image src="./Images/facebook-icon.png" className="social-media-icon" />
-            <Link to={'/Register'} className="sign-up"> or Sign up here! </Link>
+            <Link to={'/register'} className="sign-up"> or Sign up here! </Link>
           </div>
         </Container>
       </div>

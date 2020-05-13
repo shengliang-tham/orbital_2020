@@ -4,6 +4,8 @@ import {
   Input,
   Select,
   Button,
+  Col,
+  Row,
 } from 'antd';
 import "./Register.scss";
 import Logo from "../Logo/Logo";
@@ -166,9 +168,19 @@ class Register extends Component {
             <Input.Password />
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              Register
-            </Button>
+            <Row>
+              <Col span={12}>
+                <Button type="primary" href="/">
+                  Back
+                </Button>
+              </Col>
+              <Col span={12}>
+                <Button type="primary" htmlType="submit">
+                  Register
+                 </Button>
+              </Col>
+            </Row>
+
           </Form.Item>
 
         </Form>
