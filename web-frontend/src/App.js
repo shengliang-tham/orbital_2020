@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Register from "./components/Register/Register"
-import "antd/dist/antd.css"
+// import "antd/dist/antd.css"
 
 class App extends Component {
   render() {
