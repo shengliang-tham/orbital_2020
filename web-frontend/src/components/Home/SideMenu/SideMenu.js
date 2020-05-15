@@ -13,6 +13,7 @@ import Dashboard from '../Dashboard/Dashboard';
 import Trade from '../Trade/Trade';
 import { withRouter } from "react-router";
 import Profile from '../Profile/Profile';
+import indomieLogo from '../../../assets/Images/Indomie.jpg'
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -51,7 +52,7 @@ class SideMenu extends Component {
                 <Layout style={{ minHeight: '100vh' }}>
                     <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                         <Header className="site-layout-background" style={{ padding: 0 }}>
-                            <Image src="./Images/Indomie.jpg" className="logo" />
+                            <Image src={indomieLogo} className="logo" />
 
                         </Header>
                         <Menu theme="Light" defaultSelectedKeys={['1']} mode="inline">

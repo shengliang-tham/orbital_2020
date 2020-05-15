@@ -9,6 +9,7 @@ import {
 } from 'antd';
 import "./Register.scss";
 import Logo from "../Logo/Logo";
+import { Link } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -170,9 +171,12 @@ class Register extends Component {
           <Form.Item {...tailFormItemLayout}>
             <Row>
               <Col span={12}>
-                <Button type="primary" href="/">
-                  Back
+                <Link to="/">
+                  <Button type="primary">
+                    Back
                 </Button>
+                </Link>
+
               </Col>
               <Col span={12}>
                 <Button type="primary" htmlType="submit">

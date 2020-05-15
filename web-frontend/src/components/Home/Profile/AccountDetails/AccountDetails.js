@@ -32,7 +32,7 @@ class AccountDetails extends Component {
                     </Col>
                 </Row>
                 <Divider />
-                <Row >
+                <Row>
                     <Col span={2}></Col>
                     <Col span={4}><Button type="primary" >Change Email</Button></Col>
                     <Col span={4}></Col>

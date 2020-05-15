@@ -11,6 +11,8 @@ import "./Login.scss";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Logo from "../Logo/Logo";
+import googleIcon from '../../assets/Images/google-icon.png'
+import facebookIcon from '../../assets/Images/facebook-icon.png'
 
 class Login extends Component {
 
@@ -83,8 +85,8 @@ class Login extends Component {
 
         <Container>
           <div className="social-media">
-            <Image src="./Images/google-icon.png" className="social-media-icon" />
-            <Image src="./Images/facebook-icon.png" className="social-media-icon" />
+            <Image src={googleIcon} className="social-media-icon" />
+            <Image src={facebookIcon} className="social-media-icon" />
             <Link to={'/register'} className="sign-up"> or Sign up here! </Link>
           </div>
         </Container>

@@ -5,6 +5,8 @@ import {
     Row,
     Image,
 } from "react-bootstrap";
+import logo from '../../assets/Images/logo.png'
+import indomieLogo from '../../assets/Images/Indomie.jpg'
 
 class Logo extends Component {
     render() {
@@ -12,10 +14,10 @@ class Logo extends Component {
             <div className="Logo">
                 <Container fluid="sm">
                     <Row className="paddingNone">
-                        <Image src="./Images/logo.png" className="logo" />
+                        <Image src={logo} className="logo" />
                     </Row>
                     <Row className="paddingNone">
-                        <Image src="./Images/indomie.jpg" className="indomie" />
+                        <Image src={indomieLogo} className="indomie" />
                     </Row>
                 </Container>
             </div>
