@@ -18,13 +18,13 @@
   .ant-btn {
     width: 80%;
   }
+  a.ant-btn.ant-btn-primary {
+    color: #000 !important;
+  }
   button.ant-btn.ant-btn-primary{
     background-color: #FACB1B;
     border-color: #FACB1B;
     color: #000;
-  }
-  a.ant-btn.ant-btn-primary {
-    color: #000 !important;
   }
 
   @media only screen and (max-width: 820px) {
