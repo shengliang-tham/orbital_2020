@@ -1,6 +1,9 @@
 import * as actionTypes from '../actions/authActions'
+
+
+
 const initialState = {
-    token: null
+    token: localStorage.getItem('token') ? localStorage.getItem('token') : null
 }
 const authReducer = (state = initialState, { type, payload }) => {
     switch (type) {
@@ -8,6 +11,11 @@ const authReducer = (state = initialState, { type, payload }) => {
             ...state,
             token: payload
         }
+        case actionTypes.DELETE_TOKEN: return {
+            ...state,
+            token: null
+        }
+
     }
     return state;
 

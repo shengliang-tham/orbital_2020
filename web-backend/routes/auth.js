@@ -6,7 +6,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
 const middleware = require('./middleware/auth')
-
+const User = require('../models/user')
 
 passport.serializeUser((user, cb) => {
     cb(null, user);
@@ -20,11 +20,24 @@ passport.deserializeUser((user, cb) => {
 passport.use(new FacebookStrategy({
     clientID: config.FACEBOOK.clientID,
     clientSecret: config.FACEBOOK.clientSecret,
-    callbackURL: "/auth/facebook/callback"
+    callbackURL: "/auth/facebook/callback",
+    profileFields: ['id', 'email']
 },
     (accessToken, refreshToken, profile, cb) => {
-        console.log((JSON.stringify(profile)));
-        user = { ...profile };
+        User.findOne({
+            facebookId: profile.id
+        }, (error, user) => {
+            if (!user) {
+                let user = new User({
+                    email: profile.emails[0].value,
+                    facebookId: profile.id
+                })
+
+                user.save((err) => {
+                    console.log(err)
+                })
+            }
+        })
         return cb(null, profile);
     }));
 
@@ -35,23 +48,29 @@ passport.use(new GoogleStrategy({
     callbackURL: "/auth/google/callback"
 },
     (accessToken, refreshToken, profile, cb) => {
-        console.log((JSON.stringify(profile)));
-        user = { ...profile };
+        User.findOne({
+            googleId: profile.id
+        }, (error, user) => {
+            if (!user) {
+                let user = new User({
+                    email: profile.emails[0].value,
+                    googleId: profile.id
+                })
+
+                user.save((err) => {
+                    console.log(err)
+                })
+            }
+
+        })
         return cb(null, profile);
     }));
 
 router.use(passport.initialize())
 
 
-router.get('/facebook', passport.authenticate("facebook"))
+router.get('/facebook', passport.authenticate("facebook", { scope: ['email'] }))
 router.get('/facebook/callback', passport.authenticate("facebook"), (req, res) => {
-    console.log("authenticated")
-    res.redirect('http://localhost:3000/home')
-})
-
-router.get('/google', passport.authenticate("google", { scope: ['profile', 'email'] }))
-router.get('/google/callback', passport.authenticate("google"), (req, res) => {
-    console.log("authenticated")
     let token = jwt.sign({ username: "username" },
         config.secretKey,
         {
@@ -60,12 +79,19 @@ router.get('/google/callback', passport.authenticate("google"), (req, res) => {
     );
 
     res.cookie('jwt', token);
-    // return the JWT token for the future API calls
-    // res.json({
-    //     success: true,
-    //     message: 'Authentication successful!',
-    //     token: token
-    // });
+    res.redirect('http://localhost:3000/auth-redirect')
+})
+
+router.get('/google', passport.authenticate("google", { scope: ['profile', 'email'] }))
+router.get('/google/callback', passport.authenticate("google"), (req, res) => {
+    let token = jwt.sign({ username: "username" },
+        config.secretKey,
+        {
+            expiresIn: '24h' // expires in 24 hours
+        }
+    );
+
+    res.cookie('jwt', token);
     res.redirect('http://localhost:3000/auth-redirect')
 })
 
