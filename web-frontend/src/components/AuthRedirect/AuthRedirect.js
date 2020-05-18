@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie';
+import { connect } from 'react-redux'
+import * as actionTypes from '../../store/actions/authActions'
 
 class AuthRedirect extends Component {
 
-    state = {
-        token: Cookies.get('jwt')
-    }
 
     componentDidMount() {
-        localStorage.setItem('token', this.state.token);
+        const token = Cookies.get('jwt')
+        localStorage.setItem('token', token);
+        this.props.saveToken(token);
         this.props.history.push("/home");
     }
 
@@ -21,4 +22,10 @@ class AuthRedirect extends Component {
     }
 }
 
-export default AuthRedirect;
+const mapDispatchToProps = dispatch => {
+    return {
+        saveToken: (token) => { dispatch({ type: actionTypes.SAVE_TOKEN, payload: token }) }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(AuthRedirect);
