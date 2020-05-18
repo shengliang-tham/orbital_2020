@@ -1,22 +1,45 @@
 import React, { Component } from "react";
 import Login from "./components/Login/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Register from "./components/Register/Register"
 import AuthRedirect from "./components/AuthRedirect/AuthRedirect";
 // import "antd/dist/antd.css"
 
 class App extends Component {
+
   render() {
-    return (
-      <Router>
+
+    let routes = (
+      <Switch>
+        <Route exact path="/" component={Login} />
+        <Route path="/register" component={Register} />
+        <Route path="/auth-redirect" component={AuthRedirect} />
+        <Redirect to="/" />
+      </Switch>
+    )
+
+    if (localStorage.getItem('token')) {
+      routes = (
         <Switch>
           <Route exact path="/" component={Login} />
-          <Route path="/home" component={Home} />
           <Route path="/register" component={Register} />
           <Route path="/auth-redirect" component={AuthRedirect} />
+          <Route path="/home" component={Home} />
         </Switch>
+      )
+    }
+
+    return (
+      <Router>
+        {routes}
+        {/* <Switch>
+          <Route exact path="/" component={Login} />
+          <Route path="/register" component={Register} />
+          <Route path="/auth-redirect" component={AuthRedirect} />
+          <Route path="/home" component={Home} />
+        </Switch> */}
       </Router>
     );
   }
