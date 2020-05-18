@@ -18,30 +18,25 @@ passport.deserializeUser((user, cb) => {
     cb(null, user);
 });
 
-// Facebook Strategy
+//Facebook Strategy
 passport.use(new FacebookStrategy({
     clientID: config.FACEBOOK.clientID,
     clientSecret: config.FACEBOOK.clientSecret,
     callbackURL: "/auth/facebook/callback",
     profileFields: ['id', 'email']
-},
-    (accessToken, refreshToken, profile, cb) => {
-        User.findOne({
+}, async (accessToken, refreshToken, profile, cb) => {
+    const facebookUser = await User.findOne({ facebookId: profile.id })
+    if (!facebookUser) {
+        let user = new User({
+            email: profile.emails[0].value,
             facebookId: profile.id
-        }, (error, user) => {
-            if (!user) {
-                let user = new User({
-                    email: profile.emails[0].value,
-                    facebookId: profile.id
-                })
-
-                user.save((err) => {
-                    console.log(err)
-                })
-            }
         })
-        return cb(null, profile);
-    }));
+        user = await user.save();
+    }
+
+    return cb(null, profile);
+}))
+
 
 // Google Strategy
 passport.use(new GoogleStrategy({
@@ -49,23 +44,18 @@ passport.use(new GoogleStrategy({
     clientSecret: config.GOOGLE.clientSecret,
     callbackURL: "/auth/google/callback"
 },
-    (accessToken, refreshToken, profile, cb) => {
-        User.findOne({
-            googleId: profile.id
-        }, (error, user) => {
-            if (!user) {
-                let user = new User({
-                    email: profile.emails[0].value,
-                    googleId: profile.id
-                })
-
-                user.save((err) => {
-                    console.log(err)
-                })
-            }
-
-        })
-        return cb(null, profile);
+    async (accessToken, refreshToken, profile, cb) => {
+        const googleUser = await User.findOne({ googleId: profile.id });
+        if (!googleUser) {
+            let user = new User({
+                email: profile.emails[0].value,
+                googleId: profile.id
+            })
+            user = await user.save();
+            return cb(null, user);
+        } else {
+            return cb(null, googleUser);
+        }
     }));
 
 router.use(passport.initialize())
@@ -73,112 +63,116 @@ router.use(passport.initialize())
 
 router.get('/facebook', passport.authenticate("facebook", { scope: ['email'] }))
 router.get('/facebook/callback', passport.authenticate("facebook"), (req, res) => {
-    let token = jwt.sign({ authType: 'facebook', username: "username" },
-        config.secretKey,
-        {
-            expiresIn: '24h' // expires in 24 hours
-        }
-    );
-
+    let user = req.user;
+    let token = signToken("facebook", user.googleId);
     res.cookie('jwt', token);
     res.redirect('http://localhost:3000/auth-redirect')
 })
 
 router.get('/google', passport.authenticate("google", { scope: ['profile', 'email'] }))
 router.get('/google/callback', passport.authenticate("google"), (req, res) => {
-    let token = jwt.sign({ username: "username" },
-        config.secretKey,
-        {
-            expiresIn: '24h' // expires in 24 hours
-        }
-    );
-
+    const user = req.user;
+    let token = signToken("google", user.googleId);
     res.cookie('jwt', token);
     res.redirect('http://localhost:3000/auth-redirect')
 })
 
 
-router.post('/register', (req, res) => {
-    console.log(req.body)
-    console.log("hello")
-    User.findOne({
-        googleId: null,
-        facebookId: null,
-        email: req.body.email
-    }, (error, user) => {
+router.post('/register', async (req, res) => {
+    try {
+        const user = await User.findOne({ googleId: null, facebookId: null, email: req.body.email })
+        if (user) {
+            res.json({
+                success: false,
+                message: "Email has been used"
+            })
+        }
         //No such user
         if (!user) {
-
-            bcrypt.genSalt(10, (err, salt) => {
-                bcrypt.hash(req.body.password, salt, (err, hash) => {
-                    console.log(hash)
-                    // Store hash in your password DB.
-                    let user = new User({
-                        email: req.body.email,
-                        password: hash
-                    })
-
-                    user.save((err) => {
-                        console.log(err)
-                    })
-
-                });
-            });
-
+            const generateSalt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(req.body.password, salt)
+            let user = new User({
+                email: req.body.email,
+                password: hash
+            })
+            user = await user.save();
+            console.log(user._id)
+            const token = signToken("email", user._id);
+            res.json({
+                success: true,
+                token: token
+            })
         }
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error
+        })
+    }
 
-
-    })
-
-    let token = jwt.sign({ email: "username" },
-        config.secretKey,
-        {
-            expiresIn: '24h' // expires in 24 hours
-        }
-    );
-    res.json({
-        success: true,
-        token: token
-    })
 })
 
-router.post('/login', (req, res) => {
-    console.log(req.body)
-    User.findOne({
-        googleId: null,
-        facebookId: null,
-        email: req.body.email
-    }, (error, user) => {
-        console.log(user)
-        if (!user)
+router.post('/login', async (req, res) => {
+    try {
+        const user = await User.findOne({
+            googleId: null,
+            facebookId: null,
+            email: req.body.email
+        });
+        if (!user) {
             res.json({
                 success: false,
                 message: "No such user found"
             })
-        else {
-            //Correct password
-            if (bcrypt.compareSync(req.body.password, user.password)) {
-                let token = jwt.sign({ email: "username" },
-                    config.secretKey,
-                    {
-                        expiresIn: '24h' // expires in 24 hours
-                    }
-                );
+        } else {
+            const samePassword = await bcrypt.compareSync(req.body.password, user.password);
+            if (samePassword) {
+                const token = signToken("email", user._id);
                 res.json({
                     success: true,
                     token: token
                 })
-            }
-            //Wrong password
-            else {
+            } else {
                 res.json({
                     success: false,
                     message: "Wrong password"
                 })
             }
         }
-    })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error
+        })
+    }
+
 })
+
+
+const signToken = (authType, id) => {
+    switch (authType) {
+        case "facebook":
+            return jwt.sign({
+                authType: "facebook",
+                id: id
+            }, config.secretKey, {
+                expiresIn: '24h' // expires in 24 hours
+            });
+        case "google":
+            return jwt.sign({
+                authType: "google",
+                id: id
+            }, config.secretKey, {
+                expiresIn: '24h' // expires in 24 hours
+            });
+        default: return jwt.sign({
+            authType: "email",
+            id: id
+        }, config.secretKey, {
+            expiresIn: '24h' // expires in 24 hours
+        });
+    }
+}
 
 router.get('/home', middleware.isAuthenticated, (req, res) => {
     console.log("pass")
