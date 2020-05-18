@@ -12,5 +12,6 @@ const mongoURL = "mongodb://shengliang:asd123asd@ds155634.mlab.com:55634/orbital
 module.exports = {
     FACEBOOK,
     GOOGLE,
-    mongoURL
+    mongoURL,
+    secretKey: "Orbital2020"
 };

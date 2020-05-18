@@ -4,6 +4,8 @@ const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const config = require('../config/config');
+const jwt = require('jsonwebtoken');
+const middleware = require('./middleware/auth')
 
 
 passport.serializeUser((user, cb) => {
@@ -50,10 +52,22 @@ router.get('/facebook/callback', passport.authenticate("facebook"), (req, res) =
 router.get('/google', passport.authenticate("google", { scope: ['profile', 'email'] }))
 router.get('/google/callback', passport.authenticate("google"), (req, res) => {
     console.log("authenticated")
+    let token = jwt.sign({ username: "username" },
+        config.secretKey,
+        {
+            expiresIn: '24h' // expires in 24 hours
+        }
+    );
+    // return the JWT token for the future API calls
+    res.json({
+        success: true,
+        message: 'Authentication successful!',
+        token: token
+    });
     res.redirect('http://localhost:3000/home')
 })
 
-router.get('/home', passport.authenticate(["google", "facebook"]), (req, res) => {
+router.get('/home', middleware.isAuthenticated, (req, res) => {
     console.log("pass")
     res.redirect('http://localhost:3000/home')
 })
