@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 let userSchema = mongoose.Schema({
     email: String,
+    password: {
+        type: String,
+        default: null
+    },
     facebookId: {
         type: String,
         default: null

@@ -14,7 +14,11 @@ import googleIcon from '../../assets/Images/google-icon.png'
 import facebookIcon from '../../assets/Images/facebook-icon.png'
 import Grid from "antd/lib/card/Grid";
 import { Row, Col, Divider } from 'antd'
-import { withRouter, } from "react-router";;
+import { withRouter, } from "react-router";
+import { backendUrl } from '../../global-variables';
+import axios from 'axios';
+import { connect } from 'react-redux'
+import * as actionTypes from '../../store/actions/authActions'
 
 class Login extends Component {
 
@@ -23,16 +27,29 @@ class Login extends Component {
   render() {
 
     let handleSubmit = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       const form = event.currentTarget;
-      console.log(form)
-      if (form.checkValidity() === false) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-
       this.setState({
         setValidated: true, validated: true
       })
+
+      console.log(form.elements.email.value)
+
+      axios.post(backendUrl + '/auth/login', {
+        email: form.elements.email.value,
+        password: form.elements.password.value
+      }).then((response) => {
+        console.log(response)
+        if (response.data.success) {
+          localStorage.setItem('token', response.data.token)
+          this.props.saveToken(response.data.token);
+          this.props.history.push("/home");
+        }
+
+      })
+
+
     };
 
     return (
@@ -45,7 +62,7 @@ class Login extends Component {
               <Divider></Divider>
               <Form className="user-input" noValidate validated={this.state.validated} onSubmit={handleSubmit}>
                 <Form.Row>
-                  <Form.Group as={Col} controlId="validationCustomUsername">
+                  <Form.Group as={Col} controlId="email">
                     <InputGroup>
                       <InputGroup.Prepend>
                         <InputGroup.Text id="basic-addon1">
@@ -65,7 +82,7 @@ class Login extends Component {
                   </Form.Group>
                 </Form.Row>
                 <Form.Row>
-                  <Form.Group as={Col} controlId="validationCustomUsername">
+                  <Form.Group as={Col} controlId="password">
                     <InputGroup>
                       <InputGroup.Prepend>
                         <InputGroup.Text id="basic-addon1">
@@ -93,23 +110,22 @@ class Login extends Component {
               </Form>
               <Divider />
               <div className="social-media-container">
-                {/* <Image src={googleIcon} className="social-media-icon" /> */}
                 <div className="facebook-container">
-                  <a href="http://localhost:5000/auth/facebook" className="social-media-icon">
+                  <a href={backendUrl + "/auth/facebook"} className="social-media-icon">
                     <FaFacebook></FaFacebook>
                   &nbsp; Continue with Facebook
                  </a>
                 </div>
 
 
-                {/* <Image src={facebookIcon} className="social-media-icon" /> */}
-                {/* <Link to={'/register'} className="sign-up"> or Sign up here! </Link> */}
                 <div className="google-container">
-                  <a href="http://localhost:5000/auth/google" className="social-media-icon">
+                  <a href={backendUrl + "/auth/google"} className="social-media-icon">
                     <FaGoogle></FaGoogle>
                   &nbsp; Continue with Google
                  </a>
                 </div>
+                <Link to={'/register'} className="sign-up"> or Sign up here! </Link>
+
               </div>
             </Col>
             <Col xs={6}></Col>
@@ -120,4 +136,11 @@ class Login extends Component {
   }
 }
 
-export default withRouter(Login);
+const mapDispatchToProps = dispatch => {
+  return {
+    saveToken: (token) => { dispatch({ type: actionTypes.SAVE_TOKEN, payload: token }) }
+  }
+}
+
+
+export default connect(null, mapDispatchToProps)(withRouter(Login));
