@@ -58,13 +58,15 @@ router.get('/google/callback', passport.authenticate("google"), (req, res) => {
             expiresIn: '24h' // expires in 24 hours
         }
     );
+
+    res.cookie('jwt', token);
     // return the JWT token for the future API calls
-    res.json({
-        success: true,
-        message: 'Authentication successful!',
-        token: token
-    });
-    res.redirect('http://localhost:3000/home')
+    // res.json({
+    //     success: true,
+    //     message: 'Authentication successful!',
+    //     token: token
+    // });
+    res.redirect('http://localhost:3000/auth-redirect')
 })
 
 router.get('/home', middleware.isAuthenticated, (req, res) => {

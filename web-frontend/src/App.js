@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Register from "./components/Register/Register"
+import AuthRedirect from "./components/AuthRedirect/AuthRedirect";
 // import "antd/dist/antd.css"
 
 class App extends Component {
@@ -14,6 +15,7 @@ class App extends Component {
           <Route exact path="/" component={Login} />
           <Route path="/home" component={Home} />
           <Route path="/register" component={Register} />
+          <Route path="/auth-redirect" component={AuthRedirect} />
         </Switch>
       </Router>
     );
