@@ -5,11 +5,14 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-d
 import Home from "./components/Home/Home";
 import Register from "./components/Register/Register"
 import AuthRedirect from "./components/AuthRedirect/AuthRedirect";
+import { connect } from 'react-redux'
 // import "antd/dist/antd.css"
 
 class App extends Component {
 
   render() {
+    console.log(this.props.auth.token)
+
 
     let routes = (
       <Switch>
@@ -20,7 +23,7 @@ class App extends Component {
       </Switch>
     )
 
-    if (localStorage.getItem('token')) {
+    if (this.props.auth.token) {
       routes = (
         <Switch>
           <Route exact path="/" component={Login} />
@@ -45,4 +48,10 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    auth: state.auth
+  }
+}
+
+export default connect(mapStateToProps)(App);
