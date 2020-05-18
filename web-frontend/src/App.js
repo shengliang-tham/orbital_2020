@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Login from "./components/Login/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect, BrowserRouter } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Register from "./components/Register/Register"
 import AuthRedirect from "./components/AuthRedirect/AuthRedirect";
@@ -35,15 +35,11 @@ class App extends Component {
     }
 
     return (
-      <Router>
-        {routes}
-        {/* <Switch>
-          <Route exact path="/" component={Login} />
-          <Route path="/register" component={Register} />
-          <Route path="/auth-redirect" component={AuthRedirect} />
-          <Route path="/home" component={Home} />
-        </Switch> */}
-      </Router>
+      <BrowserRouter>
+        <Router>
+          {routes}
+        </Router>
+      </BrowserRouter>
     );
   }
 }

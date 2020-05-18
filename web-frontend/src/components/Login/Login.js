@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, } from "react";
 import {
   InputGroup,
   Container,
@@ -13,7 +13,8 @@ import Logo from "../Logo/Logo";
 import googleIcon from '../../assets/Images/google-icon.png'
 import facebookIcon from '../../assets/Images/facebook-icon.png'
 import Grid from "antd/lib/card/Grid";
-import { Row, Col, Divider } from 'antd';
+import { Row, Col, Divider } from 'antd'
+import { withRouter, } from "react-router";;
 
 class Login extends Component {
 
@@ -110,23 +111,13 @@ class Login extends Component {
                  </a>
                 </div>
               </div>
-
-
             </Col>
             <Col xs={6}></Col>
-
-          </Row>
-          <Row>
-
           </Row>
         </Grid>
-
-        <Container>
-
-        </Container>
       </div>
     );
   }
 }
 
-export default Login;
+export default withRouter(Login);

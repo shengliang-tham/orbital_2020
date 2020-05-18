@@ -11,7 +11,7 @@ import { Image } from "react-bootstrap";
 import './SideMenu.scss';
 import Dashboard from '../Dashboard/Dashboard';
 import Trade from '../Trade/Trade';
-import { withRouter } from "react-router";
+import { withRouter, Redirect } from "react-router";
 import Profile from '../Profile/Profile';
 import indomieLogo from '../../../assets/Images/Indomie.jpg'
 
@@ -37,6 +37,7 @@ class SideMenu extends Component {
 
     onClickSignout = () => {
         this.props.history.push('/');
+        localStorage.clear();
     }
     render() {
 
