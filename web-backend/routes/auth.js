@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const keys = require('../config/config');
+const config = require('../config/config');
 
 
 passport.serializeUser((user, cb) => {
@@ -16,8 +16,8 @@ passport.deserializeUser((user, cb) => {
 
 // Facebook Strategy
 passport.use(new FacebookStrategy({
-    clientID: keys.FACEBOOK.clientID,
-    clientSecret: keys.FACEBOOK.clientSecret,
+    clientID: config.FACEBOOK.clientID,
+    clientSecret: config.FACEBOOK.clientSecret,
     callbackURL: "/auth/facebook/callback"
 },
     (accessToken, refreshToken, profile, cb) => {
@@ -28,8 +28,8 @@ passport.use(new FacebookStrategy({
 
 // Google Strategy
 passport.use(new GoogleStrategy({
-    clientID: keys.GOOGLE.clientID,
-    clientSecret: keys.GOOGLE.clientSecret,
+    clientID: config.GOOGLE.clientID,
+    clientSecret: config.GOOGLE.clientSecret,
     callbackURL: "/auth/google/callback"
 },
     (accessToken, refreshToken, profile, cb) => {
@@ -50,8 +50,11 @@ router.get('/facebook/callback', passport.authenticate("facebook"), (req, res) =
 router.get('/google', passport.authenticate("google", { scope: ['profile', 'email'] }))
 router.get('/google/callback', passport.authenticate("google"), (req, res) => {
     console.log("authenticated")
-    console.log(res.json())
     res.redirect('http://localhost:3000/home')
 })
 
+router.get('/home', passport.authenticate(["google", "facebook"]), (req, res) => {
+    console.log("pass")
+    res.redirect('http://localhost:3000/home')
+})
 module.exports = router;
