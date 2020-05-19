@@ -1,20 +1,19 @@
 import React, { Component } from "react";
-import Login from "./components/Login/Login";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Switch, Route, Redirect, BrowserRouter } from "react-router-dom";
-import Home from "./components/Home/Home";
-import Register from "./components/Register/Register"
-import AuthRedirect from "./components/AuthRedirect/AuthRedirect";
-import { connect } from 'react-redux'
-import { Spin, Space } from 'antd';
-// import "antd/dist/antd.css"
 
-class App extends Component {
+import "bootstrap/dist/css/bootstrap.min.css";
+
+import { BrowserRouter as Router, Switch, Route, Redirect, } from "react-router-dom";
+
+import { Spin, Space } from 'antd';
+
+import AuthRedirect from "./components/AuthRedirect/AuthRedirect";
+import Home from "./components/Home/Home";
+import Login from "./components/Login/Login";
+
+
+export class App extends Component {
 
   render() {
-    console.log(this.props.auth.token)
-    console.log(this.props.global.loading)
-
     let routes = (
       <Switch>
         <Route exact path="/" component={Login} />
@@ -36,11 +35,7 @@ class App extends Component {
     }
 
     return (
-      <BrowserRouter>
-        <Router>
-          <Spin size="large" tip="Loading..." spinning={this.props.global.loading}> {routes}</Spin>
-        </Router>
-      </BrowserRouter>
+      <Spin size="large" tip="Loading..." spinning={this.props.global.loading}> {routes}</Spin>
 
     );
   }

@@ -1,4 +1,5 @@
 import React, { Component, } from "react";
+
 import {
   Form,
   Input,
@@ -9,15 +10,17 @@ import {
   Divider
 } from 'antd';
 import Grid from "antd/lib/card/Grid";
-import "./Register.scss";
-import Logo from "../Logo/Logo";
+
 import { Link } from "react-router-dom";
-import { backendUrl } from '../../global-variables';
+
 import axios from 'axios';
-import { connect } from 'react-redux'
-import * as authActionTypes from '../../store/actions/authActions'
-import * as globalActionTypes from '../../store/actions/globalActions'
+
 import { notification } from 'antd';
+
+import { backendUrl } from '../../global-variables';
+import Logo from "../Logo/Logo";
+
+import "./Register.scss";
 
 const { Option } = Select;
 

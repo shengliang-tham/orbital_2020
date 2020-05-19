@@ -1,18 +1,25 @@
 import React, { Component, } from "react";
+
 import {
   InputGroup,
   Button,
   Form,
 } from "react-bootstrap";
-import "./Login.scss";
+
 import { FaEnvelope, FaLock, FaFacebook, FaGoogle } from "react-icons/fa";
+
 import { Link } from "react-router-dom";
-import Logo from "../Logo/Logo";
+
 import Grid from "antd/lib/card/Grid";
-import { Row, Col, Divider, notification } from 'antd'
+
 import { withRouter, } from "react-router";
-import { backendUrl } from '../../global-variables';
+
 import axios from 'axios';
+
+import { backendUrl } from '../../global-variables';
+import Logo from "../Logo/Logo";
+
+import "./Login.scss";
 import { connect } from 'react-redux'
 import * as authActionTypes from '../../store/actions/authActions'
 import * as globalActionTypes from '../../store/actions/globalActions'
@@ -47,7 +54,6 @@ class Login extends Component {
         email: form.elements.email.value,
         password: form.elements.password.value
       }).then((response) => {
-        console.log(response)
         if (response.data.success) {
           localStorage.setItem('token', response.data.token)
           this.props.saveToken(response.data.token);

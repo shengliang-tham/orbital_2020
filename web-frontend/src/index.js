@@ -1,12 +1,13 @@
 import React from 'react';
+
 import ReactDOM from 'react-dom';
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
-import { Provider } from 'react-redux'
+
+import { BrowserRouter } from 'react-router-dom';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import authReducer from './store/reducers/authReducer'
-import globalReducer from './store/reducers/globalReducer';
 
+import globalReducer from './store/reducers/globalReducer';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const allReducer = combineReducers({ auth: authReducer, global: globalReducer })
@@ -14,7 +15,9 @@ const store = createStore(allReducer, composeEnhancers())
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </Provider>,
   document.getElementById('root')
 );
