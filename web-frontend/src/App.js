@@ -6,20 +6,21 @@ import Home from "./components/Home/Home";
 import Register from "./components/Register/Register"
 import AuthRedirect from "./components/AuthRedirect/AuthRedirect";
 import { connect } from 'react-redux'
+import { Spin, Space } from 'antd';
 // import "antd/dist/antd.css"
 
 class App extends Component {
 
   render() {
     console.log(this.props.auth.token)
-
+    console.log(this.props.global.loading)
 
     let routes = (
       <Switch>
         <Route exact path="/" component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/auth-redirect" component={AuthRedirect} />
-        <Redirect to="/" />
+        <Redirect to={{ pathname: '/', state: { message: "Please login first!" } }} />
       </Switch>
     )
 
@@ -37,16 +38,18 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Router>
-          {routes}
+          <Spin size="large" tip="Loading..." spinning={this.props.global.loading}> {routes}</Spin>
         </Router>
       </BrowserRouter>
+
     );
   }
 }
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    auth: state.auth,
+    global: state.global
   }
 }
 

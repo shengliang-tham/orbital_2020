@@ -5,10 +5,11 @@ import { Provider } from 'react-redux'
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import authReducer from './store/reducers/authReducer'
+import globalReducer from './store/reducers/globalReducer';
 
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const allReducer = combineReducers({ auth: authReducer })
+const allReducer = combineReducers({ auth: authReducer, global: globalReducer })
 const store = createStore(allReducer, composeEnhancers())
 
 ReactDOM.render(

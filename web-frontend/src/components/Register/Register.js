@@ -15,7 +15,9 @@ import { Link } from "react-router-dom";
 import { backendUrl } from '../../global-variables';
 import axios from 'axios';
 import { connect } from 'react-redux'
-import * as actionTypes from '../../store/actions/authActions'
+import * as authActionTypes from '../../store/actions/authActions'
+import * as globalActionTypes from '../../store/actions/globalActions'
+import { notification } from 'antd';
 
 const { Option } = Select;
 
@@ -48,13 +50,32 @@ class Register extends Component {
 
     let onFinish = values => {
       console.log('Received values of form: ', values);
+
+      this.props.toggleLoading();
+
       axios.post(backendUrl + '/auth/register', {
         email: values.email,
         password: values.password
       }).then((response) => {
-        localStorage.setItem('token', response.data.token)
-        this.props.saveToken(response.data.token);
-        this.props.history.push("/home");
+        console.log(response)
+        if (response.data.success) {
+          localStorage.setItem('token', response.data.token)
+          this.props.saveToken(response.data.token);
+          notification.success({
+            message: 'Success',
+            description: "You have successfully signed up!!",
+            placement: 'bottomRight'
+          });
+          this.props.history.push("/home");
+        } else {
+          notification.error({
+            message: 'Error',
+            description: response.data.message,
+            placement: 'bottomRight'
+          });
+        }
+        this.props.toggleLoading();
+
       })
     };
 
@@ -217,7 +238,8 @@ class Register extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveToken: (token) => { dispatch({ type: actionTypes.SAVE_TOKEN, payload: token }) }
+    saveToken: (token) => { dispatch({ type: authActionTypes.SAVE_TOKEN, payload: token }) },
+    toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
   }
 }
 

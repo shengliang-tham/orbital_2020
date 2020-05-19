@@ -1,8 +1,6 @@
 import React, { Component, } from "react";
 import {
   InputGroup,
-  Container,
-  Image,
   Button,
   Form,
 } from "react-bootstrap";
@@ -10,23 +8,32 @@ import "./Login.scss";
 import { FaEnvelope, FaLock, FaFacebook, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Logo from "../Logo/Logo";
-import googleIcon from '../../assets/Images/google-icon.png'
-import facebookIcon from '../../assets/Images/facebook-icon.png'
 import Grid from "antd/lib/card/Grid";
-import { Row, Col, Divider } from 'antd'
+import { Row, Col, Divider, notification } from 'antd'
 import { withRouter, } from "react-router";
 import { backendUrl } from '../../global-variables';
 import axios from 'axios';
 import { connect } from 'react-redux'
-import * as actionTypes from '../../store/actions/authActions'
-
+import * as authActionTypes from '../../store/actions/authActions'
+import * as globalActionTypes from '../../store/actions/globalActions'
 class Login extends Component {
 
   state = { validated: false, setValidated: false }
 
+  componentDidMount(props) {
+    if (this.props.location.state && this.props.location.state.message) {
+      notification.error({
+        message: 'Error',
+        description: this.props.location.state.message,
+        placement: 'bottomRight'
+      });
+    }
+  }
+
   render() {
 
     let handleSubmit = (event) => {
+      this.props.toggleLoading();
       event.preventDefault();
       event.stopPropagation();
       const form = event.currentTarget;
@@ -44,16 +51,25 @@ class Login extends Component {
         if (response.data.success) {
           localStorage.setItem('token', response.data.token)
           this.props.saveToken(response.data.token);
+          notification.success({
+            message: 'Success',
+            description: "You have logged in!",
+            placement: 'bottomRight'
+          });
           this.props.history.push("/home");
+        } else {
+          notification.error({
+            message: 'Error',
+            description: response.data.message,
+            placement: 'bottomRight'
+          });
         }
-
+        this.props.toggleLoading();
       })
-
-
     };
 
     return (
-      <div className="Login">
+      <div className="Login" >
         <Grid>
           <Row>
             <Col xs={6}></Col>
@@ -138,7 +154,8 @@ class Login extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveToken: (token) => { dispatch({ type: actionTypes.SAVE_TOKEN, payload: token }) }
+    saveToken: (token) => { dispatch({ type: authActionTypes.SAVE_TOKEN, payload: token }) },
+    toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
   }
 }
 
