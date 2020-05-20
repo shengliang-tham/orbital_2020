@@ -3,12 +3,12 @@ const router = express.Router()
 const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const config = require('../config/config');
+const config = require('../../config/config');
 const jwt = require('jsonwebtoken');
-const middleware = require('./middleware/auth');
-const User = require('../models/user');
+const middleware = require('../middleware/auth');
+const User = require('../../models/user');
 const bcrypt = require('bcryptjs');
-const salt = bcrypt.genSaltSync(10);
+const authTypes = require('./authType')
 
 passport.serializeUser((user, cb) => {
     cb(null, user);
@@ -64,7 +64,7 @@ router.use(passport.initialize())
 router.get('/facebook', passport.authenticate("facebook", { scope: ['email'] }))
 router.get('/facebook/callback', passport.authenticate("facebook"), (req, res) => {
     let user = req.user;
-    let token = signToken("facebook", user.googleId);
+    let token = signToken(authTypes.authTypeFacebook, user.facebookId);
     res.cookie('jwt', token);
     res.redirect('http://localhost:3000/auth-redirect')
 })
@@ -72,15 +72,15 @@ router.get('/facebook/callback', passport.authenticate("facebook"), (req, res) =
 router.get('/google', passport.authenticate("google", { scope: ['profile', 'email'] }))
 router.get('/google/callback', passport.authenticate("google"), (req, res) => {
     const user = req.user;
-    let token = signToken("google", user.googleId);
+    let token = signToken(authTypes.authTypeGoogle, user.googleId);
     res.cookie('jwt', token);
     res.redirect('http://localhost:3000/auth-redirect')
 })
 
 
-router.post('/register', async (req, res) => {
-    try {
-        const user = await User.findOne({ googleId: null, facebookId: null, email: req.body.email })
+router.post('/register', (req, res) => {
+
+    User.findOne({ googleId: null, facebookId: null, email: req.body.email }).then(user => {
         if (user) {
             res.json({
                 success: false,
@@ -89,43 +89,42 @@ router.post('/register', async (req, res) => {
         }
         //No such user
         if (!user) {
-            const generateSalt = await bcrypt.genSalt(10);
-            const hash = await bcrypt.hash(req.body.password, salt)
+            const salt = bcrypt.genSaltSync(10);
+            const hash = bcrypt.hashSync(req.body.password, salt)
             let user = new User({
                 email: req.body.email,
                 password: hash
             })
-            user = await user.save();
-            console.log(user._id)
-            const token = signToken("email", user._id);
-            res.json({
-                success: true,
-                token: token
-            })
+            user.save().then(savedUser => {
+                const token = signToken(authTypes.authTypeEmail, savedUser._id);
+                res.json({
+                    success: true,
+                    token: token
+                })
+            });
+
         }
-    } catch (error) {
+    }).catch(error => {
         res.json({
             success: false,
             message: error
         })
-    }
-
+    })
 })
 
-router.post('/login', async (req, res) => {
-    try {
-        const user = await User.findOne({
-            googleId: null,
-            facebookId: null,
-            email: req.body.email
-        });
+router.post('/login', (req, res) => {
+    User.findOne({
+        googleId: null,
+        facebookId: null,
+        email: req.body.email
+    }).then(user => {
         if (!user) {
             res.json({
                 success: false,
                 message: "No such user found"
             })
         } else {
-            const samePassword = await bcrypt.compareSync(req.body.password, user.password);
+            const samePassword = bcrypt.compareSync(req.body.password, user.password);
             if (samePassword) {
                 const token = signToken("email", user._id);
                 res.json({
@@ -139,39 +138,48 @@ router.post('/login', async (req, res) => {
                 })
             }
         }
-    } catch (error) {
+
+    }).catch(error => {
         res.json({
             success: false,
             message: error
         })
-    }
-
+    })
 })
 
 
 const signToken = (authType, id) => {
-    switch (authType) {
-        case "facebook":
-            return jwt.sign({
-                authType: "facebook",
-                id: id
-            }, config.secretKey, {
-                expiresIn: '24h' // expires in 24 hours
-            });
-        case "google":
-            return jwt.sign({
-                authType: "google",
-                id: id
-            }, config.secretKey, {
-                expiresIn: '24h' // expires in 24 hours
-            });
-        default: return jwt.sign({
-            authType: "email",
-            id: id
-        }, config.secretKey, {
-            expiresIn: '24h' // expires in 24 hours
-        });
-    }
+    console.log("sign token " + authType)
+
+    // switch (authType) {
+    //     case authTypes.authTypeFacebook:
+    //         return jwt.sign({
+    //             authType: authTypes.authTypeFacebook,
+    //             id: id
+    //         }, config.secretKey, {
+    //             expiresIn: '24h' // expires in 24 hours
+    //         });
+    //     case authTypes.authTypeGoogle:
+    //         return jwt.sign({
+    //             authType: authTypeGoogle,
+    //             id: id
+    //         }, config.secretKey, {
+    //             expiresIn: '24h' // expires in 24 hours
+    //         });
+    //     default: return jwt.sign({
+    //         authType: authTypeEmail,
+    //         id: id
+    //     }, config.secretKey, {
+    //         expiresIn: '24h' // expires in 24 hours
+    //     });
+    // }
+
+    return jwt.sign({
+        authType: authType,
+        id: id
+    }, config.secretKey, {
+        expiresIn: '24h' // expires in 24 hours
+    });
 }
 
 router.get('/home', middleware.isAuthenticated, (req, res) => {

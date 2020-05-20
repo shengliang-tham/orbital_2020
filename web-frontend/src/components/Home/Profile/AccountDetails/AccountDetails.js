@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Row, Col, Divider, Button, Form, Input } from 'antd';
+import { Row, Col, Divider, Button, Form, Input, notification } from 'antd';
 import './account-details.scss'
 import CustomModal from '../../../../UI/Modal/Modal';
 import * as globalActionTypes from '../../../../store/actions/globalActions'
 import { connect } from "react-redux";
 import { backendUrl } from '../../../../global-variables';
 import axios from 'axios';
+import responsiveObserve from 'antd/lib/_util/responsiveObserve';
 
 class AccountDetails extends Component {
 
@@ -43,6 +44,45 @@ class AccountDetails extends Component {
     onEmailUpdate = values => {
         console.log(values)
         this.props.toggleLoading();
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': this.props.auth.token
+        }
+
+
+        axios.post(backendUrl + '/user/update-email', {
+            email: values.email
+        }, {
+            headers: headers
+        }).then((response) => {
+            console.log(response)
+            if (response.data.success) {
+                notification.success({
+                    message: 'Success',
+                    description: "You have successfully changed your email",
+                    placement: 'bottomRight'
+                });
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: response.data.message,
+                    placement: 'bottomRight'
+                });
+            }
+            this.props.toggleLoading();
+            this.setState({
+                emailModalVisible: false,
+            });
+        }).catch(error => {
+            notification.error({
+                message: 'Error',
+                description: error,
+                placement: 'bottomRight'
+            });
+            this.props.toggleLoading();
+
+        })
 
     }
 
