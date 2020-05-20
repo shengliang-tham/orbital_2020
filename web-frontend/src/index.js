@@ -4,10 +4,14 @@ import ReactDOM from 'react-dom';
 
 import { BrowserRouter } from 'react-router-dom';
 
+import { compose, combineReducers, createStore } from 'redux';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import globalReducer from './store/reducers/globalReducer';
+import authReducer from './store/reducers/authReducer'
+import { Provider } from 'react-redux';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const allReducer = combineReducers({ auth: authReducer, global: globalReducer })

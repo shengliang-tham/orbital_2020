@@ -2,13 +2,15 @@ import React, { Component } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { BrowserRouter as Router, Switch, Route, Redirect, } from "react-router-dom";
+import { Switch, Route, Redirect, } from "react-router-dom";
 
-import { Spin, Space } from 'antd';
+import { Spin, } from 'antd';
 
 import AuthRedirect from "./components/AuthRedirect/AuthRedirect";
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
+import Register from './components/Register/Register'
+import { connect } from "react-redux";
 
 
 export class App extends Component {

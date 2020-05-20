@@ -19,8 +19,11 @@ import { notification } from 'antd';
 
 import { backendUrl } from '../../global-variables';
 import Logo from "../Logo/Logo";
+import * as authActionTypes from '../../store/actions/authActions'
+import * as globalActionTypes from '../../store/actions/globalActions'
 
 import "./Register.scss";
+import { connect } from "react-redux";
 
 const { Option } = Select;
 

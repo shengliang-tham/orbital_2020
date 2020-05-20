@@ -11,6 +11,7 @@ import App from './App';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
+import './mocks/matchMedia'
 
 const unAuthenticatedMockStore = configureMockStore();
 let unAuthenticatedInitialState = {

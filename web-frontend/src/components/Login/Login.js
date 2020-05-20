@@ -23,6 +23,7 @@ import "./Login.scss";
 import { connect } from 'react-redux'
 import * as authActionTypes from '../../store/actions/authActions'
 import * as globalActionTypes from '../../store/actions/globalActions'
+import { notification, Divider, Row, Col } from "antd";
 class Login extends Component {
 
   state = { validated: false, setValidated: false }
@@ -48,12 +49,12 @@ class Login extends Component {
         setValidated: true, validated: true
       })
 
-      console.log(form.elements.email.value)
 
       axios.post(backendUrl + '/auth/login', {
         email: form.elements.email.value,
         password: form.elements.password.value
       }).then((response) => {
+
         if (response.data.success) {
           localStorage.setItem('token', response.data.token)
           this.props.saveToken(response.data.token);
@@ -63,6 +64,7 @@ class Login extends Component {
             placement: 'bottomRight'
           });
           this.props.history.push("/home");
+
         } else {
           notification.error({
             message: 'Error',
@@ -71,6 +73,14 @@ class Login extends Component {
           });
         }
         this.props.toggleLoading();
+      }).catch(error => {
+        notification.error({
+          message: 'Error',
+          description: "Network error",
+          placement: 'bottomRight'
+        });
+        this.props.toggleLoading();
+
       })
     };
 
