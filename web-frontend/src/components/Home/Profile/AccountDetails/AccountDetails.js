@@ -6,7 +6,6 @@ import * as globalActionTypes from '../../../../store/actions/globalActions'
 import { connect } from "react-redux";
 import { backendUrl } from '../../../../global-variables';
 import axios from 'axios';
-import responsiveObserve from 'antd/lib/_util/responsiveObserve';
 
 class AccountDetails extends Component {
 
