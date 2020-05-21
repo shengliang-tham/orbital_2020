@@ -27,14 +27,6 @@ class AccountDetails extends Component {
         });
     }
 
-
-    // handleEmailModalOk = e => {
-    //     console.log(e);
-    //     this.setState({
-    //         emailModalVisible: false,
-    //     });
-    // };
-
     handleEmailModalCancel = e => {
         this.setState({
             emailModalVisible: false,
@@ -92,22 +84,17 @@ class AccountDetails extends Component {
         });
     }
 
-    handlePasswordModalOk = e => {
-        console.log(e);
-        this.setState({
-            passwordModalVisible: false,
-        });
-    };
-
     handlePasswordModalCancel = e => {
         this.setState({
             passwordModalVisible: false,
         });
     };
 
+    onPasswordUpdate = (value) => {
+        console.log(value)
+    }
+
     render() {
-
-
         return (
             <div className="account-details">
                 <Row align="middle" justify="center">
@@ -170,8 +157,9 @@ class AccountDetails extends Component {
                 <CustomModal visible={this.state.passwordModalVisible}
                     handleOk={this.handlePasswordModalOk}
                     handleCancel={this.handlePasswordModalCancel}
-                    title="Change Password">
-                    <Form>
+                    title="Change Password"
+                    formName="password-update-form">
+                    <Form id='password-update-form' onFinish={this.onPasswordUpdate}>
                         <Form.Item
                             name="password"
                             label="Password"

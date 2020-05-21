@@ -65,6 +65,7 @@ class Register extends Component {
       }).then((response) => {
         console.log(response)
         if (response.data.success) {
+          this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
           localStorage.setItem('token', response.data.token)
           this.props.saveToken(response.data.token);
           notification.success({
@@ -244,6 +245,7 @@ class Register extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
+    setAuthType: (authType) => { dispatch({ type: authType }) },
     saveToken: (token) => { dispatch({ type: authActionTypes.SAVE_TOKEN, payload: token }) },
     toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
   }
