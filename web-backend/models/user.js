@@ -16,6 +16,10 @@ let userSchema = mongoose.Schema({
     created: {
         type: Date,
         default: Date.now
+    },
+    accountBalance: {
+        type: Number,
+        default: 0
     }
 })
 

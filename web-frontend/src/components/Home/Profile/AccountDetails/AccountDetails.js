@@ -3,9 +3,11 @@ import { Row, Col, Divider, Button, Form, Input, notification } from 'antd';
 import './account-details.scss'
 import CustomModal from '../../../../UI/Modal/Modal';
 import * as globalActionTypes from '../../../../store/actions/globalActions'
+import * as userActionTypes from '../../../../store/actions/userActions'
 import { connect } from "react-redux";
 import { backendUrl } from '../../../../global-variables';
 import axios from 'axios';
+import Moment from 'react-moment';
 
 class AccountDetails extends Component {
 
@@ -33,22 +35,15 @@ class AccountDetails extends Component {
     };
 
     onEmailUpdate = values => {
-        console.log(values)
         this.props.toggleLoading();
-
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': this.props.auth.token
-        }
-
 
         axios.post(backendUrl + '/user/update-email', {
             email: values.email
-        }, {
-            headers: headers
         }).then((response) => {
             console.log(response)
             if (response.data.success) {
+                console.log(response.data.user)
+                this.props.updateEmail(response.data.user)
                 notification.success({
                     message: 'Success',
                     description: "You have successfully changed your email",
@@ -106,16 +101,12 @@ class AccountDetails extends Component {
                     <Col span={2}></Col>
                     <Col>
                         <Row>
-                            First Name : Nasi
+                            Email Address : {this.props.user ? this.props.user.email : ""}
                         </Row>
                         <Row>
-                            Last Name : Babi
-                        </Row>
-                        <Row>
-                            Email Address : nasibabi@gmail.com
-                        </Row>
-                        <Row>
-                            Registration Date : 10 May 2020
+                            Registration Date : <div>
+                                <Moment date={this.props.user ? this.props.user.createdDate : null} />
+                            </div>
                         </Row>
                     </Col>
                 </Row>
@@ -202,13 +193,16 @@ class AccountDetails extends Component {
 const mapStateToProps = state => {
     return {
         auth: state.auth,
+        user: state.user.user
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
+        updateEmail: (user) => { dispatch({ type: userActionTypes.UPDATE_USER_DETAILS, payload: user }) }
     }
+
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountDetails);

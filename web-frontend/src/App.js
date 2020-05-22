@@ -15,10 +15,6 @@ import { connect } from "react-redux";
 
 export class App extends Component {
 
-  componentDidMount() {
-    console.log("app")
-  }
-
   render() {
     let routes = (
       <Switch>

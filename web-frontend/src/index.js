@@ -11,11 +11,30 @@ import * as serviceWorker from './serviceWorker';
 
 import globalReducer from './store/reducers/globalReducer';
 import authReducer from './store/reducers/authReducer'
+import userReducer from './store/reducers/userReducer'
 import { Provider } from 'react-redux';
+import axios from 'axios';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const allReducer = combineReducers({ auth: authReducer, global: globalReducer })
+const allReducer = combineReducers({
+  auth: authReducer
+  , global: globalReducer,
+  user: userReducer
+})
 const store = createStore(allReducer, composeEnhancers())
+
+axios.interceptors.request.use(request => {
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': localStorage.getItem('token')
+  }
+  request.headers = headers
+
+  return request
+})
+
+
 
 ReactDOM.render(
   <Provider store={store}>

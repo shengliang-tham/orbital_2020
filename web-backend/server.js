@@ -6,7 +6,8 @@ const bodyParser = require('body-parser')
 
 //Routes
 const auth = require('./routes/auth/auth');
-const user = require('./routes/user/user')
+const user = require('./routes/user/user');
+const stripe = require('./routes/stripe/stripe')
 
 mongoose.connect(config.mongoURL, {
     useNewUrlParser: true,
@@ -25,6 +26,7 @@ app.use(bodyParser.json())
 
 app.use('/auth', auth);
 app.use('/user', user);
+app.use('/stripe', stripe)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
