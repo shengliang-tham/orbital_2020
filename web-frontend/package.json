@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-spa-js": "^1.8.1",
     "@babel/core": "7.9.0",
+    "@stripe/react-stripe-js": "^1.1.2",
+    "@stripe/stripe-js": "^1.5.0",
     "@svgr/webpack": "4.3.3",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -11,6 +14,7 @@
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
     "antd": "^4.2.2",
+    "axios": "^0.19.2",
     "babel-eslint": "10.1.0",
     "babel-jest": "^24.9.0",
     "babel-loader": "8.1.0",
@@ -24,6 +28,8 @@
     "d3": "^5.16.0",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
+    "enzyme": "^3.11.0",
+    "enzyme-react-16": "^1.0.0",
     "eslint": "^6.6.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-loader": "3.0.3",
@@ -40,7 +46,9 @@
     "jest-environment-jsdom-fourteen": "1.0.1",
     "jest-resolve": "24.9.0",
     "jest-watch-typeahead": "0.4.2",
+    "js-cookie": "^2.2.1",
     "mini-css-extract-plugin": "0.9.0",
+    "moment": "^2.26.0",
     "node-sass": "^4.14.1",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "pnp-webpack-plugin": "1.6.4",
@@ -55,9 +63,13 @@
     "react-dev-utils": "^10.2.1",
     "react-dom": "^16.13.1",
     "react-icons": "^3.10.0",
+    "react-moment": "^0.9.7",
+    "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "react-stockcharts": "^0.7.8",
+    "react-test-renderer": "^16.13.1",
     "reactstrap": "^8.4.1",
+    "redux": "^4.0.5",
     "resolve": "1.15.0",
     "resolve-url-loader": "3.1.1",
     "semver": "6.3.0",
@@ -73,7 +85,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "dev": "concurrently --kill-others \"npm run start\" \"cd ../web-backend && nodemon\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -147,8 +160,11 @@
   },
   "devDependencies": {
     "antd-scss-theme-plugin": "^1.0.8",
+    "axios-mock-adapter": "^1.18.1",
     "babel-plugin-import": "^1.13.0",
+    "concurrently": "^5.2.0",
     "less-loader": "^5.0.0",
+    "redux-mock-store": "^1.5.4",
     "sass-loader": "^8.0.2"
   }
 }

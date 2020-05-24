@@ -11,9 +11,11 @@ import { Image } from "react-bootstrap";
 import './SideMenu.scss';
 import Dashboard from '../Dashboard/Dashboard';
 import Trade from '../Trade/Trade';
-import { withRouter } from "react-router";
+import { withRouter, } from "react-router";
 import Profile from '../Profile/Profile';
 import indomieLogo from '../../../assets/Images/Indomie.jpg'
+import { connect } from 'react-redux'
+import * as actionTypes from '../../../store/actions/authActions';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -37,6 +39,8 @@ class SideMenu extends Component {
 
     onClickSignout = () => {
         this.props.history.push('/');
+        localStorage.clear();
+        this.props.deleteToken();
     }
     render() {
 
@@ -98,4 +102,11 @@ class SideMenu extends Component {
     }
 }
 
-export default withRouter(SideMenu);
+
+const mapDispatchToProps = dispatch => {
+    return {
+        deleteToken: () => { dispatch({ type: actionTypes.DELETE_TOKEN }) }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(withRouter(SideMenu));
