@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Divider, Button, Typography, notification } from 'antd';
+import { Row, Col, Divider, Button, Typography, notification, Tooltip, InputNumber } from 'antd';
 import './AccountBalance.scss'
 import CustomModal from '../../../../UI/Modal/Modal';
 import { CardElement } from '@stripe/react-stripe-js';
@@ -11,17 +11,22 @@ import axios from 'axios';
 
 const { Title } = Typography;
 
+const sampleCreditCard = "Credit Card Number: 4242 4242 4242 4242";
+
 class AccountBalance extends Component {
 
     state = {
         topUpModalVisible: false,
         disabledButtons: false,
+        defaultAmount: 1,
+        amount: 1
     }
 
     showTopUpModal = () => {
         this.setState({
             topUpModalVisible: true,
         });
+
     }
 
     handleTopUpModalOk = () => {
@@ -34,6 +39,14 @@ class AccountBalance extends Component {
         this.setState({
             topUpModalVisible: false,
         });
+    }
+
+    onAmountChange = (value) => {
+        this.setState({
+            ...this.state,
+            amount: value
+        })
+        console.log(this.state.amount)
     }
 
     handleSubmit = async (event) => {
@@ -73,7 +86,8 @@ class AccountBalance extends Component {
             })
 
             const response = await axios.post(backendUrl + '/stripe/generate-intent', {
-                email: ""
+                email: "",
+                amount: this.state.amount
             })
 
             const result = await stripe.confirmCardPayment(response.data.clientSecret, {
@@ -86,6 +100,11 @@ class AccountBalance extends Component {
                 console.log(result.error)
                 // Show error to your customer (e.g., insufficient funds)
                 console.log(result.error.message);
+                notification.error({
+                    message: 'Error',
+                    description: result.error.message,
+                    placement: 'bottomRight'
+                });
             } else {
                 // The payment has been processed!
                 console.log(result)
@@ -135,7 +154,9 @@ class AccountBalance extends Component {
                 <Divider />
                 <Row>
                     <Col span={2}></Col>
-                    <Col span={4}><Button type="primary" onClick={this.showTopUpModal} >Top Up</Button></Col>
+                    <Tooltip placement="bottom" title="Sample Credit Card: 4242 4242 4242 4242" arrowPointAtCenter="true" mouseEnterDelay="0">
+                        <Col span={4}><Button type="primary" onClick={this.showTopUpModal} >Top Up</Button></Col>
+                    </Tooltip>
                     <Col span={4}></Col>
                 </Row>
                 <Divider />
@@ -149,6 +170,20 @@ class AccountBalance extends Component {
                 >
 
                     <form id="top-up-form" onSubmit={this.handleSubmit}>
+                        <Row align="middle" justify="center">
+                            <Col span={12}> Amount to be top up :</Col>
+                            <Col span={12}>
+                                <InputNumber style={{ width: '100%' }}
+                                    min={this.state.defaultAmount}
+                                    defaultValue={this.state.defaultAmount}
+                                    formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                    onChange={this.onAmountChange}
+                                    size="large"
+                                />
+                            </Col>
+                        </Row>
+                        <Divider />
                         <CardElement
                             options={{
                                 style: {
