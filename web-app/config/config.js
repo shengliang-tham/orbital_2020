@@ -7,11 +7,13 @@ const GOOGLE = {
     clientSecret: "YW6ZyiRTfyP2cJIHP7UTniBm"
 };
 
-const mongoURL = "mongodb://shengliang:asd123asd@ds239936.mlab.com:39936/orbital-dev"
+const mongoURL_DEV = "mongodb://shengliang:asd123asd@ds239936.mlab.com:39936/orbital-dev"
+const mongoURL = "mongodb://shengliang:asd123asd@ds029106.mlab.com:29106/orbital"
 
 module.exports = {
     FACEBOOK,
     GOOGLE,
     mongoURL,
-    secretKey: "Orbital2020"
+    secretKey: "Orbital2020",
+    mongoURL_DEV
 };

@@ -9,13 +9,7 @@ const auth = require('./routes/auth/auth');
 const user = require('./routes/user/user');
 const stripe = require('./routes/stripe/stripe')
 
-mongoose.connect(config.mongoURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
-}).then(response => {
-    console.log("db connected")
-});
+
 const app = express();
 app.use(cors())
 app.use((req, res, next) => {
@@ -37,6 +31,22 @@ if (process.env.NODE_ENV === "production") {
     const path = require("path");
     app.get("*", (req, res) => {
         res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+    });
+
+    mongoose.connect(config.mongoURL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false
+    }).then(response => {
+        console.log("db connected")
+    });
+} else {
+    mongoose.connect(config.mongoURL_DEV, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false
+    }).then(response => {
+        console.log("db connected")
     });
 }
 
