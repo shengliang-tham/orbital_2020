@@ -10,6 +10,8 @@ const User = require('../../models/user');
 const bcrypt = require('bcryptjs');
 const authTypes = require('./authType')
 
+const frontendUrl = process.env.NODE_ENV === "production" ? "https://orbital-2020.herokuapp.com/auth-redirect" : 'http://localhost:3000/auth-redirect';
+
 passport.serializeUser((user, cb) => {
     cb(null, user);
 });
@@ -66,7 +68,7 @@ router.get('/facebook/callback', passport.authenticate("facebook"), (req, res) =
     let user = req.user;
     let token = signToken(authTypes.authTypeFacebook, user.facebookId);
     res.cookie('jwt', token);
-    res.redirect('http://localhost:3000/auth-redirect')
+    res.redirect(frontendUrl)
 })
 
 router.get('/google', passport.authenticate("google", { scope: ['profile', 'email'] }))
@@ -74,7 +76,7 @@ router.get('/google/callback', passport.authenticate("google"), (req, res) => {
     const user = req.user;
     let token = signToken(authTypes.authTypeGoogle, user.googleId);
     res.cookie('jwt', token);
-    res.redirect('http://localhost:3000/auth-redirect')
+    res.redirect(frontendUrl)
 })
 
 
