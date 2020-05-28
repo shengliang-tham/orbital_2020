@@ -22,6 +22,10 @@ class AccountDetails extends Component {
 
     }
 
+    componentDidMount() {
+        console.log(this.props.user)
+    }
+
     showEmailModal = () => {
         this.setState({
             emailModalVisible: true,
@@ -89,6 +93,7 @@ class AccountDetails extends Component {
     }
 
     render() {
+
         return (
             <div className="account-details">
                 <Row align="middle" justify="center">
@@ -105,7 +110,7 @@ class AccountDetails extends Component {
                         </Row>
                         <Row>
                             Registration Date : <div>
-                                <Moment date={this.props.user ? this.props.user.createdDate : null} />
+                                <Moment date={this.props.user ? this.props.user.created : null} />
                             </div>
                         </Row>
                     </Col>
@@ -115,7 +120,7 @@ class AccountDetails extends Component {
                     <Col span={2}></Col>
                     <Col span={4}><Button type="primary" onClick={this.showEmailModal}>Change Email</Button></Col>
                     <Col span={4}></Col>
-                    <Col span={4}><Button type="primary" onClick={this.showPasswordModal}>Change Password </Button></Col>
+                    {/* <Col span={4}><Button type="primary" onClick={this.showPasswordModal}>Change Password </Button></Col> */}
                 </Row>
                 <Divider />
 

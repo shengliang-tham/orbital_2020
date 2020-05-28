@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Divider, Button, Typography, notification, Tooltip, InputNumber } from 'antd';
+import { Row, Col, Divider, Button, Typography, notification, Tooltip, InputNumber, message } from 'antd';
 import './AccountBalance.scss'
 import CustomModal from '../../../../UI/Modal/Modal';
 import { CardElement } from '@stripe/react-stripe-js';
@@ -80,6 +80,8 @@ class AccountBalance extends Component {
             console.log('[error]', error);
         } else {
             console.log('[PaymentMethod]', paymentMethod);
+            const msgIndicator = message.loading('Verifying card details...', 0);
+
             this.setState({
                 ...this.state,
                 disabledButtons: true
@@ -109,6 +111,7 @@ class AccountBalance extends Component {
                 // The payment has been processed!
                 console.log(result)
 
+
                 if (result.paymentIntent.status === 'succeeded') {
 
                     //result.paymentIntent.amount
@@ -124,6 +127,16 @@ class AccountBalance extends Component {
                         });
 
                         this.props.updateBalance(response.data.user)
+                        msgIndicator();
+                        this.setState({
+                            topUpModalVisible: false,
+                        });
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: response.data.message,
+                            placement: 'bottomRight'
+                        });
                     }
                 }
             }
