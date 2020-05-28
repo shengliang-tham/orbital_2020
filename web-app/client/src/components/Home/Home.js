@@ -10,7 +10,7 @@ class Home extends Component {
     componentDidMount() {
         this.props.toggleLoading();
         axios.get(backendUrl + '/user/retrieve-user').then(user => {
-            // console.log(user)
+            console.log(user)
             this.props.fetchUserDetails(user.data.user)
             this.props.toggleLoading();
         })

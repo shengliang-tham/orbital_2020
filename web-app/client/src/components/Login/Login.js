@@ -41,48 +41,52 @@ class Login extends Component {
   render() {
 
     let handleSubmit = (event) => {
-      this.props.toggleLoading();
       event.preventDefault();
       event.stopPropagation();
-      const form = event.currentTarget;
       this.setState({
         setValidated: true, validated: true
       })
 
+      const form = event.currentTarget;
 
-      axios.post(backendUrl + '/auth/login', {
-        email: form.elements.email.value,
-        password: form.elements.password.value
-      }).then((response) => {
+      console.log(form.elements)
 
-        if (response.data.success) {
-          this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
-          localStorage.setItem('token', response.data.token)
-          this.props.saveToken(response.data.token);
-          notification.success({
-            message: 'Success',
-            description: "You have logged in!",
-            placement: 'bottomRight'
-          });
-          this.props.history.push("/home");
+      if (!(form.elements.email.validationMessage && form.elements.password.validationMessage)) {
+        this.props.toggleLoading();
+        axios.post(backendUrl + '/auth/login', {
+          email: form.elements.email.value,
+          password: form.elements.password.value
+        }).then((response) => {
 
-        } else {
+          if (response.data.success) {
+            this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
+            localStorage.setItem('token', response.data.token)
+            this.props.saveToken(response.data.token);
+            notification.success({
+              message: 'Success',
+              description: "You have logged in!",
+              placement: 'bottomRight'
+            });
+            this.props.history.push("/home");
+
+          } else {
+            notification.error({
+              message: 'Error',
+              description: response.data.message,
+              placement: 'bottomRight'
+            });
+          }
+          this.props.toggleLoading();
+        }).catch(error => {
           notification.error({
             message: 'Error',
-            description: response.data.message,
+            description: "Network error",
             placement: 'bottomRight'
           });
-        }
-        this.props.toggleLoading();
-      }).catch(error => {
-        notification.error({
-          message: 'Error',
-          description: "Network error",
-          placement: 'bottomRight'
-        });
-        this.props.toggleLoading();
+          this.props.toggleLoading();
 
-      })
+        })
+      }
     };
 
     return (

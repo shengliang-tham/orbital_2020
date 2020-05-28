@@ -6,9 +6,9 @@ const User = require('../../models/user');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 router.post('/update-email', middleware.isAuthenticated, (req, res) => {
-    console.log(req)
     const { authType } = req.decoded
     if (authType === authTypeEmail) {
+        console.log("1")
         User.findOneAndUpdate({
             _id: new ObjectId(req.decoded.id)
         }, {
@@ -74,7 +74,7 @@ router.get('/retrieve-user', middleware.isAuthenticated, (req, res) => {
     const { authType } = req.decoded
 
     if (authType === authTypeEmail) {
-        User.findOneAndUpdate({
+        User.findOne({
             _id: new ObjectId(req.decoded.id)
         }).then(user => {
             res.json({

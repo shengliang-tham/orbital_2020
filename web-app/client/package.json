@@ -85,8 +85,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js",
-    "dev": "concurrently --kill-others \"npm run start\" \"cd ../web-backend && nodemon\""
+    "test": "node scripts/test.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -162,7 +161,6 @@
     "antd-scss-theme-plugin": "^1.0.8",
     "axios-mock-adapter": "^1.18.1",
     "babel-plugin-import": "^1.13.0",
-    "concurrently": "^5.2.0",
     "less-loader": "^5.0.0",
     "redux-mock-store": "^1.5.4",
     "sass-loader": "^8.0.2"

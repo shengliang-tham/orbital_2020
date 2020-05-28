@@ -7,7 +7,7 @@ const GOOGLE = {
     clientSecret: "YW6ZyiRTfyP2cJIHP7UTniBm"
 };
 
-const mongoURL = "mongodb://shengliang:asd123asd@ds155634.mlab.com:55634/orbital"
+const mongoURL = "mongodb://shengliang:asd123asd@ds239936.mlab.com:39936/orbital-dev"
 
 module.exports = {
     FACEBOOK,
