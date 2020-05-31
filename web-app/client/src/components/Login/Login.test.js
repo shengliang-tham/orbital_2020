@@ -1,15 +1,15 @@
-import React from 'react'
-import { mount } from 'enzyme'
-import { Provider } from "react-redux";
+import '../../mocks/matchMedia';
 
-import configureMockStore from "redux-mock-store";
+import React from 'react';
 
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import configureMockStore from 'redux-mock-store';
 
+import * as global from '../../global-variables';
+import * as globalActionTypes from '../../store/actions/globalActions';
 import Login from './Login';
-import '../../mocks/matchMedia'
-import * as globalActionTypes from '../../store/actions/globalActions'
-import * as global from '../../global-variables'
 
 let axios = require("axios");
 let MockAdapter = require("axios-mock-adapter");
