@@ -17,7 +17,7 @@ api = Api(app)
 def get(tick):
     with app.app_context():
          #Get the stock data
-        ticker = 'Z74.SI' #Insert stocks here
+        ticker = tick #Insert stocks here
         Duration_from_today = dt.timedelta(days=365)
         # time delta converts numbers to date
         end_date = dt.date.today()
