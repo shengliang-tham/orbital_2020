@@ -173,7 +173,15 @@ def stockOHLC():
     return df.to_csv(sep='\t')
 ##### End of Stock OHLC DATA ###########
 
-
+##### Start of Company Details and Price #######
+@app.route('/compProfile/<string:ticker>', methods=['GET'])
+def compProfile(ticker):
+    r = requests.get('https://finnhub.io/api/v1/stock/profile2?symbol='+ticker+'&token='+token)
+    q = requests.get('https://finnhub.io/api/v1/stock/metric?symbol='+ticker+'&metric=all&token='+token)
+    t = r.json()
+    y = q.json()
+    t.update(y['metric'])
+    return json.dumps(t, indent=4)
 
 if __name__ == '__main__':
       app.run(host='0.0.0.0', port=8000)
