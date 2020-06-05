@@ -98,9 +98,7 @@ def compProfile(ticker):
     y = q.json()
     t.update(y['metric'])
     return json.dumps(t)
-
-print(compProfile('Z74.SI'))
-    
+####################
     
     
     

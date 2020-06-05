@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
+
 import json
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -9,11 +10,27 @@ import pandas as pd
 pd.core.common.is_list_like = pd.api.types.is_list_like
 import pandas_datareader.data as pdr
 import datetime as dt
+import requests
+import time
+from datetime import date, datetime, timedelta
+
 
 app = Flask(__name__)
 api = Api(app)
+token = 'brcab6nrh5rap841ir30'
 
-@app.route('/ticker/<string:tick>', methods=['GET'])
+####### Time conversion Unix #################
+def unix_Date(ts):
+    datetimeCURR = (datetime.utcfromtimestamp(ts) + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
+    return datetimeCURR
+
+def date_Unix(s):
+    return int(time.mktime(dt.datetime.strptime(s, "%d/%m/%Y").timetuple()))
+####### Time conversion Unix #################
+
+
+##### Start of SciKit Learn Stock prediction #############
+@app.route('/stockpredict/<string:tick>', methods=['GET'])
 def get(tick):
     with app.app_context():
          #Get the stock data
@@ -25,8 +42,6 @@ def get(tick):
         start_date = end_date - Duration_from_today
         #interval by default is set to day others are d,wk,mo 
         data = pdr.get_data_yahoo(ticker,start_date,end_date,interval = "d")
-        
-        
         #Take a look at the data
         ##print(data) #will be using the adjusted head
         #Get adjusted Close Price
@@ -81,6 +96,83 @@ def get(tick):
         #print(type(lr_confidence))
         ####################### IMPORTANT LINEAR REGRESSION CONFIDENCE #########################
         return jsonify({lr_confidence: json.dumps(listArr)})
+##### End of SciKit Learn Stock prediction #############
+
+
+##### Start of Forex OHLC DATA ###########
+## Parameters:
+# ticker - symbol should follow EUR_USD format
+# interval - 1, 5, 15, 30, 60, D, W, M 
+# startDate - Follow dd/mm/yyyy format
+# endDate - same  as start Date should be left blank if defaulted to today
+@app.route('/api/forexOHLC', methods=['GET'])
+def forexOHLC():
+    bar = request.args.to_dict()
+    Symbol = bar['ticker']
+    resolution = str(bar['interval']) ##1,5 etc etc
+    t_Start = str(date_Unix(bar['startDate']))  ## start time
+    if len(bar['endDate']) == 0:
+        t_End = str(int(time.time()))
+    else:
+        t_End = str(date_Unix(bar['endDate']))
+    URL = 'https://finnhub.io/api/v1/forex/candle?symbol=OANDA:'+Symbol+'&resolution='+resolution+'&from='+t_Start+'&to='+t_End+'&token='+token+'&format=json'
+    r = requests.get(URL)
+    r_json = r.json()
+    r_Open = np.array(r_json['o'])
+    r_High = np.array(r_json['h'])
+    r_Low = np.array(r_json['l'])
+    r_Close = np.array(r_json['c'])
+    r_time = np.array(r_json['t'])
+    df2 = pd.DataFrame(r_time,columns=['Time'])
+    df2['Time'] = df2['Time'].apply(lambda x: unix_Date(x))
+    r_vol = np.array(r_json['v'])
+    df = pd.DataFrame(r_Open,columns=['Open'])
+    df['High'] = r_High
+    df['Low'] = r_Low
+    df['Close'] = r_Close
+    df['Volume'] = r_vol
+    df.index = df2['Time']
+    df.index.names = ['Time']
+    return df.to_csv(sep='\t')
+##### End of Forex OHLC DATA ###########
+
+##### Start of Stock OHLC DATA ###########
+## Parameters:
+# ticker - symbol should follow yahoo signals.
+# interval - 1, 5, 15, 30, 60, D, W, M 
+# startDate - Follow dd/mm/yyyy format
+# endDate - same  as start Date should be left blank if defaulted to today
+@app.route('/api/stockOHLC', methods=['GET'])
+def stockOHLC():
+    bar = request.args.to_dict()
+    Symbol = bar['ticker']
+    resolution = str(bar['interval']) ##1,5 etc etc
+    t_Start = str(date_Unix(bar['startDate']))  ## start time
+    if len(bar['endDate']) == 0:
+        t_End = str(int(time.time()))
+    else:
+        t_End = str(date_Unix(bar['endDate']))
+    url = 'https://finnhub.io/api/v1/stock/candle?symbol='+Symbol+'&resolution='+resolution+'&from='+t_Start+'&to='+t_End+'&token='+token
+    r = requests.get(url)
+    r_json = r.json()
+    r_Open = np.array(r_json['o'])
+    r_High = np.array(r_json['h'])
+    r_Low = np.array(r_json['l'])
+    r_Close = np.array(r_json['c'])
+    r_time = np.array(r_json['t'])
+    df2 = pd.DataFrame(r_time,columns=['Time'])
+    df2['Time'] = df2['Time'].apply(lambda x: unix_Date(x))
+    r_vol = np.array(r_json['v'])
+    df = pd.DataFrame(r_Open,columns=['Open'])
+    df['High'] = r_High
+    df['Low'] = r_Low
+    df['Close'] = r_Close
+    df['Volume'] = r_vol
+    df.index = df2['Time']
+    df.index.names = ['Time']
+    return df.to_csv(sep='\t')
+##### End of Stock OHLC DATA ###########
+
 
 
 if __name__ == '__main__':
