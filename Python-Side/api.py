@@ -38,7 +38,6 @@ def get(tick):
         forecast_out = 7 #predict the futute by how many days
         #Create another column (target gonna be shift base on forecast)
         
-        
         df['Prediction'] = data['Adj Close'].shift(-forecast_out)
         #print out data seta
         #print(df.tail(4))
