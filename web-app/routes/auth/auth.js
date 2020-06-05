@@ -111,10 +111,10 @@ router.post('/register', async (req, res) => {
         password: hash,
       });
       newUser = await newUser.save();
-      const token = signToken(authTypes.authTypeEmail, newUser._id);
+      const token = await signToken(authTypes.authTypeEmail, newUser._id);
       res.json({
         success: true,
-        token,
+        token: token,
       });
     }
   } catch (error) {
@@ -127,11 +127,8 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const user = await User.findOne({
-      googleId: null,
-      facebookId: null,
-      email: req.body.email,
-    });
+    const user = await User.findOne({ googleId: null, facebookId: null, email: req.body.email });
+
     if (!user) {
       res.json({
         success: false,
@@ -143,7 +140,7 @@ router.post('/login', async (req, res) => {
         const token = await signToken('email', user._id);
         res.json({
           success: true,
-          token,
+          token: token,
         });
       } else {
         res.json({
