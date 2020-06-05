@@ -1,13 +1,26 @@
+import './account-details.scss';
+
 import React, { Component } from 'react';
-import { Row, Col, Divider, Button, Form, Input, notification } from 'antd';
-import './account-details.scss'
-import CustomModal from '../../../../UI/Modal/Modal';
-import * as globalActionTypes from '../../../../store/actions/globalActions'
-import * as userActionTypes from '../../../../store/actions/userActions'
-import { connect } from "react-redux";
-import { backendUrl } from '../../../../global-variables';
+
+import {
+  Button,
+  Col,
+  Divider,
+  Form,
+  Input,
+  message,
+  notification,
+  Row,
+} from 'antd';
 import axios from 'axios';
 import Moment from 'react-moment';
+import { connect } from 'react-redux';
+
+import { backendUrl } from '../../../../global-variables';
+import * as authActionTypes from '../../../../store/actions/authActions';
+import * as globalActionTypes from '../../../../store/actions/globalActions';
+import * as userActionTypes from '../../../../store/actions/userActions';
+import CustomModal from '../../../../UI/Modal/Modal';
 
 class AccountDetails extends Component {
 
@@ -39,7 +52,7 @@ class AccountDetails extends Component {
     };
 
     onEmailUpdate = values => {
-        this.props.toggleLoading();
+        const msgIndicator = message.loading('Updating Email...', 0);
 
         axios.post(backendUrl + '/user/update-email', {
             email: values.email
@@ -60,18 +73,17 @@ class AccountDetails extends Component {
                     placement: 'bottomRight'
                 });
             }
-            this.props.toggleLoading();
             this.setState({
                 emailModalVisible: false,
             });
+            msgIndicator();
         }).catch(error => {
             notification.error({
                 message: 'Error',
                 description: error,
                 placement: 'bottomRight'
             });
-            this.props.toggleLoading();
-
+            msgIndicator();
         })
 
     }
@@ -90,6 +102,38 @@ class AccountDetails extends Component {
 
     onPasswordUpdate = (value) => {
         console.log(value)
+        const msgIndicator = message.loading('Updating Email...', 0);
+
+        axios.post(backendUrl + '/user/update-password', {
+            password: value.password
+        }).then((response) => {
+            console.log(response)
+            if (response.data.success) {
+                console.log(response.data.user)
+                notification.success({
+                    message: 'Success',
+                    description: "You have successfully changed your password",
+                    placement: 'bottomRight'
+                });
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: response.data.message,
+                    placement: 'bottomRight'
+                });
+            }
+            this.setState({
+                passwordModalVisible: false,
+            });
+            msgIndicator();
+        }).catch(error => {
+            notification.error({
+                message: 'Error',
+                description: error,
+                placement: 'bottomRight'
+            });
+            msgIndicator();
+        })
     }
 
     render() {
@@ -120,7 +164,11 @@ class AccountDetails extends Component {
                     <Col span={2}></Col>
                     <Col span={4}><Button type="primary" onClick={this.showEmailModal}>Change Email</Button></Col>
                     <Col span={4}></Col>
-                    {/* <Col span={4}><Button type="primary" onClick={this.showPasswordModal}>Change Password </Button></Col> */}
+                    {this.props.auth.authType === authActionTypes.SET_AUTH_EMAIL ?
+                        <Col span={4}><Button type="primary" onClick={this.showPasswordModal}>Change Password </Button></Col>
+                        : null
+                    }
+
                 </Row>
                 <Divider />
 

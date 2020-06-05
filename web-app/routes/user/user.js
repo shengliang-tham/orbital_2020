@@ -5,6 +5,7 @@ const { ObjectId } = require('mongoose').Types;
 const middleware = require('../middleware/auth');
 const { authTypeEmail } = require('../auth/authType');
 const User = require('../../models/user');
+const bcrypt = require('bcryptjs');
 
 router.post('/update-email', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
@@ -36,30 +37,35 @@ router.post('/update-email', middleware.isAuthenticated, async (req, res) => {
   }
 });
 
-// router.post('/update-password', middleware.isAuthenticated, (req, res) => {
-//   const { authType } = req.decoded;
-//   if (authType === authTypeEmail) {
-//     User.findOneAndUpdate({
-//       _id: new ObjectId(req.decoded.id),
-//     }, { $set: { email: req.body.email } })
-//       .then((user) => {
-//         console.log(user);
-//         res.json({
-//           success: true,
-//         });
-//       }).catch((error) => {
-//         res.json({
-//           success: false,
-//           message: error,
-//         });
-//       });
-//   } else {
-//     res.json({
-//       success: false,
-//       message: 'Only can change password using email authentication',
-//     });
-//   }
-// });
+router.post('/update-password', middleware.isAuthenticated, async (req, res) => {
+  const { authType } = req.decoded;
+  if (authType === authTypeEmail) {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(req.body.password, salt);
+    try {
+      const user = await User.findOneAndUpdate({
+        _id: new ObjectId(req.decoded.id),
+      }, { $set: { password: hash } })
+
+      if (user) {
+        res.json({
+          success: true,
+        });
+      }
+    } catch (error) {
+      res.json({
+        success: false,
+        message: error,
+      });
+    }
+  }
+  else {
+    res.json({
+      success: false,
+      message: 'Only can change password using email authentication',
+    });
+  }
+});
 
 router.get('/retrieve-user', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;

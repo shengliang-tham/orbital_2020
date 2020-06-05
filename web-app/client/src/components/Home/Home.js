@@ -1,17 +1,25 @@
 import React, { Component } from 'react';
-import SideMenu from './SideMenu/SideMenu';
+
 import axios from 'axios';
-import { backendUrl } from '../../global-variables'
-import { connect } from "react-redux";
-import * as globalActionTypes from '../../store/actions/globalActions'
-import * as userActionTypes from '../../store/actions/userActions'
+import { connect } from 'react-redux';
+
+import { backendUrl } from '../../global-variables';
+import * as authActionTypes from '../../store/actions/authActions';
+import * as globalActionTypes from '../../store/actions/globalActions';
+import * as userActionTypes from '../../store/actions/userActions';
+import SideMenu from './SideMenu/SideMenu';
+
 class Home extends Component {
 
     componentDidMount() {
         this.props.toggleLoading();
         axios.get(backendUrl + '/user/retrieve-user').then(user => {
+            user = user.data.user;
             console.log(user)
-            this.props.fetchUserDetails(user.data.user)
+            if (!user.facebookId && !user.googleId) {
+                this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
+            }
+            this.props.fetchUserDetails(user)
             this.props.toggleLoading();
         })
     }
@@ -33,6 +41,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        setAuthType: (authType) => { dispatch({ type: authType }) },
         toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
         fetchUserDetails: (user) => { dispatch({ type: userActionTypes.FETCH_USER_DETAILS, payload: user }) },
     }
