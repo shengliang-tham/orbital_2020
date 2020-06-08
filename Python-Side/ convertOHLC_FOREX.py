@@ -23,8 +23,8 @@ def unix_Date(ts):
 ####### Forex Related Exchange #################
 def getOHLC__Forex(ticker):
     Symbol = ticker
-    resolution = '1'
-    t_Start ='1591228800'
+    resolution = '60'
+    t_Start ='159128800'
     t_End = str(int(time.time()))
     URL = 'https://finnhub.io/api/v1/forex/candle?symbol=OANDA:'+Symbol+'&resolution='+resolution+'&from='+t_Start+'&to='+t_End+'&token='+token+'&format=json'
     r = requests.get(URL)
@@ -42,9 +42,10 @@ def getOHLC__Forex(ticker):
     df['Low'] = r_Low
     df['Close'] = r_Close
     df['Volume'] = r_vol
-    df.index = df2['Time']
-    df.index.names = ['Time']
-    return df
+    df['Date'] = df2['Time']
+    # df.index = df2['Time']
+    # df.index.names = ['Time']
+    return json.dumps(json.loads(df.to_json(orient='index')), indent=2)
 
 def displayExchange():
     r = requests.get('https://finnhub.io/api/v1/forex/exchange?token='+token)
@@ -52,6 +53,8 @@ def displayExchange():
 
 ####### Forex Related Exchange #################
     
+print(getOHLC__Forex('EUR_USD'))
+
 ####### Stock Related Exchange #################
 def getOHLC__Stocks(ticker):
     resolution = '5'
