@@ -26,7 +26,8 @@ def getOHLC__Forex(ticker):
     resolution = '60'
     t_Start ='159128800'
     t_End = str(int(time.time()))
-    URL = 'https://finnhub.io/api/v1/forex/candle?symbol=OANDA:'+Symbol+'&resolution='+resolution+'&from='+t_Start+'&to='+t_End+'&token='+token+'&format=json'
+    indicator = '&indicator=bbands&timeperiod=7&seriestype=c&matype=8'
+    URL = 'https://finnhub.io/api/v1/forex/candle?symbol=OANDA:'+Symbol+'&resolution='+resolution+'&from='+t_Start+'&to='+t_End+indicator+'&token='+token+'&format=json'
     r = requests.get(URL)
     r_json = r.json()
     r_Open = np.array(r_json['o'])
@@ -43,8 +44,8 @@ def getOHLC__Forex(ticker):
     df['Close'] = r_Close
     df['Volume'] = r_vol
     df['Date'] = df2['Time']
-    # df.index = df2['Time']
-    # df.index.names = ['Time']
+    df.index = df2['Time']
+    df.index.names = ['Time']
     return json.dumps(json.loads(df.to_json(orient='index')), indent=2)
 
 def displayExchange():
@@ -103,6 +104,14 @@ def compProfile(ticker):
     return json.dumps(t)
 ####################
     
+##### Technical indcators ######
+
+def TA(ticker):    
+    r = requests.get('https://finnhub.io//api/v1/forex/candle?symbol=OANDA:EUR_USD&resolution=D&count=250&indicator=bbands&timeperiod=7&seriestype=c&matype=8&token='+token)
+    return r.json()
+
+
+
     
     
     
