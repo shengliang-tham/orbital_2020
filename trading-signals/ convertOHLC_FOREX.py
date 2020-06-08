@@ -46,7 +46,7 @@ def getOHLC__Forex(ticker):
     df['Date'] = df2['Time']
     df.index = df2['Time']
     df.index.names = ['Time']
-    return json.dumps(json.loads(df.to_json(orient='index')), indent=2)
+    #return json.dumps(json.loads(df.to_json(orient='index')), indent=2)
 
 def displayExchange():
     r = requests.get('https://finnhub.io/api/v1/forex/exchange?token='+token)
