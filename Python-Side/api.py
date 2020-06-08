@@ -139,9 +139,10 @@ def forexOHLC():
     df['Low'] = r_Low
     df['Close'] = r_Close
     df['Volume'] = r_vol
-    df.index = df2['Time']
-    df.index.names = ['Time']
-    return df.to_csv(sep='\t')
+    df['Date'] = df2['Time']
+    # df.index = df2['Time']
+    # df.index.names = ['Time']
+    return json.dumps(json.loads(df.to_json(orient='index')), indent=2)
     # return df.to_json()
 
 ##### End of Forex OHLC DATA ###########
