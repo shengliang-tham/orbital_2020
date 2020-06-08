@@ -29,17 +29,22 @@ import { fitWidth } from "react-stockcharts/lib/helper";
 import { last } from "react-stockcharts/lib/utils";
 
 const candlesAppearance = {
-    wickStroke: "#000000",
-    fill: function fill(d) {
-      return d.close > d.open ? "rgba(0, 128, 0, 0.8)" : "rgba(255, 0, 0, 0.8)";
-    },
-    stroke: "#000000",
-    candleStrokeWidth: 1,
-    widthRatio: 0.8,
-    opacity: 1,
+  wickStroke: "#000000",
+  fill: function fill(d) {
+    return d.close > d.open ? "rgba(0, 128, 0, 0.8)" : "rgba(255, 0, 0, 0.8)";
+  },
+  stroke: "#000000",
+  candleStrokeWidth: 1,
+  widthRatio: 0.8,
+  opacity: 1,
 }
 
 class CandleStickChartWithMA extends React.Component {
+
+  componentDidMount() {
+    console.log(this.props.data)
+  }
+
   render() {
     const ema20 = ema()
       .options({
@@ -47,33 +52,33 @@ class CandleStickChartWithMA extends React.Component {
         sourcePath: "close", // optional will default to close as the source
       })
       .skipUndefined(true) // defaults to true
-      .merge((d, c) => {d.ema20 = c;}) // Required, if not provided, log a error
+      .merge((d, c) => { d.ema20 = c; }) // Required, if not provided, log a error
       .accessor(d => d.ema20) // Required, if not provided, log an error during calculation
       .stroke("blue"); // Optional
 
     const sma20 = sma()
       .options({ windowSize: 20 })
-      .merge((d, c) => {d.sma20 = c;})
+      .merge((d, c) => { d.sma20 = c; })
       .accessor(d => d.sma20);
 
     const wma20 = wma()
       .options({ windowSize: 20 })
-      .merge((d, c) => {d.wma20 = c;})
+      .merge((d, c) => { d.wma20 = c; })
       .accessor(d => d.wma20);
 
     const tma20 = tma()
       .options({ windowSize: 20 })
-      .merge((d, c) => {d.tma20 = c;})
+      .merge((d, c) => { d.tma20 = c; })
       .accessor(d => d.tma20);
 
     const ema50 = ema()
       .options({ windowSize: 50 })
-      .merge((d, c) => {d.ema50 = c;})
+      .merge((d, c) => { d.ema50 = c; })
       .accessor(d => d.ema50);
 
     const smaVolume50 = sma()
       .options({ windowSize: 20, sourcePath: "volume" })
-      .merge((d, c) => {d.smaVolume50 = c;})
+      .merge((d, c) => { d.smaVolume50 = c; })
       .accessor(d => d.smaVolume50)
       .stroke("#4682B4")
       .fill("#4682B4");
@@ -97,25 +102,25 @@ class CandleStickChartWithMA extends React.Component {
     //might delete
     const height = 400;
 
-    var margin = {left: 70, right: 70, top:20, bottom: 30};
+    var margin = { left: 70, right: 70, top: 20, bottom: 30 };
     var gridHeight = height - margin.top - margin.bottom;
     var gridWidth = width - margin.left - margin.right;
 
     var showGrid = true;
-    var yGrid = showGrid ? { 
-        innerTickSize: -1 * gridWidth,
-        tickStrokeDasharray: 'Solid',
-        tickStrokeOpacity: 0.2,
-        tickStrokeWidth: 1
+    var yGrid = showGrid ? {
+      innerTickSize: -1 * gridWidth,
+      tickStrokeDasharray: 'Solid',
+      tickStrokeOpacity: 0.2,
+      tickStrokeWidth: 1
     } : {};
-    var xGrid = showGrid ? { 
-        innerTickSize: -1 * gridHeight,
-        tickStrokeDasharray: 'Solid',
-        tickStrokeOpacity: 0.2,
-        tickStrokeWidth: 1
+    var xGrid = showGrid ? {
+      innerTickSize: -1 * gridHeight,
+      tickStrokeDasharray: 'Solid',
+      tickStrokeOpacity: 0.2,
+      tickStrokeWidth: 1
     } : {};
 
-//might delete
+    //might delete
     return (
       <ChartCanvas height={400}
         width={width}
@@ -134,26 +139,26 @@ class CandleStickChartWithMA extends React.Component {
           yExtents={[d => [d.high, d.low], sma20.accessor(), wma20.accessor(), tma20.accessor(), ema20.accessor(), ema50.accessor()]}
           padding={{ top: 10, bottom: 20 }}
         >
-          <XAxis axisAt="bottom" orient="bottom" {...xGrid}/>
-          <YAxis axisAt="right" orient="right" ticks={5} {...yGrid}/>
+          <XAxis axisAt="bottom" orient="bottom" {...xGrid} />
+          <YAxis axisAt="right" orient="right" ticks={5} {...yGrid} />
 
           <MouseCoordinateY
             at="right"
             orient="right"
             displayFormat={format(".2f")} />
-<CandlestickSeries {...candlesAppearance} />
-          <LineSeries yAccessor={sma20.accessor()} stroke={sma20.stroke()}/>
-          <LineSeries yAccessor={wma20.accessor()} stroke={wma20.stroke()}/>
-          <LineSeries yAccessor={tma20.accessor()} stroke={tma20.stroke()}/>
-          <LineSeries yAccessor={ema20.accessor()} stroke={ema20.stroke()}/>
-          <LineSeries yAccessor={ema50.accessor()} stroke={ema50.stroke()}/>
+          <CandlestickSeries {...candlesAppearance} />
+          <LineSeries yAccessor={sma20.accessor()} stroke={sma20.stroke()} />
+          <LineSeries yAccessor={wma20.accessor()} stroke={wma20.stroke()} />
+          <LineSeries yAccessor={tma20.accessor()} stroke={tma20.stroke()} />
+          <LineSeries yAccessor={ema20.accessor()} stroke={ema20.stroke()} />
+          <LineSeries yAccessor={ema50.accessor()} stroke={ema50.stroke()} />
           <CurrentCoordinate yAccessor={sma20.accessor()} fill={sma20.stroke()} />
           <CurrentCoordinate yAccessor={wma20.accessor()} fill={wma20.stroke()} />
           <CurrentCoordinate yAccessor={tma20.accessor()} fill={tma20.stroke()} />
           <CurrentCoordinate yAccessor={ema20.accessor()} fill={ema20.stroke()} />
           <CurrentCoordinate yAccessor={ema50.accessor()} fill={ema50.stroke()} />
 
-          <OHLCTooltip origin={[-40, 0]}/>
+          <OHLCTooltip origin={[-40, 0]} />
           <MovingAverageTooltip
             onClick={e => console.log(e)}
             origin={[-38, 15]}
@@ -200,7 +205,7 @@ class CandleStickChartWithMA extends React.Component {
           yExtents={[d => d.volume, smaVolume50.accessor()]}
           height={150} origin={(w, h) => [0, h - 150]}
         >
-          <YAxis axisAt="left" orient="left" ticks={5} tickFormat={format(".2s")}/>
+          <YAxis axisAt="left" orient="left" ticks={5} tickFormat={format(".2s")} />
 
           <MouseCoordinateX
             at="bottom"
@@ -212,7 +217,7 @@ class CandleStickChartWithMA extends React.Component {
             displayFormat={format(".4s")} />
 
           <BarSeries yAccessor={d => d.volume} fill={d => d.close > d.open ? "#6BA583" : "red"} />
-          <AreaSeries yAccessor={smaVolume50.accessor()} stroke={smaVolume50.stroke()} fill={smaVolume50.fill()}/>
+          <AreaSeries yAccessor={smaVolume50.accessor()} stroke={smaVolume50.stroke()} fill={smaVolume50.fill()} />
           <CurrentCoordinate yAccessor={smaVolume50.accessor()} fill={smaVolume50.stroke()} />
           <CurrentCoordinate yAccessor={d => d.volume} fill="#9B0A47" />
         </Chart>

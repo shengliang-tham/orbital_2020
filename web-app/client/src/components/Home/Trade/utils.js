@@ -23,4 +23,12 @@ export function getData() {
         .then(response => response.text())
         .then(data => tsvParse(data, parseData(parseDate)))
     return promiseMSFT;
+
+    // const promiseMSFT = fetch("http://localhost:8000/api/stockOHLC?ticker=Z74.SI&interval=D&startDate=1/06/2020&endDate=5/06/2020")
+    //     .then(response => response.text())
+    //     .then(data => {
+    //         console.log(data);
+    //         tsvParse(data, parseData(parseDate))
+    //     })
+    // return promiseMSFT;
 }
