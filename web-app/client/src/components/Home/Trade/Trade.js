@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 import { TypeChooser } from "react-stockcharts/lib/helper";
 import CandleStickChart from './Chart/Candlestick/CandleStickChart';
 import { getData } from './Chart/CandleStickChartForDiscontinuousIntraDay/util';
-import CandleStickChartForDiscontinuousIntraDay from './Chart/CandleStickChartForDiscontinuousIntraDay/CandleStickChartForDiscontinuousIntraDayCandleStickChartForDiscontinuousIntraDay';
+import CandleStickChartForDiscontinuousIntraDay from './Chart/CandleStickChartForDiscontinuousIntraDay/CandleStickChartForDiscontinuousIntraDay';
 
 
 class Trade extends React.Component {
