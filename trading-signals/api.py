@@ -6,7 +6,7 @@ import pandas_datareader.data as pdr
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from flask_cors import CORS
-
+from bs4 import BeautifulSoup
 import json
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -61,6 +61,38 @@ def RSI(DF, n):
     return df['RSI']
 ####### Technical indcators ###############
 
+
+#### Start of Web Scraping ###########
+
+@app.route('/api/getTop3', methods=['GET'])
+def getTop3():
+    temp_dir = {}
+    temp_dir2 = {}
+    url = "https://sg.finance.yahoo.com/quote/%5ESTI/components?p=%5ESTI"
+    page = requests.get(url)
+    page_content = page.content
+    soup = BeautifulSoup(page_content, 'html.parser')
+    tabl = soup.find_all("table", {"class": "W(100%) M(0) BdB Bdc($finLightGray)"})
+    for t in tabl:
+        rows = t.find_all("tr", {"class": "BdT Bdc($seperatorColor) Ta(end) Fz(s)"})
+        for row in rows:
+            if len(row.get_text(separator='|').split("|")[0:2]) > 1:
+                temp_dir[row.get_text(separator='|').split("|")[0]] = row.get_text(separator='|').split("|")[1]
+                temp_dir2[row.get_text(separator='|').split("|")[0]] = row.get_text(separator='|').split("|")[3]
+    df = pd.DataFrame.from_dict(temp_dir, orient='index')
+    df2 = pd.DataFrame.from_dict(temp_dir2, orient='index')
+    df['change'] = df2[0]
+    df.columns = ["name","percentageChanged"]
+    df['exchange'] = "STI"
+    df.reset_index(drop=True, inplace=True)
+    df2 = df
+    df.sort_values(by=['percentageChanged'],ascending=False, inplace=True)
+    df2 = df.iloc[:3]
+    df2.reset_index(drop=True, inplace=True)
+    df2.reset_index(level=0, inplace=False)
+    df2['key'] = df2.index + 1
+    return json.dumps(json.loads(df2.to_json(orient='records')), indent=2)
+#### End of Web Scraping ###########
 
 
 ##### Start of SciKit Learn Stock prediction #############
@@ -195,7 +227,6 @@ def forexOHLC():
 # interval - 1, 5, 15, 30, 60, D, W, M
 # startDate - Follow dd/mm/yyyy format
 # endDate - same  as start Date should be left blank if defaulted to today
-
 
 @app.route('/api/stockOHLC', methods=['GET'])
 def stockOHLC():

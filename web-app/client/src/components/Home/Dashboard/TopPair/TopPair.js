@@ -21,6 +21,7 @@ const columns = [
 
 ];
 
+
 const data = [
     {
         key: '1',
@@ -29,18 +30,21 @@ const data = [
         exchange: 'Bittrex',
     },
     {
-        key: '2',
+       
         name: 'Google',
         percentageChanged: "2%",
         exchange: 'Polonex',
+        key: '2'
     },
     {
-        key: '3',
+        
         name: 'Nasi Babi',
         percentageChanged: "1%",
         exchange: 'NUS',
+        key: '3'
     },
 ];
+
 class TopPair extends Component {
     render() {
         return (
