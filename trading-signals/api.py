@@ -9,6 +9,7 @@ from flask_cors import CORS
 from bs4 import BeautifulSoup
 import json
 import numpy as np
+import math
 from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
@@ -83,10 +84,12 @@ def getTop3():
     df2 = pd.DataFrame.from_dict(temp_dir2, orient='index')
     df['change'] = df2[0]
     df.columns = ["name","percentageChanged"]
+    df['percentageChangePos'] = df['percentageChanged'].apply(lambda x: math.sqrt(float(x)*float(x)))
     df['exchange'] = "STI"
     df.reset_index(drop=True, inplace=True)
     df2 = df
-    df.sort_values(by=['percentageChanged'],ascending=False, inplace=True)
+    df.sort_values(by=['percentageChangePos'],ascending=False, inplace=True)
+    del df['percentageChangePos']
     df2 = df.iloc[:3]
     df2.reset_index(drop=True, inplace=True)
     df2.reset_index(level=0, inplace=False)
