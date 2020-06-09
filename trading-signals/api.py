@@ -36,11 +36,13 @@ def date_Unix(s):
 ####### Time conversion Unix #################
 
 ####### Technical indcators ###############
+
+
 def RSI(DF, n):
     df = DF.copy()
     df['delta'] = df['Close'] - df['Close'].shift(1)
-    df['gain'] = np.where(df['delta']>0,df['delta'],0)
-    df['loss'] = np.where(df['delta']<0,abs(df['delta']),0)
+    df['gain'] = np.where(df['delta'] > 0, df['delta'], 0)
+    df['loss'] = np.where(df['delta'] < 0, abs(df['delta']), 0)
     avg_gain = []
     avg_loss = []
     gain = df['gain'].tolist()
@@ -73,22 +75,27 @@ def getTop3():
     page = requests.get(url)
     page_content = page.content
     soup = BeautifulSoup(page_content, 'html.parser')
-    tabl = soup.find_all("table", {"class": "W(100%) M(0) BdB Bdc($finLightGray)"})
+    tabl = soup.find_all(
+        "table", {"class": "W(100%) M(0) BdB Bdc($finLightGray)"})
     for t in tabl:
-        rows = t.find_all("tr", {"class": "BdT Bdc($seperatorColor) Ta(end) Fz(s)"})
+        rows = t.find_all(
+            "tr", {"class": "BdT Bdc($seperatorColor) Ta(end) Fz(s)"})
         for row in rows:
             if len(row.get_text(separator='|').split("|")[0:2]) > 1:
-                temp_dir[row.get_text(separator='|').split("|")[0]] = row.get_text(separator='|').split("|")[1]
-                temp_dir2[row.get_text(separator='|').split("|")[0]] = row.get_text(separator='|').split("|")[3]
+                temp_dir[row.get_text(separator='|').split(
+                    "|")[0]] = row.get_text(separator='|').split("|")[1]
+                temp_dir2[row.get_text(separator='|').split(
+                    "|")[0]] = row.get_text(separator='|').split("|")[3]
     df = pd.DataFrame.from_dict(temp_dir, orient='index')
     df2 = pd.DataFrame.from_dict(temp_dir2, orient='index')
     df['change'] = df2[0]
-    df.columns = ["name","percentageChanged"]
-    df['percentageChangePos'] = df['percentageChanged'].apply(lambda x: math.sqrt(float(x)*float(x)))
+    df.columns = ["name", "percentageChanged"]
+    df['percentageChangePos'] = df['percentageChanged'].apply(
+        lambda x: math.sqrt(float(x)*float(x)))
     df['exchange'] = "STI"
     df.reset_index(drop=True, inplace=True)
     df2 = df
-    df.sort_values(by=['percentageChangePos'],ascending=False, inplace=True)
+    df.sort_values(by=['percentageChangePos'], ascending=False, inplace=True)
     del df['percentageChangePos']
     df2 = df.iloc[:3]
     df2.reset_index(drop=True, inplace=True)
@@ -186,31 +193,32 @@ def forexOHLC():
     else:
         t_End = str(date_Unix(bar['endDate']))
     indicator = '&indicator=ema&timeperiod=20'
-    URL = 'https://finnhub.io/api/v1/indicator?symbol=OANDA:'+Symbol+'&resolution='+resolution+'&from='+t_Start+'&to='+t_End+indicator+'&token='+token
+    URL = 'https://finnhub.io/api/v1/indicator?symbol=OANDA:'+Symbol+'&resolution=' + \
+        resolution+'&from='+t_Start+'&to='+t_End+indicator+'&token='+token
     r = requests.get(URL)
     r_json = r.json()
-    r_ema20 = np.array(r_json['ema']) ## hardcode stub to be replaced
+    r_ema20 = np.array(r_json['ema'])  # hardcode stub to be replaced
     r_Open = np.array(r_json['o'])
     r_High = np.array(r_json['h'])
     r_Low = np.array(r_json['l'])
     r_Close = np.array(r_json['c'])
     r_time = np.array(r_json['t'])
-    df2 = pd.DataFrame(r_time,columns=['Time'])
+    df2 = pd.DataFrame(r_time, columns=['Time'])
     df2['Time'] = df2['Time'].apply(lambda x: unix_Date(x))
     r_vol = np.array(r_json['v'])
-    df = pd.DataFrame(r_Open,columns=['Open'])
+    df = pd.DataFrame(r_Open, columns=['Open'])
     df['High'] = r_High
     df['Low'] = r_Low
     df['Close'] = r_Close
     df['Volume'] = r_vol
     df['Date'] = df2['Time']
-    df['ema20'] = r_ema20 ## hardcode stub to be replace
+    df['ema20'] = r_ema20  # hardcode stub to be replace
     # df.index = df2['Time']
     # df.index.names = ['Time']
     #### indcators #######
-    ## RSI
-    df['RSI'] = RSI(df,14)
-    ## MACD 
+    # RSI
+    df['RSI'] = RSI(df, 14)
+    # MACD
     # a = 12 ## fast period
     # b = 26 ## slow period
     # c = 9 ## signal period
@@ -230,6 +238,7 @@ def forexOHLC():
 # interval - 1, 5, 15, 30, 60, D, W, M
 # startDate - Follow dd/mm/yyyy format
 # endDate - same  as start Date should be left blank if defaulted to today
+
 
 @app.route('/api/stockOHLC', methods=['GET'])
 def stockOHLC():
