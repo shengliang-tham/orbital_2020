@@ -4,6 +4,7 @@ import axios from 'axios';
 import { tradingUrl } from '../../../../global-variables';
 import * as globalActionTypes from '../../../../store/actions/globalActions';
 import { connect } from 'react-redux';
+import './TopPair.scss'
 
 const columns = [
     {
@@ -63,11 +64,13 @@ class TopPair extends Component {
 
     render() {
         return (
-            <div>
+            <div className="top-pair">
                 <div>
                     Top Stocks (Last 24hrs)
                 </div>
-                <Table columns={columns} dataSource={this.state ? this.state.topStocks : null} />
+                <Table columns={columns}
+                    dataSource={this.state ? this.state.topStocks : null}
+                    rowClassName={(row, index) => { return row.percentageChanged.includes('-') ? "negative-value" : "positive-value" }} />
             </div>
         );
     }
