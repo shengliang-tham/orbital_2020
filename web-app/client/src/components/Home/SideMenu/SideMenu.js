@@ -56,7 +56,7 @@ class SideMenu extends Component {
                 <Layout style={{ minHeight: '100vh' }}>
                     <Sider breakpoint="lg" collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                         <Header className="site-layout-background" style={{ padding: 0 }}>
-                            <Image src={indomieHome} className="logo" />
+                            {!this.state.collapsed ? <Image src={indomieHome} className="logo" /> : <div className="logo"></div>}
 
                         </Header>
                         <Menu theme="Light" defaultSelectedKeys={['1']} mode="inline">

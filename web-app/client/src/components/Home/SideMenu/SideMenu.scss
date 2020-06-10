@@ -54,7 +54,15 @@
     .logo {
       height: 100%;
       display: flex;
-      margin: 0 auto;
+    }
+
+    .ant-layout-sider-collapsed {
+      .logo {
+        background: url("../../../assets/Images/robot.png") repeat 0 0;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: auto 100%;
+      }
     }
   }
 
