@@ -1,26 +1,34 @@
 .SideMenu {
+  $screen-sm-min: 768px;
+  $screen-md-min: 992px;
+  $screen-lg-min: 1200px;
+
   .side-menu {
     height: 100px;
   }
 
   .logo {
-    height: auto;
-    display: flex;
+    height: 30px;
+    margin: 0 auto;
   }
 
   header.ant-layout-header.site-layout-background {
     background: #fff;
   }
+
   .side-menu {
     background: #fff;
   }
+
   .ant-layout-sider-children {
     background: #fff;
   }
+
   .ant-layout-sider-trigger {
     color: #000 !important;
     background: #facb1b !important;
   }
+
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
     background-color: #facb1b !important;
     color: #000 !important;
@@ -32,11 +40,25 @@
   .ant-menu-inline .ant-menu-item::after {
     border-right: 3px solid #000 !important;
   }
+
   .ant-menuitem .ant-menu-submenu-active {
     color: #facb1b !important;
   }
 
-  .logo {
-    width: 100%;
+  /* Small devices (tablets, 768px and up) */
+  @media (min-width: $screen-sm-min) {
+  }
+
+  /* Medium devices (desktops, 992px and up) */
+  @media (min-width: $screen-md-min) {
+    .logo {
+      height: 100%;
+      display: flex;
+      margin: 0 auto;
+    }
+  }
+
+  /* Large devices (large desktops, 1200px and up) */
+  @media (min-width: $screen-lg-min) {
   }
 }

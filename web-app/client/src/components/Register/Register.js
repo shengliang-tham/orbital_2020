@@ -90,8 +90,8 @@ class Register extends Component {
       <div className="Register">
         <Grid>
           <Row>
-            <Col xs={6}></Col>
-            <Col xs={12}>
+            <Col xs={2} sm={4} md={24} lg={32} ></Col>
+            <Col xs={20} sm={16} md={24} lg={32} >
               <Logo></Logo>
               <Divider></Divider>
               <Form {...formItemLayout} onFinish={onFinish} >
@@ -232,7 +232,7 @@ class Register extends Component {
               </Form>
 
             </Col>
-            <Col xs={6}></Col>
+            <Col xs={2} sm={4}></Col>
           </Row>
         </Grid>
 
