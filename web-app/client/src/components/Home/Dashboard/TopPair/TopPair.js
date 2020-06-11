@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Tag, Space } from 'antd';
+import { Table, Tag, Space, notification } from 'antd';
 import axios from 'axios';
 import { tradingUrl } from '../../../../global-variables';
 import * as globalActionTypes from '../../../../store/actions/globalActions';
 import { connect } from 'react-redux';
+import './TopPair.scss'
 
 const columns = [
     {
@@ -52,22 +53,33 @@ class TopPair extends Component {
 
     componentDidMount() {
         this.props.toggleLoading();
-        axios.get(tradingUrl + '/getTop3').then(response => {
-            console.log(response);
-            this.setState({
-                topStocks: response.data
+        axios.get(tradingUrl + '/getTop3')
+            .then(response => {
+                console.log(response);
+                this.setState({
+                    topStocks: response.data
+                })
+                this.props.toggleLoading();
             })
-            this.props.toggleLoading();
-        })
+            .catch(error => {
+                notification.error({
+                    message: 'Error',
+                    description: JSON.parse(JSON.stringify(error)).message,
+                    placement: 'bottomRight'
+                });
+                this.props.toggleLoading();
+            })
     }
 
     render() {
         return (
-            <div>
+            <div className="top-pair">
                 <div>
                     Top Stocks (Last 24hrs)
                 </div>
-                <Table columns={columns} dataSource={this.state ? this.state.topStocks : null} />
+                <Table columns={columns}
+                    dataSource={this.state ? this.state.topStocks : null}
+                    rowClassName={(row, index) => { return row.percentageChanged.includes('-') ? "negative-value" : "positive-value" }} />
             </div>
         );
     }

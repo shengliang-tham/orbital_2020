@@ -13,7 +13,7 @@ import Dashboard from '../Dashboard/Dashboard';
 import Trade from '../Trade/Trade';
 import { withRouter, } from "react-router";
 import Profile from '../Profile/Profile';
-import indomieLogo from '../../../assets/Images/Indomie.jpg'
+import indomieHome from '../../../assets/Images/indomie-home.png'
 import { connect } from 'react-redux'
 import * as actionTypes from '../../../store/actions/authActions';
 
@@ -54,9 +54,9 @@ class SideMenu extends Component {
         return (
             <div className="SideMenu">
                 <Layout style={{ minHeight: '100vh' }}>
-                    <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
+                    <Sider breakpoint="lg" collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                         <Header className="site-layout-background" style={{ padding: 0 }}>
-                            <Image src={indomieLogo} className="logo" />
+                            {!this.state.collapsed ? <Image src={indomieHome} className="logo" /> : <div className="logo"></div>}
 
                         </Header>
                         <Menu theme="Light" defaultSelectedKeys={['1']} mode="inline">

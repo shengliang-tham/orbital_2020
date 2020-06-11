@@ -22,7 +22,7 @@ class Dashboard extends Component {
                     <Col span={8}>
                         <Balance></Balance>
                         <Divider />
-                        <TopPair></TopPair>
+                        {/* <TopPair></TopPair> */}
                         <Divider />
                         <Bot></Bot>
                     </Col>

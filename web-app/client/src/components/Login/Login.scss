@@ -1,16 +1,17 @@
 .Login {
+  $screen-sm-min: 768px;
+  $screen-md-min: 992px;
+  $screen-lg-min: 1200px;
+
   .form-group {
-    width: 50%;
+    width: 100%;
     margin: 0 auto;
     margin-bottom: 10px;
   }
+
   .login-btn {
     margin: 0 auto;
-    width: 50%;
-  }
-
-  button.btn.btn-primary {
-    font-size: 20px;
+    width: 100%;
   }
 
   .login-btn Button {
@@ -24,29 +25,95 @@
 
   .facebook-container {
     width: 100%;
-    padding: 2% 2%;
-    margin-bottom: 5px;
+    padding: 3% 3%;
+    margin-bottom: 15px;
+    background-color: #3b5998;
+
   }
 
   .facebook-container a {
     color: white;
-    padding: 2% 2%;
     text-decoration: none;
-    background-color: #3b5998;
-    width: auto;
+    width: 100%;
   }
 
   .google-container {
     width: 100%;
-    padding: 2% 2%;
+    padding: 3% 3%;
     margin-bottom: 5px;
+    background-color: #dd4b39;
+
   }
 
   .google-container a {
     color: white;
-    padding: 2% 2%;
     text-decoration: none;
-    background-color: #dd4b39;
     width: 100%;
   }
+
+
+  /* Small devices (tablets, 768px and up) */
+  @media (min-width: $screen-sm-min) {
+    .form-group {
+      width: 50%;
+    }
+
+    .login-btn {
+      width: 50%;
+    }
+
+    .login-btn Button {
+      width: 100%;
+    }
+
+
+    .facebook-container,
+    .google-container {
+      width: 50%;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      padding: 2% 2%;
+    }
+
+
+    .facebook-container a,
+    .google-container a {
+      font-size: 1.5em;
+    }
+
+  }
+
+  /* Medium devices (desktops, 992px and up) */
+  @media (min-width:$screen-md-min) {
+    .form-group {
+      width: 30%;
+    }
+
+    .login-btn {
+      width: 30%;
+    }
+
+    .login-btn Button {
+      width: 100%;
+    }
+
+
+    .facebook-container,
+    .google-container {
+      width: 30%;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      padding: 10px 10px;
+    }
+
+
+    .facebook-container a,
+    .google-container a {
+      font-size: 1.1em;
+    }
+
+  }
+
+  /* Large devices (large desktops, 1200px and up) */
+  @media (min-width: $screen-lg-min) {}
 }
