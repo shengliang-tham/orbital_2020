@@ -65,9 +65,37 @@ def RSI(DF, n):
     return df['RSI']
 ####### Technical indcators ###############
 
+#### Start of InsturmentPooling ###########
+@app.route('/api/instrumentPool', methods=['GET'])
+def instrumentPool():
+    temp_dir= {}
+    url = "https://sg.finance.yahoo.com/quote/%5ESTI/components?p=%5ESTI"
+    page = requests.get(url)
+    page_content = page.content
+    ### defining HTML Elements to look out for
+    soup = BeautifulSoup(page_content, 'html.parser')
+    tabl = soup.find_all("table", {"class": "W(100%) M(0) BdB Bdc($finLightGray)"})
+    for t in tabl:
+        rows = t.find_all("tr", {"class": "BdT Bdc($seperatorColor) Ta(end) Fz(s)"})
+        for row in rows:
+           if len(row.get_text(separator='|').split("|")[0:2]) > 1:
+                ## retrieve the symbol name in dictionary form
+                temp_dir[row.get_text(separator='|').split("|")[0]] = row.get_text(separator='|').split("|")[1]
+    df = pd.DataFrame.from_dict(temp_dir, orient='index')
+    df.reset_index(inplace=True)
+    df.columns = ["ticker","ticker_name"]
+    df["Instrument"] = "stocks"
+    
+    ## Forex
+    df2 = pd.DataFrame([["EUR_USD", "EUR/USD", "Forex"], 
+                        ["USD_JPY", "USD/JPY", "Forex"],
+                        ["GBP_USD", "GBP_USD", "Forex"],
+                        ["USD_CHF", "USD/CHF", "Forex"]], columns=["ticker","ticker_name","Instrument"])
+    df = df.append(df2)
+    return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
+
 
 #### Start of Web Scraping ###########
-
 @app.route('/api/getTop3', methods=['GET'])
 def getTop3():
    temp_dir = {}
@@ -133,11 +161,9 @@ def get(tick):
         df = data
         # Take a look at only ADJ close
         # print(df.head())
-
         # create a variable to state number of days to forecast
         forecast_out = 7  # predict the futute by how many days
         # Create another column (target gonna be shift base on forecast)
-
         df['Prediction'] = data['Adj Close'].shift(-forecast_out)
         # print out data seta
         # print(df.tail(4))
@@ -169,7 +195,6 @@ def get(tick):
         lr.fit(x_train, y_train)
         # Testing Model: return the determination of
         # the training of the prediction closer to 1 the better
-
         ####################### IMPORTANT LINEAR REGRESSION CONFIDENCE #########################
         lr_confidence = lr.score(x_test, y_test)
         # Set x_forecast equal to the last 30 rows of the original to the ADJ.CLose
@@ -247,8 +272,6 @@ def forexOHLC():
 # interval - 1, 5, 15, 30, 60, D, W, M
 # startDate - Follow dd/mm/yyyy format
 # endDate - same  as start Date should be left blank if defaulted to today
-
-
 @app.route('/api/stockOHLC', methods=['GET'])
 def stockOHLC():
     bar = request.args.to_dict()
@@ -284,8 +307,6 @@ def stockOHLC():
 ##### End of Stock OHLC DATA ###########
 
 ##### Start of Company Details and Price #######
-
-
 @app.route('/compProfile/<string:ticker>', methods=['GET'])
 def compProfile(ticker):
     r = requests.get(
