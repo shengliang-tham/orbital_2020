@@ -37,8 +37,6 @@ def date_Unix(s):
 ####### Time conversion Unix #################
 
 ####### Technical indcators ###############
-
-
 def RSI(DF, n):
     df = DF.copy()
     df['delta'] = df['Close'] - df['Close'].shift(1)
@@ -65,7 +63,7 @@ def RSI(DF, n):
     return df['RSI']
 ####### Technical indcators ###############
 
-#### Start of InsturmentPooling ###########
+#### Start of Semi-Fix Data ###########
 @app.route('/api/instrumentPool', methods=['GET'])
 def instrumentPool():
     temp_dir= {}
@@ -94,7 +92,19 @@ def instrumentPool():
     df = df.append(df2)
     return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
 
+@app.route('/api/timePool', methods=['GET'])
+def timePool():
+    df2 = pd.DataFrame([["1 min", "1"], 
+                    ["5 min", "5"],
+                    ["15 min", "15"],
+                    ["30 min", "60"],
+                    ["Daily", "D"],
+                    ["Weekly", "W"],
+                    ["Monthly", "M"]], columns=["Display","return"])
+    return json.dumps(json.loads(df2.to_json(orient='records')), indent=2)
 
+#### End of Semi-Fix Data ###########
+    
 #### Start of Web Scraping ###########
 @app.route('/api/getTop3', methods=['GET'])
 def getTop3():
