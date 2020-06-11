@@ -37,7 +37,7 @@ export function getData() {
     //     .then(data => csvParse(data, parseData(parseDateTime)))
     // return promiseMSFT;
 
-    const promiseMSFT = axios("http://localhost:8000/api/stockOHLC?ticker=Z74.SI&interval=1&startDate=1/06/2020&endDate=5/06/2020")
+    const promiseMSFT = axios("http://localhost:8000/api/stockOHLC?ticker=Z74.SI&interval=D&startDate=1/06/2020&endDate=5/06/2020")
         // .then(response => response.text())
         // .then(data => console.log(data))
         .then(data => csvParse(data.data, parseData(parseDateTime)))

@@ -14,6 +14,7 @@ import authReducer from './store/reducers/authReducer'
 import userReducer from './store/reducers/userReducer'
 import { Provider } from 'react-redux';
 import axios from 'axios';
+import { notification } from 'antd';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const allReducer = combineReducers({
@@ -33,8 +34,6 @@ axios.interceptors.request.use(request => {
 
   return request
 })
-
-
 
 ReactDOM.render(
   <Provider store={store}>

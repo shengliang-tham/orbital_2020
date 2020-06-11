@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Tag, Space } from 'antd';
+import { Table, Tag, Space, notification } from 'antd';
 import axios from 'axios';
 import { tradingUrl } from '../../../../global-variables';
 import * as globalActionTypes from '../../../../store/actions/globalActions';
@@ -53,13 +53,22 @@ class TopPair extends Component {
 
     componentDidMount() {
         this.props.toggleLoading();
-        axios.get(tradingUrl + '/getTop3').then(response => {
-            console.log(response);
-            this.setState({
-                topStocks: response.data
+        axios.get(tradingUrl + '/getTop3')
+            .then(response => {
+                console.log(response);
+                this.setState({
+                    topStocks: response.data
+                })
+                this.props.toggleLoading();
             })
-            this.props.toggleLoading();
-        })
+            .catch(error => {
+                notification.error({
+                    message: 'Error',
+                    description: JSON.parse(JSON.stringify(error)).message,
+                    placement: 'bottomRight'
+                });
+                this.props.toggleLoading();
+            })
     }
 
     render() {
