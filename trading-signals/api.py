@@ -232,13 +232,16 @@ def forexOHLC():
     Symbol = bar['ticker']
     resolution = str(bar['interval'])  # 1,5 etc etc
     t_Start = str(date_Unix(bar['startDate']))  # start time
-    if len(bar['endDate']) == 0:
+    
+    if (date_Unix(bar['endDate'])+4314000) > int(time.time()):
         t_End = str(int(time.time()))
     else:
-        t_End = str(date_Unix(bar['endDate']))
+        t_End = str(date_Unix(bar['endDate'])+4314000)
+        
     indicator = '&indicator=ema&timeperiod=20'
     URL = 'https://finnhub.io/api/v1/indicator?symbol=OANDA:'+Symbol+'&resolution=' + \
         resolution+'&from='+t_Start+'&to='+t_End+indicator+'&token='+token
+    print(URL)
     r = requests.get(URL)
     r_json = r.json()
     r_ema20 = np.array(r_json['ema'])  # hardcode stub to be replaced
@@ -271,7 +274,7 @@ def forexOHLC():
     # df["MACD"] = df["MA_Fast"] - df["MA_Slow"]
     # df["Signal"] = df["MACD"].ewm(span=c,min_periods=c).mean()
     #### indcators ########
-    return json.dumps(json.loads(df.to_json(orient='index')), indent=2)
+    return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
     # return df.to_json()
 
 ##### End of Forex OHLC DATA ###########
@@ -288,10 +291,10 @@ def stockOHLC():
     Symbol = bar['ticker']
     resolution = str(bar['interval'])  # 1,5 etc etc
     t_Start = str(date_Unix(bar['startDate']))  # start time
-    if len(bar['endDate']) == 0:
+    if (date_Unix(bar['endDate'])+4314000) > int(time.time()):
         t_End = str(int(time.time()))
     else:
-        t_End = str(date_Unix(bar['endDate']))
+        t_End = str(date_Unix(bar['endDate'])+4314000)
     url = 'https://finnhub.io/api/v1/stock/candle?symbol='+Symbol + \
         '&resolution='+resolution+'&from='+t_Start+'&to='+t_End+'&token='+token
     r = requests.get(url)
@@ -309,9 +312,9 @@ def stockOHLC():
     df['low'] = r_Low
     df['close'] = r_Close
     df['volume'] = r_vol
-    df.index = df2['date']
-    df.index.names = ['date']
-    return df.to_csv()
+    df['date'] = df2['date']
+    
+    return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
     # return df.to_csv(sep='\t')
     # return df.to_json(orient="records")
 ##### End of Stock OHLC DATA ###########

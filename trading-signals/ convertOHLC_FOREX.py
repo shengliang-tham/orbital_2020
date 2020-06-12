@@ -54,7 +54,11 @@ def displayExchange():
 
 ####### Forex Related Exchange #################
     
-print(getOHLC__Forex('EUR_USD'))
+print(date_Unix('12/06/2020'))
+
+def date_Unix(s):
+    return int(time.mktime(dt.datetime.strptime(s, "%d/%m/%Y").timetuple()))
+
 
 ####### Stock Related Exchange #################
 def getOHLC__Stocks(ticker):
@@ -63,8 +67,10 @@ def getOHLC__Stocks(ticker):
     t_Start ='1591228800'
     t_End = str(int(time.time()))
     url = 'https://finnhub.io/api/v1/stock/candle?symbol='+symbol+'&resolution='+resolution+'&from='+t_Start+'&to='+t_End+'&token='+token
+
     r = requests.get(url)
     r_json = r.json()
+    print(r_json)
     r_Open = np.array(r_json['o'])
     r_High = np.array(r_json['h'])
     r_Low = np.array(r_json['l'])
@@ -80,9 +86,10 @@ def getOHLC__Stocks(ticker):
     df['Volume'] = r_vol
     df.index = df2['Time']
     df.index.names = ['Time']
-    return df
+    return(df)
 ####### Stock Related Exchange #################
     
+#print(getOHLC__Stocks('Z74.SI'))
 
 ####### Stock Related Information ###############
 ### only works for US markets
