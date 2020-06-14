@@ -20,6 +20,13 @@ import requests
 import numpy as np
 import pandas as pd
 
+from ..Tech_indicator.ADX import ADX
+from ..Tech_indicator.EMA import EMA
+from ..Tech_indicator.MACD import MACD
+from ..Tech_indicator.RSI import RSI
+from ..Tech_indicator.OBV import OBV
+from ..Tech_indicator.Slope import slope
+
 #from ..Tech_indicator.RSI import RSI
 from ..Others.timeConversion import unix_Date, date_Unix
 
@@ -47,10 +54,20 @@ def stockOHLC(bar_data, token):
     df2['date'] = df2['Time'].apply(lambda x: unix_Date(x))
     r_vol = np.array(r_json['v'])
     df = pd.DataFrame(r_Open, columns=['open'])
-    df['high'] = r_High
-    df['low'] = r_Low
-    df['close'] = r_Close
-    df['volume'] = r_vol
-    df['date'] = df2['date']
+    df['High'] = r_High
+    df['Low'] = r_Low
+    df['Close'] = r_Close
+    df['Volume'] = r_vol
+    df['Date'] = df2['date']
+    
+    df['RSI'] = RSI(df, 14)
+    #MACD
+    #df = MACD(df)
+    df["MA_20"] = EMA(df,20)
+    df["ADX"] = ADX(df, 20)
+    df["OBV"] = OBV(df)
+    df["slope"] = slope(df)
+    
+    
     return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
 ##### End of Stock OHLC DATA ###########

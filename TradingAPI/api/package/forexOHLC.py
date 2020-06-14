@@ -20,7 +20,13 @@ import requests
 import numpy as np
 import pandas as pd
 
+from ..Tech_indicator.ADX import ADX
+from ..Tech_indicator.EMA import EMA
+from ..Tech_indicator.MACD import MACD
 from ..Tech_indicator.RSI import RSI
+from ..Tech_indicator.OBV import OBV
+from ..Tech_indicator.Slope import slope
+
 from ..Others.timeConversion import unix_Date, date_Unix
 
 def forexOHLC(bar_data, token):
@@ -33,17 +39,14 @@ def forexOHLC(bar_data, token):
         t_End = str(int(time.time()))
     else:
         t_End = str(date_Unix(bar['endDate'])+4314000)
-    indicator = '&indicator=ema&timeperiod=20'
     URL = 'https://finnhub.io/api/v1/indicator?symbol=OANDA:'+Symbol+'&resolution=' + \
-        resolution+'&from='+t_Start+'&to='+t_End+indicator+'&token='+token
-    #print(URL)
+        resolution+'&from='+t_Start+'&to='+t_End+'&token='+token
     r = requests.get(URL)
     r_json = r.json()
     r_Open = np.array(r_json['o'])
     r_High = np.array(r_json['h'])
     r_Low = np.array(r_json['l'])
     r_Close = np.array(r_json['c'])
-    r_ema20 = np.array(r_json['ema'])  # hardcode stub to be replaced
     r_time = np.array(r_json['t'])
     df2 = pd.DataFrame(r_time, columns=['Time'])
     df2['Time'] = df2['Time'].apply(lambda x: unix_Date(x))
@@ -54,12 +57,19 @@ def forexOHLC(bar_data, token):
     df['Close'] = r_Close
     df['Volume'] = r_vol
     df['Date'] = df2['Time']
-    df['ema20'] = r_ema20  # hardcode stub to be replace
+    
     # df.index = df2['Time']
     # df.index.names = ['Time']
+    
     #### indcators #######
     # RSI
     df['RSI'] = RSI(df, 14)
-
+    #MACD
+    #df = MACD(df)
+    df["MA_20"] = EMA(df,20)
+    df["ADX"] = ADX(df, 20)
+    df["OBV"] = OBV(df)
+    df["slope"] = slope(df)
+    
     return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
     # return df.to_json()
