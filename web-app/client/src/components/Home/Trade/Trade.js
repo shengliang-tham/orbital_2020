@@ -38,11 +38,16 @@ const dateFormat = 'D/MM/YYYY';
 class Trade extends React.Component {
   state = {
     buyModalVisible: false,
-    defaultStocks: [],
-    defaultForex: [],
+    stocksArray: [],
+    forexArray: [],
     timeFrame: [],
-    chartData: []
+    chartData: [],
+    startDate: moment(),
+    endDate: moment(),
+    selectedInstrument: null,
+    selectedTimeFrame: null,
   }
+
 
 
   showBuyModal = () => {
@@ -64,22 +69,18 @@ class Trade extends React.Component {
       await this.fetchInstruments();
       await this.fetchTimeFrame();
 
+      console.log(this.state)
       const params = {
-        ticker: this.state.defaultStocks[0].ticker,
+        ticker: this.state.stocksArray[1].ticker,
         interval: this.state.timeFrame[0].value,
-        startDate: moment().subtract(1, 'days').format(dateFormat),
-        endDate: moment().format(dateFormat),
+        startDate: this.state.startDate.format(dateFormat),
+        endDate: this.state.endDate.format(dateFormat)
       }
 
-      const chartResponse = await getData(params);
-      this.setState({
-        ...this.state,
-        chartData: chartResponse
-      })
 
-      console.log(this.state)
       this.props.toggleLoading();
     } catch (error) {
+      console.log(error)
       notification.error({
         message: 'Error',
         description: JSON.parse(JSON.stringify(error)).message,
@@ -87,43 +88,25 @@ class Trade extends React.Component {
       });
       this.props.toggleLoading();
     }
-
-
-
-    // getData()
-    //   .then(data => {
-    //     console.log(data)
-    //     this.setState({ data })
-
-    //     console.log(this.state)
-    //     this.props.toggleLoading();
-    //   })
-    //   .catch(error => {
-    //     notification.error({
-    //       message: 'Error',
-    //       description: JSON.parse(JSON.stringify(error)).message,
-    //       placement: 'bottomRight'
-    //     });
-    //     this.props.toggleLoading();
-    //   })
-    console.log(this.state)
   }
 
 
   fetchInstruments = async () => {
     const instruments = await axios.get(tradingUrl + '/instrument-pool')
-    const newDefaultStocks = instruments.data.filter(obj => {
+    console.log(instruments)
+    const newstocksArray = instruments.data.filter(obj => {
       return obj.instrument === 'stocks'
     })
 
-    const newDefaultForex = instruments.data.filter(obj => {
+    const newforexArray = instruments.data.filter(obj => {
       return obj.instrument === 'forex'
     })
 
     this.setState({
       ...this.state,
-      defaultStocks: newDefaultStocks,
-      defaultForex: newDefaultForex
+      stocksArray: newstocksArray,
+      forexArray: newforexArray,
+      selectedInstrument: newstocksArray[0].ticker,
     })
   }
 
@@ -131,13 +114,32 @@ class Trade extends React.Component {
     const timeFrame = await axios.get(tradingUrl + '/time-pool')
     this.setState({
       ...this.state,
-      timeFrame: timeFrame.data
+      timeFrame: timeFrame.data,
+      selectedTimeFrame: timeFrame.data[0].display
     })
   }
 
+  fetchChart = async (params) => {
+    const chartResponse = await getData(params);
+    this.setState({
+      ...this.state,
+      chartData: chartResponse,
+    })
+  }
 
-  handleChange = (value) => {
+  handleStockChange = (value) => {
     console.log(`selected ${value}`);
+    this.setState({
+      ...this.state,
+      selectedInstrument: value
+    })
+  }
+
+  handleTimeChange = (value) => {
+    this.setState({
+      ...this.state,
+      selectedTimeFrame: value
+    })
   }
 
   onStartChange = (date, dateString) => {
@@ -152,32 +154,36 @@ class Trade extends React.Component {
     console.log('changed', value);
   }
 
+  onBuyModal = (form) => {
+    console.log(form)
+  }
+
   render() {
     return (
       this.state ?
         <div className="trade">
           <Row>
             <Col>
-              <Select style={{ width: 200 }} onChange={this.handleChange} placeholder="Select Ticker" value={this.state.defaultStocks.length ? this.state.defaultStocks[0].ticker : null}>
+              <Select style={{ width: 200 }} onChange={this.handleStockChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
                 <OptGroup label="Stock">
-                  {this.state ? this.state.defaultStocks
+                  {this.state ? this.state.stocksArray
                     .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker}</Option>) : null}
                 </OptGroup>
                 <OptGroup label="Forex">
-                  {this.state ? this.state.defaultForex
+                  {this.state ? this.state.forexArray
                     .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker}</Option>) : null}
                 </OptGroup>
               </Select>
             </Col>
             <Col>
-              <Select style={{ width: 200 }} onChange={this.handleChange} placeholder="Select Timeframe" value={this.state.timeFrame.length ? this.state.timeFrame[0].display : null}>
+              <Select style={{ width: 200 }} onChange={this.handleTimeChange} placeholder="Select Timeframe" value={this.state.selectedTimeFrame ? this.state.selectedTimeFrame : null}>
                 {this.state ? this.state.timeFrame
                   .map((item, index) => <Option key={index} value={item.value}>{item.display}</Option>) : null}
               </Select>
 
             </Col>
             <Col>
-              <RangePicker defaultValue={[moment(moment().subtract(1, 'days'), dateFormat), moment(moment(), dateFormat)]}
+              <RangePicker defaultValue={[moment(this.state.startDate, dateFormat), moment(this.state.endDate, dateFormat)]}
                 format={dateFormat} />
             </Col>
           </Row>
@@ -206,7 +212,7 @@ class Trade extends React.Component {
             title="Buy Order"
             formName="buy-form"
           >
-            <Form id='buy-form' onFinish={this.onEmailUpdate} initialValues={{ unit: 1, lotSize: 100, currentPrice: 100, totalPrice: 100 }} {...formItemLayout}>
+            <Form id='buy-form' onFinish={this.onBuyModal} initialValues={{ unit: 1, lotSize: 100, currentPrice: 100, totalPrice: 100 }} {...formItemLayout}>
               <Form.Item
                 name="unit"
                 label="Unit"

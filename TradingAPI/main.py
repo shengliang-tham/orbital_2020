@@ -30,13 +30,13 @@ token = data['Credentials']['token']
 ######## OHLC DATA ###############
 
 
-@app.route('/api/forex-ohlc', methods=['GET'])
+@app.route('/api/forexOHLC', methods=['GET'])
 def forexAPI():
     bar = request.args.to_dict()
     return FOHLC.forexOHLC(bar, token)
 
 
-@app.route('/api/stock-ohlc', methods=['GET'])
+@app.route('/api/stockOHLC', methods=['GET'])
 def stockAPI():
     bar = request.args.to_dict()
     return SOHLC.stockOHLC(bar, token)
@@ -56,14 +56,14 @@ def timePool():
 ######## Fundamental DATA ###############
 
 
-@app.route('/comp-profile/<string:ticker>', methods=['GET'])
+@app.route('/compProfile/<string:ticker>', methods=['GET'])
 def compProfile(ticker):
     return cp.compProfile(ticker, token)
 
 ######## Stock prediction ###############
 
 
-@app.route('/stock-predict/<string:tick>', methods=['GET'])
+@app.route('/stockpredict/<string:tick>', methods=['GET'])
 def get(tick):
     with app.app_context():
         return sp.get(tick)
@@ -71,7 +71,7 @@ def get(tick):
 #### Start of Web Scraping for Top 3 ###########
 
 
-@app.route('/api/get-top-instruments', methods=['GET'])
+@app.route('/api/getTop3', methods=['GET'])
 def getTop3():
     return t3.getTop3()
 
