@@ -82,7 +82,7 @@ class Trade extends React.Component {
     } catch (error) {
       notification.error({
         message: 'Error',
-        description: error,
+        description: JSON.parse(JSON.stringify(error)).message,
         placement: 'bottomRight'
       });
       this.props.toggleLoading();

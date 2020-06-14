@@ -33,6 +33,10 @@ axios.interceptors.request.use(request => {
   request.headers = headers
 
   return request
+}, (error) => {
+  // Do something with response error
+  console.log(error.response);
+  return Promise.reject(error);
 })
 
 ReactDOM.render(
