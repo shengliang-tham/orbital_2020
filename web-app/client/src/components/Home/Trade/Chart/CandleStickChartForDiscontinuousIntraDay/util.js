@@ -19,7 +19,7 @@ function parseData(parse) {
 
 const parseDateTime = timeParse("%Y-%m-%d %H:%M:%S");
 
-export function getData() {
+export function getData(params) {
     // const promiseIntraDayContinuous = fetch("https://cdn.rawgit.com/rrag/react-stockcharts/master/docs/data/bitfinex_xbtusd_1m.csv")
     //     .then(response => response.text())
     //     .then(data => csvParse(data, parseData(parseDateTime)))
@@ -36,10 +36,11 @@ export function getData() {
     //     .then(data => console.log(data))
     //     .then(data => csvParse(data, parseData(parseDateTime)))
     // return promiseMSFT;
-
-    const promiseMSFT = axios("http://localhost:8000/api/stockOHLC?ticker=Z74.SI&interval=D&startDate=1/06/2020&endDate=5/06/2020")
+    console.log(`http://localhost:8000/api/stockOHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
+    const promiseMSFT = axios(`http://localhost:8000/api/stockOHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
         // .then(response => response.text())
         // .then(data => console.log(data))
         .then(data => csvParse(data.data, parseData(parseDateTime)))
     return promiseMSFT;
+
 }   

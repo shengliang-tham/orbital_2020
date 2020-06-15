@@ -12,6 +12,9 @@ import { Select, Row, Col, Divider, notification, DatePicker, Button, Input, Inp
 import './Trade.scss';
 import CustomModal from './../../../UI/Modal/Modal';
 import Form from 'antd/lib/form/Form';
+import moment from 'moment';
+import { tradingUrl } from '../../../global-variables';
+import axios from 'axios';
 
 const { Option, OptGroup } = Select;
 const { RangePicker } = DatePicker;
@@ -28,10 +31,23 @@ const formItemLayout = {
   },
 };
 
+
+const dateFormat = 'D/MM/YYYY';
+
+
 class Trade extends React.Component {
   state = {
     buyModalVisible: false,
+    stocksArray: [],
+    forexArray: [],
+    timeFrame: [],
+    chartData: [],
+    startDate: moment(),
+    endDate: moment(),
+    selectedInstrument: null,
+    selectedTimeFrame: null,
   }
+
 
 
   showBuyModal = () => {
@@ -40,39 +56,90 @@ class Trade extends React.Component {
     });
   }
 
-  handleBuyModalOk = () => {
-
-  }
-
   handleBuyModalCancel = () => {
     this.setState({
       buyModalVisible: false,
     });
   }
 
-  componentDidMount() {
-    // this.props.toggleLoading();
-    // getData()
-    //   .then(data => {
-    //     console.log(data)
-    //     this.setState({ data })
+  async componentDidMount() {
+    try {
+      this.props.toggleLoading();
 
-    //     console.log(this.state)
-    //     this.props.toggleLoading();
-    //   })
-    //   .catch(error => {
-    //     notification.error({
-    //       message: 'Error',
-    //       description: JSON.parse(JSON.stringify(error)).message,
-    //       placement: 'bottomRight'
-    //     });
-    //     this.props.toggleLoading();
-    //   })
+      await this.fetchInstruments();
+      await this.fetchTimeFrame();
+
+      console.log(this.state)
+      const params = {
+        ticker: this.state.stocksArray[1].ticker,
+        interval: this.state.timeFrame[0].value,
+        startDate: this.state.startDate.format(dateFormat),
+        endDate: this.state.endDate.format(dateFormat)
+      }
+
+
+      this.props.toggleLoading();
+    } catch (error) {
+      console.log(error)
+      notification.error({
+        message: 'Error',
+        description: JSON.parse(JSON.stringify(error)).message,
+        placement: 'bottomRight'
+      });
+      this.props.toggleLoading();
+    }
   }
 
 
-  handleChange = (value) => {
+  fetchInstruments = async () => {
+    const instruments = await axios.get(tradingUrl + '/instrument-pool')
+    console.log(instruments)
+    const newstocksArray = instruments.data.filter(obj => {
+      return obj.instrument === 'stocks'
+    })
+
+    const newforexArray = instruments.data.filter(obj => {
+      return obj.instrument === 'forex'
+    })
+
+    this.setState({
+      ...this.state,
+      stocksArray: newstocksArray,
+      forexArray: newforexArray,
+      selectedInstrument: newstocksArray[0].ticker,
+    })
+  }
+
+  fetchTimeFrame = async () => {
+    const timeFrame = await axios.get(tradingUrl + '/time-pool')
+    this.setState({
+      ...this.state,
+      timeFrame: timeFrame.data,
+      selectedTimeFrame: timeFrame.data[0].display
+    })
+  }
+
+  fetchChart = async (params) => {
+    const chartResponse = await getData(params);
+    this.setState({
+      ...this.state,
+      chartData: chartResponse,
+    })
+  }
+
+  handleStockChange = (value) => {
     console.log(`selected ${value}`);
+    this.setState({
+      ...this.state,
+      selectedInstrument: value
+    })
+  }
+
+  handleTimeChange = (value) => {
+    this.setState({
+      ...this.state,
+      selectedTimeFrame: value
+    })
   }
 
   onStartChange = (date, dateString) => {
@@ -87,47 +154,51 @@ class Trade extends React.Component {
     console.log('changed', value);
   }
 
+  onBuyModal = (form) => {
+    console.log(form)
+  }
+
   render() {
     return (
       this.state ?
         <div className="trade">
           <Row>
             <Col>
-              <Select style={{ width: 200 }} onChange={this.handleChange} placeholder="Select Ticker">
+              <Select style={{ width: 200 }} onChange={this.handleStockChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
                 <OptGroup label="Stock">
-                  <Option value="5BI.SI">5BI.SI</Option>
-                  <Option value="ARIA.SI">ARIA.SI</Option>
+                  {this.state ? this.state.stocksArray
+                    .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker}</Option>) : null}
                 </OptGroup>
                 <OptGroup label="Forex">
-                  <Option value="SGD/USB">SGD/USD</Option>
-                  <Option value="USD/GBP">USD/GBP</Option>
+                  {this.state ? this.state.forexArray
+                    .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker}</Option>) : null}
                 </OptGroup>
               </Select>
             </Col>
             <Col>
-              <Select style={{ width: 200 }} onChange={this.handleChange} placeholder="Select Timeframe">
-                <Option value="5BI.SI">1 min</Option>
-                <Option value="ARIA.SI">5 min</Option>
-                <Option value="ARIA.SI">15 min</Option>
-                <Option value="ARIA.SI">30 min</Option>
-                <Option value="ARIA.SI">60 min</Option>
-                <Option value="ARIA.SI">Daily</Option>
-                <Option value="ARIA.SI">Weekly</Option>
-                <Option value="ARIA.SI">Monthly</Option>
+              <Select style={{ width: 200 }} onChange={this.handleTimeChange} placeholder="Select Timeframe" value={this.state.selectedTimeFrame ? this.state.selectedTimeFrame : null}>
+                {this.state ? this.state.timeFrame
+                  .map((item, index) => <Option key={index} value={item.value}>{item.display}</Option>) : null}
               </Select>
 
             </Col>
             <Col>
-              <RangePicker />
+              <RangePicker defaultValue={[moment(this.state.startDate, dateFormat), moment(this.state.endDate, dateFormat)]}
+                format={dateFormat} />
             </Col>
           </Row>
           <Divider />
           <Row>
-            {/* <Col span={24}>
-              < TypeChooser >
-                {type => < CandleStickChartForDiscontinuousIntraDay type={type} data={this.state.data} />}
-              </TypeChooser>
-            </Col> */}
+
+
+            {
+              this.state.chartData.length ? <Col span={24}>
+                < TypeChooser >
+                  {type => < CandleStickChartForDiscontinuousIntraDay type={type} data={this.state.chartData} />}
+                </TypeChooser>
+              </Col>
+                : null}
+
           </Row>
           <Row>
             <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
@@ -141,7 +212,7 @@ class Trade extends React.Component {
             title="Buy Order"
             formName="buy-form"
           >
-            <Form id='buy-form' onFinish={this.onEmailUpdate} initialValues={{ unit: 1, lotSize: 100, currentPrice: 100, totalPrice: 100 }} {...formItemLayout}>
+            <Form id='buy-form' onFinish={this.onBuyModal} initialValues={{ unit: 1, lotSize: 100, currentPrice: 100, totalPrice: 100 }} {...formItemLayout}>
               <Form.Item
                 name="unit"
                 label="Unit"
