@@ -43,31 +43,38 @@ def stockOHLC(bar_data, token):
     url = 'https://finnhub.io/api/v1/stock/candle?symbol='+Symbol + \
         '&resolution='+resolution+'&from='+t_Start+'&to='+t_End+'&token='+token
     #print(url)
+
     r = requests.get(url)
     r_json = r.json()
-    r_Open = np.array(r_json['o'])
-    r_High = np.array(r_json['h'])
-    r_Low = np.array(r_json['l'])
-    r_Close = np.array(r_json['c'])
-    r_time = np.array(r_json['t'])
-    df2 = pd.DataFrame(r_time, columns=['Time'])
-    df2['date'] = df2['Time'].apply(lambda x: unix_Date(x))
-    r_vol = np.array(r_json['v'])
-    df = pd.DataFrame(r_Open, columns=['open'])
-    df['High'] = r_High
-    df['Low'] = r_Low
-    df['Close'] = r_Close
-    df['Volume'] = r_vol
-    df['Date'] = df2['date']
     
-    df['RSI'] = RSI(df, 14)
-    #MACD
-    #df = MACD(df)
-    df["MA_20"] = EMA(df,20)
-    df["ADX"] = ADX(df, 20)
-    df["OBV"] = OBV(df)
-    df["slope"] = slope(df)
-    
-    
-    return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
+    try:
+        r_Open = np.array(r_json['o'])
+        r_High = np.array(r_json['h'])
+        r_Low = np.array(r_json['l'])
+        r_Close = np.array(r_json['c'])
+        r_time = np.array(r_json['t'])
+        df2 = pd.DataFrame(r_time, columns=['Time'])
+        df2['date'] = df2['Time'].apply(lambda x: unix_Date(x))
+        r_vol = np.array(r_json['v'])
+        df = pd.DataFrame(r_Open, columns=['open'])
+        df['High'] = r_High
+        df['Low'] = r_Low
+        df['Close'] = r_Close
+        df['Volume'] = r_vol
+        df['Date'] = df2['date']
+        df['RSI'] = RSI(df, 14)
+        #MACD
+        #df = MACD(df)
+        df["MA_20"] = EMA(df,20)
+        df["ADX"] = ADX(df, 20)
+        df["OBV"] = OBV(df)
+        df["slope"] = slope(df)
+        return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
+    except:
+        return "Data Currently Unavailable"
 ##### End of Stock OHLC DATA ###########
+        
+    
+    
+    
+    
