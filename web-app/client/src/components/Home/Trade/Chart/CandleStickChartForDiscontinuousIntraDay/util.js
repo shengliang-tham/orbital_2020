@@ -37,10 +37,18 @@ export function getData(params) {
     //     .then(data => csvParse(data, parseData(parseDateTime)))
     // return promiseMSFT;
     console.log(`http://localhost:8000/api/stockOHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
-    const promiseMSFT = axios(`http://localhost:8000/api/stockOHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
+    const response = axios(`http://localhost:8000/api/stockOHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
         // .then(response => response.text())
         // .then(data => console.log(data))
-        .then(data => csvParse(data.data, parseData(parseDateTime)))
-    return promiseMSFT;
+        // .then(data => csvParse(data.data, parseData(parseDateTime)))
+        // .then(data => data.map(x => parseData(parseDateTime)))
+        .then(result => {
+            return result.data.map(obj => {
+                const tempObject = Object.assign({}, obj);
+                tempObject.date = new Date(parseDateTime(obj.date));
+                return tempObject;
+            })
+        })
+    return response;
 
 }   

@@ -15,6 +15,7 @@ import Form from 'antd/lib/form/Form';
 import moment from 'moment';
 import { tradingUrl } from '../../../global-variables';
 import axios from 'axios';
+import { timeParse } from "d3-time-format";
 
 const { Option, OptGroup } = Select;
 const { RangePicker } = DatePicker;
@@ -120,7 +121,21 @@ class Trade extends React.Component {
   }
 
   fetchChart = async (params) => {
-    const chartResponse = await getData(params);
+
+    const parseDateTime = timeParse("%Y-%m-%d %H:%M:%S");
+
+    let chartResponse = await getData(params);
+
+    // chartResponse = chartResponse.data.map(x => new Date(parseDateTime(x.date)))
+    // chartResponse = chartResponse.data.map(x => {
+    //   const temp = Object.assign({}, x);
+    //   temp.date = new Date(parseDateTime(x.date));
+    //   return temp;
+    // })
+
+    // console.log(chartResponse)
+    // chartResponse.data.map(x => console.log(x))
+    // const chartResponse = await axios.get(`http://localhost:8000/api/stockOHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
     console.log(chartResponse)
     this.setState({
       ...this.state,
