@@ -9,7 +9,7 @@ import numpy as np
 ####### Technical indcators ###############
 def RSI(DF, n):
     df = DF.copy()
-    df['delta'] = df['Close'] - df['Close'].shift(1)
+    df['delta'] = df['close'] - df['close'].shift(1)
     df['gain'] = np.where(df['delta'] > 0, df['delta'], 0)
     df['loss'] = np.where(df['delta'] < 0, abs(df['delta']), 0)
     avg_gain = []

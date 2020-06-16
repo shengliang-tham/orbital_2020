@@ -13,7 +13,7 @@ import statsmodels.api as sm
 
 def slope(DF):
     n= 5
-    ser = DF['Close']
+    ser = DF['close']
     slopes = [i*0 for i in range(n-1)]
     for i in range(n,len(ser)+1):
         y = ser[i-n:i]

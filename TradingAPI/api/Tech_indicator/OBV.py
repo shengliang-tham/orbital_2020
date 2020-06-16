@@ -17,8 +17,8 @@ import datetime as dt
 
 def OBV(DF):
     df = DF.copy()
-    df['Volume'] =  df['Volume'].astype(int)
-    df['Direction'] = np.where((df['Close'] > df['Close'].shift(1)),1,-1)
-    df['Vol_dir'] = df['Volume'] * df['Direction']
+    df['Volume'] =  df['volume'].astype(int)
+    df['Direction'] = np.where((df['close'] > df['close'].shift(1)),1,-1)
+    df['Vol_dir'] = df['volume'] * df['Direction']
     df['OBV'] = df['Vol_dir'].cumsum() #LOL
     return df['OBV']

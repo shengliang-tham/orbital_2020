@@ -15,13 +15,13 @@ import datetime as dt
 def ADX(DF,n):
     "function to calculate ADX"
     df2 = DF.copy()
-    df2['H-L']=abs(df2['High']-df2['Low'])
-    df2['H-PC']=abs(df2['High']-df2['Close'].shift(1))
-    df2['L-PC']=abs(df2['Low']-df2['Close'].shift(1))
+    df2['H-L']=abs(df2['high']-df2['low'])
+    df2['H-PC']=abs(df2['high']-df2['close'].shift(1))
+    df2['L-PC']=abs(df2['low']-df2['close'].shift(1))
     df2['TR']=df2[['H-L','H-PC','L-PC']].max(axis=1,skipna=False)
-    df2['DMplus']=np.where((df2['High']-df2['High'].shift(1))>(df2['Low'].shift(1)-df2['Low']),df2['High']-df2['High'].shift(1),0)
+    df2['DMplus']=np.where((df2['high']-df2['high'].shift(1))>(df2['low'].shift(1)-df2['low']),df2['high']-df2['high'].shift(1),0)
     df2['DMplus']=np.where(df2['DMplus']<0,0,df2['DMplus'])
-    df2['DMminus']=np.where((df2['Low'].shift(1)-df2['Low'])>(df2['High']-df2['High'].shift(1)),df2['Low'].shift(1)-df2['Low'],0)
+    df2['DMminus']=np.where((df2['low'].shift(1)-df2['low'])>(df2['high']-df2['high'].shift(1)),df2['low'].shift(1)-df2['low'],0)
     df2['DMminus']=np.where(df2['DMminus']<0,0,df2['DMminus'])
     TRn = []
     DMplusN = []

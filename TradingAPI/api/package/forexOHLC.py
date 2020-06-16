@@ -55,12 +55,12 @@ def forexOHLC(bar_data, token):
         df2 = pd.DataFrame(r_time, columns=['Time'])
         df2['Time'] = df2['Time'].apply(lambda x: unix_Date(x))
         r_vol = np.array(r_json['v'])
-        df = pd.DataFrame(r_Open, columns=['Open'])
-        df['High'] = r_High
-        df['Low'] = r_Low
-        df['Close'] = r_Close
-        df['Volume'] = r_vol
-        df['Date'] = df2['Time']
+        df = pd.DataFrame(r_Open, columns=['open'])
+        df['high'] = r_High
+        df['low'] = r_Low
+        df['close'] = r_Close
+        df['volume'] = r_vol
+        df['date'] = df2['Time']
         
         # df.index = df2['Time']
         # df.index.names = ['Time']

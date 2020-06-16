@@ -9,5 +9,5 @@ n being the timeframe
 """
 
 def EMA(df, n):
-     MA = df["Close"].ewm(span=n, min_periods=n).mean()
+     MA = df["close"].ewm(span=n, min_periods=n).mean()
      return MA;
