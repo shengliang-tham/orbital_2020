@@ -37,12 +37,42 @@ const dateFormat = 'D/MM/YYYY';
 
 
 class Trade extends React.Component {
+
+  buyModalRef = React.createRef();
+
   state = {
     buyModalVisible: false,
     stocksArray: [],
     forexArray: [],
     timeFrame: [],
-    chartData: [],
+    // chartData: [],
+    chartData: [
+      {
+        "open": 0.765,
+        "high": 0.765,
+        "low": 0.765,
+        "close": 0.765,
+        "volume": 0,
+        "date": new Date(),
+        "RSI": null,
+        "MA_20": null,
+        "ADX": null,
+        "OBV": 0,
+        "slope": 0
+      },
+      {
+        "open": 0.765,
+        "high": 0.77,
+        "low": 0.765,
+        "close": 0.765,
+        "volume": 193200,
+        "date": new Date(),
+        "RSI": null,
+        "MA_20": null,
+        "ADX": null,
+        "OBV": -193200,
+        "slope": 0
+      }],
     startDate: moment(),
     endDate: moment(),
     selectedInstrument: null,
@@ -77,7 +107,7 @@ class Trade extends React.Component {
         startDate: this.state.startDate.format(dateFormat),
         endDate: this.state.endDate.format(dateFormat)
       }
-      await this.fetchChart(params);
+      // await this.fetchChart(params);
 
       this.props.toggleLoading();
     } catch (error) {
@@ -121,27 +151,12 @@ class Trade extends React.Component {
   }
 
   fetchChart = async (params) => {
-
-    const parseDateTime = timeParse("%Y-%m-%d %H:%M:%S");
-
     let chartResponse = await getData(params);
-
-    // chartResponse = chartResponse.data.map(x => new Date(parseDateTime(x.date)))
-    // chartResponse = chartResponse.data.map(x => {
-    //   const temp = Object.assign({}, x);
-    //   temp.date = new Date(parseDateTime(x.date));
-    //   return temp;
-    // })
-
-    // console.log(chartResponse)
-    // chartResponse.data.map(x => console.log(x))
-    // const chartResponse = await axios.get(`http://localhost:8000/api/stockOHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
-    console.log(chartResponse)
     this.setState({
       ...this.state,
       chartData: chartResponse,
     })
-    // console.log(this.state)
+    console.log(chartResponse)
   }
 
   handleStockChange = (value) => {
@@ -173,6 +188,12 @@ class Trade extends React.Component {
 
   onBuyModal = (form) => {
     console.log(form)
+  }
+
+  onBuyModalChange = (changedValues, allValues) => {
+    console.log(changedValues)
+    console.log(allValues)
+    this.buyModalRef.current.setFieldsValue({ totalPrice: 100 * allValues.currentPrice * allValues.unit })
   }
 
   render() {
@@ -207,7 +228,6 @@ class Trade extends React.Component {
           <Divider />
           <Row>
 
-
             {
               this.state.chartData.length ? <Col span={24}>
                 < TypeChooser >
@@ -217,9 +237,14 @@ class Trade extends React.Component {
                 : null}
 
           </Row>
+          <Divider />
           <Row>
-            <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
-            <Button size="large" shape="round" className="sell-btn">Sell</Button>
+            <Col span={4}>
+              <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
+            </Col>
+            <Col span={4}>
+              <Button size="large" shape="round" className="sell-btn">Sell</Button>
+            </Col>
           </Row>
 
 
@@ -229,7 +254,7 @@ class Trade extends React.Component {
             title="Buy Order"
             formName="buy-form"
           >
-            <Form id='buy-form' onFinish={this.onBuyModal} initialValues={{ unit: 1, lotSize: 100, currentPrice: 100, totalPrice: 100 }} {...formItemLayout}>
+            <Form id='buy-form' onValuesChange={this.onBuyModalChange} onFinish={this.onBuyModal} ref={this.buyModalRef} initialValues={{ unit: 1, lotSize: 100, currentPrice: this.state.chartData[this.state.chartData.length - 1].open, totalPrice: 100 * this.state.chartData[this.state.chartData.length - 1].open }} {...formItemLayout}>
               <Form.Item
                 name="unit"
                 label="Unit"
