@@ -77,6 +77,7 @@ class Trade extends React.Component {
     endDate: moment(),
     selectedInstrument: null,
     selectedTimeFrame: null,
+    selectedTimeFrameValue: null
   }
 
 
@@ -146,7 +147,8 @@ class Trade extends React.Component {
     this.setState({
       ...this.state,
       timeFrame: timeFrame.data,
-      selectedTimeFrame: timeFrame.data[0].display
+      selectedTimeFrame: timeFrame.data[0].display,
+      selectedTimeFrameValue: timeFrame.data[0].value,
     })
   }
 
@@ -159,19 +161,38 @@ class Trade extends React.Component {
     console.log(chartResponse)
   }
 
-  handleStockChange = (value) => {
-    console.log(`selected ${value}`);
+  handleStockChange = async (value) => {
+    this.props.toggleLoading();
     this.setState({
       ...this.state,
       selectedInstrument: value
     })
+
+    const params = {
+      ticker: value,
+      interval: this.state.selectedTimeFrameValue,
+      startDate: this.state.startDate.format(dateFormat),
+      endDate: this.state.endDate.format(dateFormat)
+    }
+    await this.fetchChart(params);
+    this.props.toggleLoading();
   }
 
-  handleTimeChange = (value) => {
+  handleTimeChange = async (value, index) => {
+    this.props.toggleLoading();
     this.setState({
       ...this.state,
-      selectedTimeFrame: value
+      selectedTimeFrame: value,
+      selectedTimeFrameValue: index.value
     })
+    const params = {
+      ticker: this.state.selectedInstrument,
+      interval: index.value,
+      startDate: this.state.startDate.format(dateFormat),
+      endDate: this.state.endDate.format(dateFormat)
+    }
+    await this.fetchChart(params);
+    this.props.toggleLoading();
   }
 
   onStartChange = (date, dateString) => {
@@ -181,13 +202,14 @@ class Trade extends React.Component {
   onEndChange = (date, dateString) => {
     console.log(date, dateString);
   }
-
-  onUnitChange = (value) => {
-    console.log('changed', value);
-  }
-
   onBuyModal = (form) => {
     console.log(form)
+
+    const buyOrder = {
+      ...form,
+      ticker: this.state.selectedInstrument
+    }
+    console.log(buyOrder)
   }
 
   onBuyModalChange = (changedValues, allValues) => {
@@ -259,7 +281,7 @@ class Trade extends React.Component {
                 name="unit"
                 label="Unit"
               >
-                <InputNumber min={1} value={1} onChange={this.onUnitChange} />
+                <InputNumber min={1} value={1} />
               </Form.Item>
               <Form.Item
                 name="lotSize"
