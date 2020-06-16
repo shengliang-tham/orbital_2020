@@ -71,12 +71,12 @@ class Trade extends React.Component {
 
       console.log(this.state)
       const params = {
-        ticker: this.state.stocksArray[1].ticker,
+        ticker: this.state.stocksArray[0].ticker,
         interval: this.state.timeFrame[0].value,
         startDate: this.state.startDate.format(dateFormat),
         endDate: this.state.endDate.format(dateFormat)
       }
-
+      await this.fetchChart(params);
 
       this.props.toggleLoading();
     } catch (error) {
@@ -121,10 +121,12 @@ class Trade extends React.Component {
 
   fetchChart = async (params) => {
     const chartResponse = await getData(params);
+    console.log(chartResponse)
     this.setState({
       ...this.state,
       chartData: chartResponse,
     })
+    // console.log(this.state)
   }
 
   handleStockChange = (value) => {

@@ -11,6 +11,7 @@ import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import Register from './components/Register/Register'
 import { connect } from "react-redux";
+import './App.scss';
 
 
 export class App extends Component {
@@ -37,7 +38,7 @@ export class App extends Component {
     }
 
     return (
-      <Spin size="large" tip="Loading..." spinning={this.props.global.loading}> {routes}</Spin>
+      <Spin size="large" tip="Loading..." spinning={this.props.global.loading} > {routes}</Spin>
 
     );
   }

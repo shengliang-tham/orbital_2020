@@ -10,6 +10,7 @@ const bcrypt = require('bcryptjs');
 router.post('/update-email', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
   let user;
+  console.log(req)
 
   try {
     if (authType === authTypeEmail) {
@@ -20,7 +21,7 @@ router.post('/update-email', middleware.isAuthenticated, async (req, res) => {
       }, { returnOriginal: false });
     } else {
       user = await User.findOneAndUpdate({
-        _id: new ObjectId(req.decoded.id),
+        [authType]: req.decoded.id,
       }, {
         $set: { email: req.body.email },
       }, { returnOriginal: false });
