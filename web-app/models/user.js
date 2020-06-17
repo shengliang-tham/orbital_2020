@@ -20,7 +20,15 @@ let userSchema = mongoose.Schema({
     accountBalance: {
         type: Number,
         default: 0
-    }
+    },
+    transactionHistory: [{
+        date: Date,
+        ticker: String,
+        units: Number,
+        price: Number,
+        lotSize: Number,
+        totalPrice: Number
+    }]
 })
 
 let User = mongoose.model('User', userSchema)

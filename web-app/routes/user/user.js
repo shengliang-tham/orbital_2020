@@ -71,7 +71,9 @@ router.post('/update-password', middleware.isAuthenticated, async (req, res) => 
 router.get('/retrieve-user', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
   let user;
+
   try {
+
     if (authType === authTypeEmail) {
       user = await User.findOne({
         _id: new ObjectId(req.decoded.id),
@@ -81,10 +83,12 @@ router.get('/retrieve-user', middleware.isAuthenticated, async (req, res) => {
         [authType]: req.decoded.id,
       });
     }
+
     res.json({
       success: true,
       user,
     });
+
   } catch (error) {
     res.json({
       success: false,
@@ -124,5 +128,65 @@ router.post('/update-balance', middleware.isAuthenticated, async (req, res) => {
     });
   }
 });
+
+router.post('/buy-order', middleware.isAuthenticated, async (req, res) => {
+  const { authType } = req.decoded;
+  let user;
+
+  try {
+    if (authType === authTypeEmail) {
+      user = await User.findOne({
+        _id: new ObjectId(req.decoded.id),
+      })
+    } else {
+      user = await User.findOne({
+        [authType]: req.decoded.id,
+      })
+    }
+
+    console.log(user)
+    console.log(req.body)
+    //Insufficient Funds
+    if (req.body.totalPrice > user.accountBalance) {
+      res.json({
+        success: false,
+        message: "Insufficient Funds",
+      });
+    }
+
+    const transaction = {
+      date: new Date(),
+      ticker: req.body.ticker,
+      units: req.body.unit,
+      price: req.body.currentPrice,
+      lotSize: req.body.lotSize,
+      totalPrice: req.body.totalPrice
+    }
+
+    user = await User.findOneAndUpdate({
+      _id: user._id
+    }, {
+      $inc: {
+        accountBalance: -1 * req.body.totalPrice
+      },
+      $push: {
+        transactionHistory: transaction
+      }
+    })
+
+    res.json({
+      success: true,
+      user,
+    });
+
+
+
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error,
+    });
+  }
+})
 
 module.exports = router;

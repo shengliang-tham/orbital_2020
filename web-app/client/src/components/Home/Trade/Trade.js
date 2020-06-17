@@ -13,7 +13,7 @@ import './Trade.scss';
 import CustomModal from './../../../UI/Modal/Modal';
 import Form from 'antd/lib/form/Form';
 import moment from 'moment';
-import { tradingUrl } from '../../../global-variables';
+import { tradingUrl, backendUrl } from '../../../global-variables';
 import axios from 'axios';
 import { timeParse } from "d3-time-format";
 
@@ -34,6 +34,7 @@ const formItemLayout = {
 
 
 const dateFormat = 'D/MM/YYYY';
+const lotSize = 100;
 
 
 class Trade extends React.Component {
@@ -77,7 +78,7 @@ class Trade extends React.Component {
     endDate: moment(),
     selectedInstrument: null,
     selectedTimeFrame: null,
-    selectedTimeFrameValue: null
+    selectedTimeFrameValue: null,
   }
 
 
@@ -86,6 +87,8 @@ class Trade extends React.Component {
     this.setState({
       buyModalVisible: true,
     });
+    console.log(this.buyModalRef)
+
   }
 
   handleBuyModalCancel = () => {
@@ -109,6 +112,9 @@ class Trade extends React.Component {
         endDate: this.state.endDate.format(dateFormat)
       }
       // await this.fetchChart(params);
+      // this.buyModalRef.current.setFieldsValue({
+      //   accountBalance: 0
+      // })
 
       this.props.toggleLoading();
     } catch (error) {
@@ -202,20 +208,49 @@ class Trade extends React.Component {
   onEndChange = (date, dateString) => {
     console.log(date, dateString);
   }
-  onBuyModal = (form) => {
+  onBuyModal = async (form) => {
     console.log(form)
 
-    const buyOrder = {
-      ...form,
-      ticker: this.state.selectedInstrument
+    if (form.totalPrice > this.props.user.accountBalance) {
+      notification.error({
+        message: 'Error',
+        description: "Not enough funds",
+        placement: 'bottomRight'
+      });
+    } else {
+      const buyOrder = {
+        ...form,
+        ticker: this.state.selectedInstrument
+      }
+      console.log(buyOrder)
+
+      const response = await axios.post(backendUrl + '/user/buy-order', buyOrder);
+
+
     }
-    console.log(buyOrder)
+
   }
 
   onBuyModalChange = (changedValues, allValues) => {
     console.log(changedValues)
     console.log(allValues)
-    this.buyModalRef.current.setFieldsValue({ totalPrice: 100 * allValues.currentPrice * allValues.unit })
+    console.log(this.buyModalRef)
+    this.buyModalRef.setFieldsValue({ totalPrice: lotSize * allValues.currentPrice * allValues.unit })
+  }
+
+  setBuyModalRef = element => {
+    this.buyModalRef = element
+    // console.log(this.buyModalRef)
+    if (this.state.buyModalVisible) {
+      this.buyModalRef.setFieldsValue({
+        unit: 1,
+        lotSize: lotSize,
+        currentPrice: this.state.chartData[this.state.chartData.length - 1].open,
+        totalPrice: 100 * this.state.chartData[this.state.chartData.length - 1].open,
+        accountBalance: this.props.user.accountBalance
+      })
+
+    }
   }
 
   render() {
@@ -275,8 +310,16 @@ class Trade extends React.Component {
             handleCancel={this.handleBuyModalCancel}
             title="Buy Order"
             formName="buy-form"
+
           >
-            <Form id='buy-form' onValuesChange={this.onBuyModalChange} onFinish={this.onBuyModal} ref={this.buyModalRef} initialValues={{ unit: 1, lotSize: 100, currentPrice: this.state.chartData[this.state.chartData.length - 1].open, totalPrice: 100 * this.state.chartData[this.state.chartData.length - 1].open }} {...formItemLayout}>
+            <Form id='buy-form' onValuesChange={this.onBuyModalChange} onFinish={this.onBuyModal} ref={this.setBuyModalRef}
+              // initialValues={{
+              //   unit: 1,
+              //   lotSize: lotSize,
+              //   currentPrice: this.state.chartData[this.state.chartData.length - 1].open,
+              //   totalPrice: 100 * this.state.chartData[this.state.chartData.length - 1].open,
+              // }}
+              {...formItemLayout}>
               <Form.Item
                 name="unit"
                 label="Unit"
@@ -298,6 +341,15 @@ class Trade extends React.Component {
                 label="Total Price">
                 <Input disabled={true} />
               </Form.Item>
+              <Form.Item
+                name="accountBalance"
+                label="Account Balance">
+                <InputNumber
+                  formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                  disabled={true}
+                />
+              </Form.Item>
             </Form>
 
           </CustomModal>
@@ -309,9 +361,16 @@ class Trade extends React.Component {
   }
 }
 
+
+const mapStateToProps = state => {
+  return {
+    user: state.user.user
+  }
+}
+
 const mapDispatchToProps = dispatch => {
   return {
     toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
   }
 }
-export default connect(null, mapDispatchToProps)(Trade);
+export default connect(mapStateToProps, mapDispatchToProps)(Trade);
