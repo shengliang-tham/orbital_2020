@@ -54,7 +54,6 @@ passport.use(new FacebookStrategy({
   return cb(null, profile);
 }));
 
-
 /**
  * Google Strategy
  */
@@ -94,7 +93,6 @@ router.get('/google/callback', passport.authenticate('google'), async (req, res)
   res.redirect(`${frontendUrl}auth-redirect`);
 });
 
-
 router.post('/register', async (req, res) => {
   try {
     const user = await User.findOne({ googleId: null, facebookId: null, email: req.body.email });
@@ -114,7 +112,7 @@ router.post('/register', async (req, res) => {
       const token = await signToken(authTypes.authTypeEmail, newUser._id);
       res.json({
         success: true,
-        token: token,
+        token,
       });
     }
   } catch (error) {
@@ -140,7 +138,7 @@ router.post('/login', async (req, res) => {
         const token = await signToken('email', user._id);
         res.json({
           success: true,
-          token: token,
+          token,
         });
       } else {
         res.json({

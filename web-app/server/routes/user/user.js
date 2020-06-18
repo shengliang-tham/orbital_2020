@@ -1,16 +1,17 @@
+/* eslint-disable no-underscore-dangle */
 const express = require('express');
 
 const router = express.Router();
 const { ObjectId } = require('mongoose').Types;
+const bcrypt = require('bcryptjs');
 const middleware = require('../middleware/auth');
 const { authTypeEmail } = require('../auth/authType');
 const User = require('../../models/user');
-const bcrypt = require('bcryptjs');
 
 router.post('/update-email', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
   let user;
-  console.log(req)
+  console.log(req);
 
   try {
     if (authType === authTypeEmail) {
@@ -46,7 +47,7 @@ router.post('/update-password', middleware.isAuthenticated, async (req, res) => 
     try {
       const user = await User.findOneAndUpdate({
         _id: new ObjectId(req.decoded.id),
-      }, { $set: { password: hash } })
+      }, { $set: { password: hash } });
 
       if (user) {
         res.json({
@@ -59,8 +60,7 @@ router.post('/update-password', middleware.isAuthenticated, async (req, res) => 
         message: error,
       });
     }
-  }
-  else {
+  } else {
     res.json({
       success: false,
       message: 'Only can change password using email authentication',
@@ -73,7 +73,6 @@ router.get('/retrieve-user', middleware.isAuthenticated, async (req, res) => {
   let user;
 
   try {
-
     if (authType === authTypeEmail) {
       user = await User.findOne({
         _id: new ObjectId(req.decoded.id),
@@ -88,7 +87,6 @@ router.get('/retrieve-user', middleware.isAuthenticated, async (req, res) => {
       success: true,
       user,
     });
-
   } catch (error) {
     res.json({
       success: false,
@@ -96,7 +94,6 @@ router.get('/retrieve-user', middleware.isAuthenticated, async (req, res) => {
     });
   }
 });
-
 
 router.post('/update-balance', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
@@ -137,20 +134,20 @@ router.post('/buy-order', middleware.isAuthenticated, async (req, res) => {
     if (authType === authTypeEmail) {
       user = await User.findOne({
         _id: new ObjectId(req.decoded.id),
-      })
+      });
     } else {
       user = await User.findOne({
         [authType]: req.decoded.id,
-      })
+      });
     }
 
-    console.log(user)
-    console.log(req.body)
-    //Insufficient Funds
+    console.log(user);
+    console.log(req.body);
+    // Insufficient Funds
     if (req.body.totalPrice > user.accountBalance) {
       res.json({
         success: false,
-        message: "Insufficient Funds",
+        message: 'Insufficient Funds',
       });
     }
 
@@ -160,33 +157,30 @@ router.post('/buy-order', middleware.isAuthenticated, async (req, res) => {
       units: req.body.unit,
       price: req.body.currentPrice,
       lotSize: req.body.lotSize,
-      totalPrice: req.body.totalPrice
-    }
+      totalPrice: req.body.totalPrice,
+    };
 
     user = await User.findOneAndUpdate({
-      _id: user._id
+      _id: user._id,
     }, {
       $inc: {
-        accountBalance: -1 * req.body.totalPrice
+        accountBalance: -1 * req.body.totalPrice,
       },
       $push: {
-        transactionHistory: transaction
-      }
-    })
+        transactionHistory: transaction,
+      },
+    });
 
     res.json({
       success: true,
       user,
     });
-
-
-
   } catch (error) {
     res.json({
       success: false,
       message: error,
     });
   }
-})
+});
 
 module.exports = router;
