@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { Table, Tag, Space } from 'antd';
+import { connect } from 'react-redux';
 
 const columns = [
     {
-        title: 'Stock Name',
-        dataIndex: 'name',
-        key: 'name',
-        render: text => <a>{text}</a>,
+        title: 'Ticker',
+        dataIndex: 'ticker',
+        key: 'ticker',
     },
     {
         title: 'Total',
-        dataIndex: 'amount',
-        key: 'amount',
+        dataIndex: 'totalPrice',
+        key: 'totalPrice',
     },
     {
         title: 'Result',
@@ -34,7 +34,7 @@ const columns = [
 const data = [
     {
         key: '1',
-        name: 'Apple',
+        ticker: 'Apple',
         percentageChanged: "5%",
         amount: "5.00",
         day: "1",
@@ -43,7 +43,7 @@ const data = [
     },
     {
         key: '2',
-        name: 'Google',
+        ticker: 'Google',
         percentageChanged: "2%",
         amount: "115.00",
         day: "2",
@@ -52,7 +52,7 @@ const data = [
     },
     {
         key: '3',
-        name: 'Nasi Babi',
+        ticker: 'Nasi Babi',
         percentageChanged: "1%",
         amount: "255.00",
         day: "3",
@@ -61,16 +61,37 @@ const data = [
     },
 ];
 class TradeHistory extends Component {
+
+    // componentDidMount() {
+    //     console.log(this.props)
+    //     this.setState({
+    //         ...this.props.user.transactionHistory
+    //     }, () => console.log(this.state))
+
+    //     console.log(this.state)
+    // }
+
+    componentDidUpdate() {
+        console.log("update")
+        console.log(this.props.user)
+    }
+
     render() {
         return (
             <div>
                 <div>
                     Trade History
                 </div>
-                <Table columns={columns} dataSource={data} />
+                <Table columns={columns} rowKey='_id' dataSource={this.props.user ? this.props.user.transactionHistory : null} />
             </div>
         );
     }
 }
 
-export default TradeHistory;
+const mapStateToProps = state => {
+    return {
+        user: state.user.user,
+    }
+}
+
+export default connect(mapStateToProps)(TradeHistory);
