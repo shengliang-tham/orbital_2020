@@ -17,6 +17,7 @@ import api.package.compProfile as cp
 import api.package.stockPredict as sp
 import api.package.top3changes as t3
 import api.package.pooling as pool
+import api.package.portfolio as pf
 
 app = Flask(__name__)
 CORS(app)
@@ -75,6 +76,12 @@ def get(tick):
 def getTop3():
     return t3.getTop3()
 
+#### Start of Web Scraping for portfolio ###########
+@app.route('/api/getPortfolio', methods=['GET'])
+def portfolio():
+    bar = request.args.to_dict()
+    tickers = bar["tickers"]
+    return pf.getResults(tickers)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
