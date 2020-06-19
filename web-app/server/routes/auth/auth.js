@@ -93,6 +93,36 @@ router.get('/google/callback', passport.authenticate('google'), async (req, res)
   res.redirect(`${frontendUrl}auth-redirect`);
 });
 
+/**
+ * @swagger
+ *
+ * /auth/register:
+ *   post:
+ *     description: Register new users
+ *     consumes:
+ *     - "application/json"
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: user
+ *         description: The user to create
+ *         in: body
+ *         schema:
+ *          type: object
+ *          required:
+ *            - email
+ *              password
+ *          properties:
+ *            email:
+ *              type: string
+ *              example: test@test.com
+ *            password:
+ *              type: string
+ *              example: abc123
+ *     responses:
+ *        success:
+ *         description: A JSON response containing a boolean variable success.
+ */
 router.post('/register', async (req, res) => {
   try {
     const user = await User.findOne({ googleId: null, facebookId: null, email: req.body.email });
@@ -123,6 +153,36 @@ router.post('/register', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *
+ * /auth/login:
+ *   post:
+ *     description: Login
+ *     consumes:
+ *     - "application/json"
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: user
+ *         description: The credentials that user have used to register
+ *         in: body
+ *         schema:
+ *          type: object
+ *          required:
+ *            - email
+ *              password
+ *          properties:
+ *            email:
+ *              type: string
+ *              example: test@test.com
+ *            password:
+ *              type: string
+ *              example: abc123
+ *     responses:
+ *        success:
+ *         description: A JSON response containing a boolean variable success.
+ */
 router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ googleId: null, facebookId: null, email: req.body.email });

@@ -8,11 +8,36 @@ const middleware = require('../middleware/auth');
 const { authTypeEmail } = require('../auth/authType');
 const User = require('../../models/user');
 
+/**
+ * @swagger
+ *
+ * /user/update-email:
+ *   post:
+ *     description: To allow existing users to update their email address.
+ *     consumes:
+ *     - "application/json"
+ *     produces:
+ *       - application/json
+ *     security:
+ *      - token: []
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         schema:
+ *          type: object
+ *          required:
+ *            - email
+ *          properties:
+ *            email:
+ *              type: string
+ *              example: new@email.com
+ *     responses:
+ *        success:
+ *         description: A JSON response containing a boolean variable success.
+ */
 router.post('/update-email', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
   let user;
-  console.log(req);
-
   try {
     if (authType === authTypeEmail) {
       user = await User.findOneAndUpdate({
@@ -39,6 +64,33 @@ router.post('/update-email', middleware.isAuthenticated, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *
+ * /user/update-password:
+ *   post:
+ *     description: To allow existing users who registered through email to update their password.
+ *     consumes:
+ *     - "application/json"
+ *     produces:
+ *       - application/json
+ *     security:
+ *      - token: []
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         schema:
+ *          type: object
+ *          required:
+ *            - password
+ *          properties:
+ *            password:
+ *              type: string
+ *              example: NewPassword123
+ *     responses:
+ *        success:
+ *         description: A JSON response containing a boolean variable success.
+ */
 router.post('/update-password', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
   if (authType === authTypeEmail) {
@@ -68,6 +120,20 @@ router.post('/update-password', middleware.isAuthenticated, async (req, res) => 
   }
 });
 
+/**
+ * @swagger
+ *
+ * /user/retrieve-user:
+ *   get:
+ *     description: To retrieve user's information from the database.
+ *     produces:
+ *       - application/json
+ *     security:
+ *      - token: []
+ *     responses:
+ *        success:
+ *         description: A JSON response containing a boolean variable success and user's data.
+ */
 router.get('/retrieve-user', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
   let user;
@@ -95,6 +161,34 @@ router.get('/retrieve-user', middleware.isAuthenticated, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *
+ * /user/update-balance:
+ *   post:
+ *     description: To update users' balance. E.g. Top up
+ *     consumes:
+ *     - "application/json"
+ *     produces:
+ *       - application/json
+ *     security:
+ *      - token: []
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         schema:
+ *          type: object
+ *          required:
+ *            - topUpAmount
+ *          properties:
+ *            topUpAmount:
+ *              type: number
+ *              minimum: 1
+ *              example: 100
+ *     responses:
+ *        success:
+ *         description: A JSON response containing a boolean variable success and user's data.
+ */
 router.post('/update-balance', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
   let user;
@@ -126,6 +220,48 @@ router.post('/update-balance', middleware.isAuthenticated, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *
+ * /user/buy-order:
+ *   post:
+ *     description: Allows user to create a buy order.
+ *     consumes:
+ *     - "application/json"
+ *     produces:
+ *       - application/json
+ *     security:
+ *      - token: []
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         schema:
+ *          type: object
+ *          required:
+ *            - buyOrder
+ *          properties:
+ *            ticker:
+ *              type: string
+ *              example: Z74
+ *            unit:
+ *              type: integer
+ *              example: 1
+ *            currentPrice:
+ *              type: number
+ *              example: 10.0
+ *            lotSize:
+ *              type: integer
+ *              example: 100
+ *            totalPrice:
+ *              type: integer
+ *              example: 100
+ *            accountBalance:
+ *              type: number
+ *              example: 10000
+ *     responses:
+ *        success:
+ *         description: A JSON response containing a boolean variable success and user's data.
+ */
 router.post('/buy-order', middleware.isAuthenticated, async (req, res) => {
   const { authType } = req.decoded;
   let user;
