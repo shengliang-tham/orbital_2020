@@ -30,6 +30,14 @@ const userSchema = mongoose.Schema({
     lotSize: Number,
     totalPrice: Number,
   }],
+  openPosition: [{
+    date: Date,
+    ticker: String,
+    units: Number,
+    price: Number,
+    lotSize: Number,
+    totalPrice: Number,
+  }],
 });
 
 const User = mongoose.model('User', userSchema);
