@@ -77,6 +77,7 @@ class Trade extends React.Component {
     startDate: moment(),
     endDate: moment(),
     selectedInstrument: null,
+    type: null,
     selectedTimeFrame: null,
     selectedTimeFrameValue: null,
   }
@@ -87,7 +88,6 @@ class Trade extends React.Component {
     this.setState({
       buyModalVisible: true,
     });
-    console.log(this.buyModalRef)
 
   }
 
@@ -104,12 +104,12 @@ class Trade extends React.Component {
       await this.fetchInstruments();
       await this.fetchTimeFrame();
 
-      console.log(this.state)
       const params = {
         ticker: this.state.stocksArray[0].ticker,
         interval: this.state.timeFrame[0].value,
         startDate: this.state.startDate.format(dateFormat),
-        endDate: this.state.endDate.format(dateFormat)
+        endDate: this.state.endDate.format(dateFormat),
+        type: this.state.type
       }
       // await this.fetchChart(params);
       // this.buyModalRef.current.setFieldsValue({
@@ -131,20 +131,21 @@ class Trade extends React.Component {
 
   fetchInstruments = async () => {
     const instruments = await axios.get(tradingUrl + '/instrument-pool')
-    console.log(instruments)
     const newstocksArray = instruments.data.filter(obj => {
-      return obj.instrument === 'stocks'
+      return obj.instrument === 'stock'
     })
 
     const newforexArray = instruments.data.filter(obj => {
       return obj.instrument === 'forex'
     })
 
+    console.log(newstocksArray)
     this.setState({
       ...this.state,
       stocksArray: newstocksArray,
       forexArray: newforexArray,
       selectedInstrument: newstocksArray[0].ticker,
+      type: newstocksArray[0].instrument
     })
   }
 
@@ -160,26 +161,46 @@ class Trade extends React.Component {
 
   fetchChart = async (params) => {
     let chartResponse = await getData(params);
-    this.setState({
-      ...this.state,
-      chartData: chartResponse,
-    })
-    console.log(chartResponse)
+    if (chartResponse.success) {
+      this.setState({
+        ...this.state,
+        chartData: chartResponse,
+      })
+    } else {
+      notification.error({
+        message: 'Error',
+        description: chartResponse.message,
+        placement: 'bottomRight'
+      });
+    }
+
+
   }
 
-  handleStockChange = async (value) => {
+  handleInstrumentChange = async (value, index) => {
     this.props.toggleLoading();
     this.setState({
       ...this.state,
       selectedInstrument: value
     })
 
+    let category = this.state.stocksArray.find(stock => stock.ticker === value)
+    let instrumentType;
+    if (category) {
+      instrumentType = "stock"
+    } else {
+      instrumentType = "forex"
+    }
+
     const params = {
       ticker: value,
       interval: this.state.selectedTimeFrameValue,
       startDate: this.state.startDate.format(dateFormat),
-      endDate: this.state.endDate.format(dateFormat)
+      endDate: this.state.endDate.format(dateFormat),
+      type: instrumentType
     }
+
+
     await this.fetchChart(params);
     this.props.toggleLoading();
   }
@@ -195,18 +216,17 @@ class Trade extends React.Component {
       ticker: this.state.selectedInstrument,
       interval: index.value,
       startDate: this.state.startDate.format(dateFormat),
-      endDate: this.state.endDate.format(dateFormat)
+      endDate: this.state.endDate.format(dateFormat),
+      type: this.state.type
     }
     await this.fetchChart(params);
     this.props.toggleLoading();
   }
 
   onStartChange = (date, dateString) => {
-    console.log(date, dateString);
   }
 
   onEndChange = (date, dateString) => {
-    console.log(date, dateString);
   }
   onBuyModal = async (form) => {
     console.log(form)
@@ -222,7 +242,6 @@ class Trade extends React.Component {
         ...form,
         ticker: this.state.selectedInstrument
       }
-      console.log(buyOrder)
 
       const response = await axios.post(backendUrl + '/user/buy-order', buyOrder);
 
@@ -232,9 +251,6 @@ class Trade extends React.Component {
   }
 
   onBuyModalChange = (changedValues, allValues) => {
-    console.log(changedValues)
-    console.log(allValues)
-    console.log(this.buyModalRef)
     this.buyModalRef.setFieldsValue({ totalPrice: lotSize * allValues.currentPrice * allValues.unit })
   }
 
@@ -259,7 +275,7 @@ class Trade extends React.Component {
         <div className="trade">
           <Row>
             <Col>
-              <Select style={{ width: 200 }} onChange={this.handleStockChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
+              <Select style={{ width: 200 }} onChange={this.handleInstrumentChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
                 <OptGroup label="Stock">
                   {this.state ? this.state.stocksArray
                     .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker}</Option>) : null}

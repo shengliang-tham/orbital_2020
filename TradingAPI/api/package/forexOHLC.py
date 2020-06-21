@@ -29,23 +29,24 @@ from ..Tech_indicator.Slope import slope
 
 from ..Others.timeConversion import unix_Date, date_Unix
 
+
 def forexOHLC(bar_data, token):
     bar = bar_data
     Symbol = bar['ticker']
     resolution = str(bar['interval'])  # 1,5 etc etc
     t_Start = str(date_Unix(bar['startDate']))  # start time
-    
+
     if (date_Unix(bar['endDate'])+4314000) > int(time.time()):
         t_End = str(int(time.time()))
     else:
         t_End = str(date_Unix(bar['endDate'])+4314000)
     URL = 'https://finnhub.io/api/v1/indicator?symbol='+Symbol+'&resolution=' + \
         resolution+'&from='+t_Start+'&to='+t_End+'&token='+token
-        
+
    # try:
     r = requests.get(URL)
-    r_json = r.json()  
-    
+    r_json = r.json()
+
     try:
         r_Open = np.array(r_json['o'])
         r_High = np.array(r_json['h'])
@@ -61,20 +62,23 @@ def forexOHLC(bar_data, token):
         df['close'] = r_Close
         df['volume'] = r_vol
         df['date'] = df2['Time']
-        
+
         # df.index = df2['Time']
         # df.index.names = ['Time']
-        
+
         #### indcators #######
         # RSI
         df['RSI'] = RSI(df, 14)
-        #MACD
+        # MACD
         #df = MACD(df)
-        df["MA_20"] = EMA(df,20)
+        df["MA_20"] = EMA(df, 20)
         df["ADX"] = ADX(df, 20)
         df["OBV"] = OBV(df)
         df["slope"] = slope(df)
         return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
     except:
-        return "Data Currently Unavailable"
+        return json.dumps({
+            'success': False,
+            'message': "The data you have requested are currently unavailable."
+        })
     # return df.to_json()

@@ -42,7 +42,7 @@ def stockOHLC(bar_data, token):
         t_End = str(date_Unix(bar['endDate'])+4314000)
     URL = 'https://finnhub.io/api/v1/stock/candle?symbol='+Symbol + \
         '&resolution='+resolution+'&from='+t_Start+'&to='+t_End+'&token='+token
-    #print(url)
+    # print(url)
 
     r = requests.get(URL)
     r_json = r.json()
@@ -61,16 +61,19 @@ def stockOHLC(bar_data, token):
         df['Close'] = r_Close
         df['Volume'] = r_vol
         df['Date'] = df2['date']
-        df.columns = ['open', 'high','low','close','volume','date']
+        df.columns = ['open', 'high', 'low', 'close', 'volume', 'date']
         df['RSI'] = RSI(df, 14)
-        #MACD
+        # MACD
         #df = MACD(df)
-        df["MA_20"] = EMA(df,20)
+        df["MA_20"] = EMA(df, 20)
         df["ADX"] = ADX(df, 20)
         df["OBV"] = OBV(df)
         df["slope"] = slope(df)
 
         return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
     except:
-        return "Data Currently Unavailable"
+        return json.dumps({
+            'success': False,
+            'message': "The data you have requested are currently unavailable."
+        })
 ##### End of Stock OHLC DATA ###########
