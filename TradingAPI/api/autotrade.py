@@ -12,24 +12,24 @@ import numpy as np
 import pandas as pd
 import api.package.helper as h
 
-# token = 'brcab6nrh5rap841ir30'
+token = 'brcab6nrh5rap841ir30'
 orderList = []
 def autotrade(t_Start, 
               t_End,
               Symbol,
               SLpips,
               balance,
-              risk, 
-              timeframe):
-    
-    if timeframe == 1:
-        timeManager = 500000
-    else:
-        timeManager = 4406400
-    currentTime = t_Start
+              risk,
+              token):
+    risk = int(risk)
+    balance = float(balance)
+    SLpips = int(SLpips)
+    timeManager = 4406400
+    currentTime = h.date_Unix(t_Start)
     # print(t_Start)
     # print(t_End)
-    tempEnd = t_Start + timeManager
+    tempEnd = currentTime + timeManager
+    t_End = h.date_Unix(t_End)
     first = True
     a = np.array([])
     
@@ -144,21 +144,21 @@ def autotrade(t_Start,
     return json.dumps(json.loads(a.to_json(orient='records')), indent=2)
 
 def autotrade_OrderOnly(t_Start, 
-              t_End,
+                 t_End,
               Symbol,
               SLpips,
               balance,
-              risk, timeframe):
-    if timeframe == 1:
-        timeManager = 500000
-    else:
-        timeManager = 4406400
-    currentTime = t_Start
+              risk,
+              token):
+    risk = int(risk)
+    balance = float(balance)
+    SLpips = int(SLpips)
+    timeManager = 4406400
+    currentTime = h.date_Unix(t_Start)
     # print(t_Start)
     # print(t_End)
-    tempEnd = t_Start + timeManager
-    ####### Time variable if the difference in time is too big ###########3
-    ######## DATA COLLECTION #################
+    tempEnd = currentTime + timeManager
+    t_End = h.date_Unix(t_End)
     while (t_End > currentTime):
         if tempEnd > t_End:
             tempEnd = t_End
@@ -241,4 +241,7 @@ def autotrade_OrderOnly(t_Start,
         if (orderList[-1].closingPrice == 0.0):
             orderList[-1].closeOrder(arr[-1][0],arr[-1][4])
     
-    return orderList        
+    storedval  = ''
+    for obj in orderList:
+        storedval += str(obj)
+    return storedval        

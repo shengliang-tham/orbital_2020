@@ -18,6 +18,7 @@ import api.package.stockPredict as sp
 import api.package.top3changes as t3
 import api.package.pooling as pool
 import api.package.portfolio as pf
+import api.autotrade as at
 
 app = Flask(__name__)
 CORS(app)
@@ -82,6 +83,29 @@ def portfolio():
     bar = request.args.to_dict()
     tickers = bar["tickers"]
     return pf.getResults(tickers)
+
+@app.route('/api/backtestForex', methods=['GET'])
+def backtestForex():
+    bar = request.args.to_dict()
+    t_Start = bar['t_Start']
+    t_End = bar['t_End']
+    Symbol = bar['Symbol']
+    SLpips = bar['SLpips']
+    balance = bar['balance']
+    risk = bar['risk']
+    return at.autotrade(t_Start, t_End, Symbol, SLpips, balance, risk, token)
+
+@app.route('/api/backtestForex_Summary', methods=['GET'])
+def backtestForex_Summary():
+    bar = request.args.to_dict()
+    t_Start = bar['t_Start']
+    t_End = bar['t_End']
+    Symbol = bar['Symbol']
+    SLpips = bar['SLpips']
+    balance = bar['balance']
+    risk = bar['risk']
+    return at.autotrade_OrderOnly(t_Start, t_End, Symbol, SLpips, balance, risk, token)
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
