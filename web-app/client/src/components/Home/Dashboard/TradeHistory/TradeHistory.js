@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Table, Tag, Space } from 'antd';
 import { connect } from 'react-redux';
+import axios from 'axios';
+import { tradingUrl } from './../../../../global-variables';
 
 const columns = [
     {
@@ -19,9 +21,9 @@ const columns = [
         key: 'percentageChanged',
     },
     {
-        title: 'Gain/Loss',
-        dataIndex: 'gainLoss',
-        key: 'gainLoss',
+        title: 'Gain/Loss %',
+        dataIndex: 'gain',
+        key: 'gain',
     },
     {
         title: 'Date',
@@ -61,20 +63,6 @@ const data = [
     },
 ];
 class TradeHistory extends Component {
-
-    // componentDidMount() {
-    //     console.log(this.props)
-    //     this.setState({
-    //         ...this.props.user.transactionHistory
-    //     }, () => console.log(this.state))
-
-    //     console.log(this.state)
-    // }
-
-    componentDidUpdate() {
-        console.log("update")
-        console.log(this.props.user)
-    }
 
     render() {
         return (

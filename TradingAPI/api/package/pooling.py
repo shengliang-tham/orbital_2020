@@ -32,7 +32,8 @@ def instrumentPool():
     df = pd.DataFrame.from_dict(temp_dir, orient='index')
     df.reset_index(inplace=True)
     df.columns = ["ticker", "ticker_name"]
-    df["instrument"] = "stocks"
+    df["instrument"] = "stock"
+    print(df)
 
     # Forex
     df2 = pd.DataFrame([["EUR_USD", "EUR/USD", "forex"],
