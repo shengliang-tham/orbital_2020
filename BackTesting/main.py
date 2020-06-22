@@ -28,10 +28,4 @@ leverage = 200
 ######## Input Variables #################
 
 orderlist = at.autotrade(t_Start, t_End, Symbol, SLpips, balance, risk, timeframe)
-strlist =''
-for obj in orderlist:
-    strlist += str(obj)
-    balance += obj.gainLoss
-
-print(strlist)
-print("balance remaining: " + str(balance))
+print(orderlist)
