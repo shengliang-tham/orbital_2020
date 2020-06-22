@@ -11,14 +11,14 @@ const columns = [
         key: 'ticker',
     },
     {
-        title: 'Total',
-        dataIndex: 'totalPrice',
-        key: 'totalPrice',
+        title: 'Price Bought At',
+        dataIndex: 'openPrice',
+        key: 'openPrice',
     },
     {
-        title: 'Result',
-        dataIndex: 'percentageChanged',
-        key: 'percentageChanged',
+        title: 'Price Closed At',
+        dataIndex: 'closePrice',
+        key: 'closePrice',
     },
     {
         title: 'Gain/Loss %',

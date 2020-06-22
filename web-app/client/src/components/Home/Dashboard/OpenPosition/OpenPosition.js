@@ -1,73 +1,205 @@
 import React, { Component } from 'react';
-import { Table, Tag, Space } from 'antd';
+import { Table, Tag, Space, Button, InputNumber, Input } from 'antd';
 import './OpenPosition.scss';
-const columns = [
-    {
-        title: 'Stock Name',
-        dataIndex: 'name',
-        key: 'name',
-        render: text => <a>{text}</a>,
-    },
-    {
-        title: 'Amount',
-        dataIndex: 'amount',
-        key: 'amount',
-    },
-    {
-        title: 'Cost',
-        dataIndex: 'costPrice',
-        key: 'costPrice',
-    },
-    {
-        title: '% Change',
-        dataIndex: 'percentageChanged',
-        key: 'percentageChanged',
-    },
-    {
-        title: 'Day',
-        dataIndex: 'day',
-        key: 'day',
-    },
+import { connect } from "react-redux";
+import CustomModal from '../../../../UI/Modal/Modal';
+import Form from 'antd/lib/form/Form';
+import axios from 'axios'
+import { backendUrl } from '../../../../global-variables';
+import { notification } from 'antd';
 
-];
+import * as globalActionTypes from '../../../../store/actions/globalActions';
+import * as userActionTypes from '../../../../store/actions/userActions';
 
-const data = [
-    {
-        key: '1',
-        name: 'Apple',
-        percentageChanged: "5%",
-        amount: "5.00",
-        costPrice: "$5.00",
-        day: "1"
+const formItemLayout = {
+    labelCol: {
+        xs: { span: 8 },
+        sm: { span: 8 },
     },
-    {
-        key: '2',
-        name: 'Google',
-        percentageChanged: "2%",
-        amount: "115.00",
-        costPrice: "$125.00",
-        day: "2"
+    wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 },
     },
-    {
-        key: '3',
-        name: 'Nasi Babi',
-        percentageChanged: "1%",
-        amount: "255.00",
-        costPrice: "$25.00",
-        day: "3"
-    },
-];
+};
+
 class OpenPosition extends Component {
+
+    state = {
+        sellModalVisible: false,
+        selectedInstrument: null
+    }
+
+    columns = [
+        {
+            title: 'Ticker',
+            dataIndex: 'ticker',
+            key: 'ticker',
+            render: text => <a>{text}</a>,
+        },
+        {
+            title: 'Price Bought At',
+            dataIndex: 'openPrice',
+            key: 'openPrice',
+        },
+        {
+            title: 'Gain/Loss %',
+            dataIndex: 'gain',
+            key: 'gain',
+        },
+        {
+            title: 'Date',
+            dataIndex: 'date',
+            key: 'date',
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (instrument) => (
+                <Button onClick={() => this.showSellModal(instrument)}>
+                    Sell
+                </Button>
+
+            ),
+        },
+
+    ];
+
+    showSellModal = (instrument) => {
+        this.setState({
+            sellModalVisible: true,
+            selectedInstrument: instrument
+        });
+        console.log(instrument)
+
+    }
+
+    handleSellModalCancel = () => {
+        this.setState({
+            sellModalVisible: false,
+        });
+    }
+
+    setSellModalRef = element => {
+        this.sellModalRef = element
+        if (this.state.sellModalVisible) {
+            console.log(this.state)
+            this.sellModalRef.setFieldsValue({
+                unit: this.state.selectedInstrument.units,
+                lotSize: this.state.selectedInstrument.lotSize,
+                openPrice: this.state.selectedInstrument.openPrice,
+                sellPrice: this.state.selectedInstrument.currentPrice,
+                gain: this.state.selectedInstrument.gain
+            })
+
+        }
+    }
+    onSellModal = async (form) => {
+        console.log(form)
+
+        try {
+            const sellOrder = {
+                ...form,
+                ticker: this.state.selectedInstrument.ticker,
+                units: this.state.selectedInstrument.unit,
+                openPrice: this.state.selectedInstrument.openPrice,
+                closePrice: this.state.selectedInstrument.currentPrice,
+                lotSize: this.state.selectedInstrument.lotSize,
+                totalPrice: this.state.selectedInstrument.currentPrice * this.state.selectedInstrument.lotSize,
+                selectedInstrumentId: this.state.selectedInstrument._id,
+                gain: this.state.selectedInstrument.gain
+            }
+
+            const response = await axios.post(backendUrl + '/user/sell-order', sellOrder);
+            if (response.data.success) {
+                notification.success({
+                    message: 'Success',
+                    description: "Successfully Sold",
+                    placement: 'bottomRight'
+                });
+
+                this.setState({
+                    sellModalVisible: false,
+                });
+                this.props.updateUser(response.data.user)
+
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: response.data.message,
+                    placement: 'bottomRight'
+                });
+            }
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: error,
+                placement: 'bottomRight'
+            });
+        }
+    }
+
     render() {
         return (
             <div>
                 <div>
                     Open Positions
                 </div>
-                <Table columns={columns} dataSource={data} />
+                <Table columns={this.columns} rowKey='_id' dataSource={this.props.user ? this.props.user.openPosition.filter(item => item.status === 'open') : null} />
+
+                <CustomModal visible={this.state.sellModalVisible}
+                    handleOk={this.handleSellModalOk}
+                    handleCancel={this.handleSellModalCancel}
+                    title="Sell Order"
+                    formName="sell-form"
+                >
+                    <Form id='sell-form' onFinish={this.onSellModal} ref={this.setSellModalRef}
+                        {...formItemLayout}>
+                        <Form.Item
+                            name="unit"
+                            label="Unit"
+                        >
+                            <Input disabled={true} />
+                        </Form.Item>
+                        <Form.Item
+                            name="lotSize"
+                            label="Lot Size">
+                            <Input disabled={true} />
+                        </Form.Item>
+                        <Form.Item
+                            name="openPrice"
+                            label="Price you bought at">
+                            <Input disabled={true} />
+                        </Form.Item>
+                        <Form.Item
+                            name="sellPrice"
+                            label="Current Price">
+                            <Input disabled={true} />
+                        </Form.Item>
+                        <Form.Item
+                            name="gain"
+                            label="Net Gain">
+                            <Input disabled={true} />
+                        </Form.Item>
+                    </Form>
+
+                </CustomModal>
             </div>
         );
     }
 }
 
-export default OpenPosition;
+const mapStateToProps = state => {
+    return {
+        user: state.user.user
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
+        updateUser: (user) => { dispatch({ type: userActionTypes.UPDATE_USER_DETAILS, payload: user }) }
+    }
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(OpenPosition);

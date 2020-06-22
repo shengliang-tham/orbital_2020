@@ -26,17 +26,21 @@ const userSchema = mongoose.Schema({
     date: Date,
     ticker: String,
     units: Number,
-    price: Number,
+    openPrice: Number,
+    closePrice: Number,
     lotSize: Number,
     totalPrice: Number,
+    status: String,
+    gain: Number,
   }],
   openPosition: [{
     date: Date,
     ticker: String,
     units: Number,
-    price: Number,
+    openPrice: Number,
     lotSize: Number,
     totalPrice: Number,
+    status: String,
   }],
 });
 

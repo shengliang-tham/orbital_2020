@@ -44,7 +44,7 @@ export function getData(params) {
         // .then(data => data.map(x => parseData(parseDateTime)))
         .then(result => {
             if (result.data.success)
-                return result.data.map(obj => {
+                return result.data.data.map(obj => {
                     const tempObject = Object.assign({}, obj);
                     tempObject.date = new Date(parseDateTime(obj.date));
                     return tempObject;

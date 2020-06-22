@@ -38,7 +38,8 @@ class Home extends Component {
             user = user.data.user;
 
             console.log(user)
-            user = await this.fetchTradeHistory(user)
+            // user = await this.fetchTradeHistory(user)
+            user = await this.fetchOpenPositions(user)
 
             if (!user.facebookId && !user.googleId) {
                 this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
@@ -54,6 +55,37 @@ class Home extends Component {
             });
         }
 
+    }
+
+
+    fetchOpenPositions = async (user) => {
+        let tickers = user.openPosition.map(item => [item.ticker])
+        let params = [].concat.apply([], tickers).join()
+        console.log(params)
+
+        const response = await axios.get(tradingUrl + '/getPortfolio', {
+            params: {
+                tickers: params
+            }
+        })
+
+        Object.keys(response.data).forEach(ticker => {
+            user.openPosition.map(item => {
+                if (item.ticker == ticker) {
+                    //If current price is lower than what user bought, its negative
+                    if (parseFloat(response.data[ticker].currentPrice) < item.openPrice) {
+                        item.gain = '-' + ((item.openPrice - parseFloat(response.data[ticker].currentPrice)) / item.openPrice)
+                    } else {
+                        //Positive Gain
+                        item.gain = (parseFloat(response.data[ticker].currentPrice) / item.openPrice) * 100;
+                    }
+                    item.currentPrice = parseFloat(response.data[ticker].currentPrice)
+
+                }
+            })
+        })
+
+        return user;
     }
 
     fetchTradeHistory = async (user) => {
@@ -77,6 +109,7 @@ class Home extends Component {
                         //Positive Gain
                         item.gain = (parseFloat(response.data[ticker].currentPrice) / item.price) * 100;
                     }
+                    item.currentPrice = parseFloat(response.data[ticker].currentPrice)
                 }
             })
         })

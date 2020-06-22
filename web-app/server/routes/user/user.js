@@ -277,8 +277,6 @@ router.post('/buy-order', middleware.isAuthenticated, async (req, res) => {
       });
     }
 
-    console.log(user);
-    console.log(req.body);
     // Insufficient Funds
     if (req.body.totalPrice > user.accountBalance) {
       res.json({
@@ -291,9 +289,10 @@ router.post('/buy-order', middleware.isAuthenticated, async (req, res) => {
       date: new Date(),
       ticker: req.body.ticker,
       units: req.body.unit,
-      price: req.body.currentPrice,
+      openPrice: req.body.currentPrice,
       lotSize: req.body.lotSize,
       totalPrice: req.body.totalPrice,
+      status: 'open',
     };
 
     user = await User.findOneAndUpdate({
@@ -303,9 +302,9 @@ router.post('/buy-order', middleware.isAuthenticated, async (req, res) => {
         accountBalance: -1 * req.body.totalPrice,
       },
       $push: {
-        transactionHistory: transaction,
+        openPosition: transaction,
       },
-    });
+    }, { returnOriginal: false });
 
     res.json({
       success: true,
@@ -319,4 +318,59 @@ router.post('/buy-order', middleware.isAuthenticated, async (req, res) => {
   }
 });
 
+router.post('/sell-order', middleware.isAuthenticated, async (req, res) => {
+  const { authType } = req.decoded;
+  let user;
+
+  try {
+    if (authType === authTypeEmail) {
+      user = await User.findOne({
+        _id: new ObjectId(req.decoded.id),
+      });
+    } else {
+      user = await User.findOne({
+        [authType]: req.decoded.id,
+      });
+    }
+
+
+    const transaction = {
+      date: new Date(),
+      ticker: req.body.ticker,
+      units: req.body.unit,
+      openPrice: req.body.openPrice,
+      closePrice: req.body.closePrice,
+      lotSize: req.body.lotSize,
+      totalPrice: req.body.closePrice * req.body.lotSize,
+      gain: req.body.gain,
+      status: 'close',
+    };
+
+    user = await User.findOneAndUpdate({
+      _id: user._id,
+    }, {
+      $inc: {
+        accountBalance: transaction.totalPrice,
+      },
+      $push: {
+        transactionHistory: transaction,
+      },
+      $pull: {
+        openPosition: {
+          _id: req.body.selectedInstrumentId,
+        },
+      },
+    }, { returnOriginal: false });
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error,
+    });
+  }
+});
 module.exports = router;

@@ -27,7 +27,7 @@ from ..Tech_indicator.RSI import RSI
 from ..Tech_indicator.OBV import OBV
 from ..Tech_indicator.Slope import slope
 
-#from ..Tech_indicator.RSI import RSI
+# from ..Tech_indicator.RSI import RSI
 from ..Others.timeConversion import unix_Date, date_Unix
 
 
@@ -64,13 +64,17 @@ def stockOHLC(bar_data, token):
         df.columns = ['open', 'high', 'low', 'close', 'volume', 'date']
         df['RSI'] = RSI(df, 14)
         # MACD
-        #df = MACD(df)
+        # df = MACD(df)
         df["MA_20"] = EMA(df, 20)
         df["ADX"] = ADX(df, 20)
         df["OBV"] = OBV(df)
         df["slope"] = slope(df)
 
-        return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
+        # return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
+        return json.dumps({
+            'success': True,
+            'data': json.loads(df.to_json(orient='records'))
+        })
     except:
         return json.dumps({
             'success': False,

@@ -86,11 +86,12 @@ class TopPair extends Component {
 }
 
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
     return {
-        toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
+        user: state.user.user
     }
-
 }
 
-export default connect(null, mapDispatchToProps)(TopPair);
+
+
+export default connect(mapStateToProps)(TopPair);

@@ -8,7 +8,8 @@ import { getData } from './Chart/CandleStickChartForDiscontinuousIntraDay/util';
 import CandleStickChartForDiscontinuousIntraDay from './Chart/CandleStickChartForDiscontinuousIntraDay/CandleStickChartForDiscontinuousIntraDay';
 import { connect } from 'react-redux';
 import * as globalActionTypes from '../../../store/actions/globalActions';
-import { Select, Row, Col, Divider, notification, DatePicker, Button, Input, InputNumber } from 'antd';
+import * as userActionTypes from '../../../store/actions/userActions';
+import { Select, Row, Col, Divider, notification, DatePicker, Button, Input, InputNumber, message } from 'antd';
 import './Trade.scss';
 import CustomModal from './../../../UI/Modal/Modal';
 import Form from 'antd/lib/form/Form';
@@ -80,6 +81,7 @@ class Trade extends React.Component {
     type: null,
     selectedTimeFrame: null,
     selectedTimeFrameValue: null,
+    disabledButtons: false
   }
 
 
@@ -161,7 +163,7 @@ class Trade extends React.Component {
 
   fetchChart = async (params) => {
     let chartResponse = await getData(params);
-    if (chartResponse.success) {
+    if (!chartResponse.success) {
       this.setState({
         ...this.state,
         chartData: chartResponse,
@@ -230,7 +232,7 @@ class Trade extends React.Component {
   }
   onBuyModal = async (form) => {
     console.log(form)
-
+    const msgIndicator = message.loading('Executing Purchase Order...', 0);
     if (form.totalPrice > this.props.user.accountBalance) {
       notification.error({
         message: 'Error',
@@ -244,7 +246,20 @@ class Trade extends React.Component {
       }
 
       const response = await axios.post(backendUrl + '/user/buy-order', buyOrder);
+      if (response.data.success) {
+        notification.success({
+          message: 'Success',
+          description: "Successfully Purchased",
+          placement: 'bottomRight'
+        });
+      }
 
+
+      msgIndicator();
+      this.setState({
+        buyModalVisible: false,
+      });
+      this.props.updateUser(response.data.user);
 
     }
 
@@ -326,7 +341,8 @@ class Trade extends React.Component {
             handleCancel={this.handleBuyModalCancel}
             title="Buy Order"
             formName="buy-form"
-
+            disabledOk={this.state.disabledButtons}
+            disabledCancel={this.state.disabledButtons}
           >
             <Form id='buy-form' onValuesChange={this.onBuyModalChange} onFinish={this.onBuyModal} ref={this.setBuyModalRef}
               // initialValues={{
@@ -387,6 +403,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
+    updateUser: (user) => { dispatch({ type: userActionTypes.UPDATE_USER_DETAILS, payload: user }) }
   }
+
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Trade);
