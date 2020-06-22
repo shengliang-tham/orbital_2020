@@ -47,34 +47,34 @@ class Trade extends React.Component {
     stocksArray: [],
     forexArray: [],
     timeFrame: [],
-    // chartData: [],
-    chartData: [
-      {
-        "open": 0.765,
-        "high": 0.765,
-        "low": 0.765,
-        "close": 0.765,
-        "volume": 0,
-        "date": new Date(),
-        "RSI": null,
-        "MA_20": null,
-        "ADX": null,
-        "OBV": 0,
-        "slope": 0
-      },
-      {
-        "open": 0.765,
-        "high": 0.77,
-        "low": 0.765,
-        "close": 0.765,
-        "volume": 193200,
-        "date": new Date(),
-        "RSI": null,
-        "MA_20": null,
-        "ADX": null,
-        "OBV": -193200,
-        "slope": 0
-      }],
+    chartData: [],
+    // chartData: [
+    //   {
+    //     "open": 0.765,
+    //     "high": 0.765,
+    //     "low": 0.765,
+    //     "close": 0.765,
+    //     "volume": 0,
+    //     "date": new Date(),
+    //     "RSI": null,
+    //     "MA_20": null,
+    //     "ADX": null,
+    //     "OBV": 0,
+    //     "slope": 0
+    //   },
+    //   {
+    //     "open": 0.765,
+    //     "high": 0.77,
+    //     "low": 0.765,
+    //     "close": 0.765,
+    //     "volume": 193200,
+    //     "date": new Date(),
+    //     "RSI": null,
+    //     "MA_20": null,
+    //     "ADX": null,
+    //     "OBV": -193200,
+    //     "slope": 0
+    //   }],
     startDate: moment(),
     endDate: moment(),
     selectedInstrument: null,
@@ -113,10 +113,8 @@ class Trade extends React.Component {
         endDate: this.state.endDate.format(dateFormat),
         type: this.state.type
       }
-      // await this.fetchChart(params);
-      // this.buyModalRef.current.setFieldsValue({
-      //   accountBalance: 0
-      // })
+      await this.fetchChart(params);
+
 
       this.props.toggleLoading();
     } catch (error) {
@@ -163,12 +161,14 @@ class Trade extends React.Component {
 
   fetchChart = async (params) => {
     let chartResponse = await getData(params);
-    if (!chartResponse.success) {
+    console.log(chartResponse)
+    if (chartResponse.success) {
       this.setState({
         ...this.state,
-        chartData: chartResponse,
+        chartData: chartResponse.data,
       })
     } else {
+      console.log(chartResponse)
       notification.error({
         message: 'Error',
         description: chartResponse.message,
@@ -225,11 +225,32 @@ class Trade extends React.Component {
     this.props.toggleLoading();
   }
 
-  onStartChange = (date, dateString) => {
+  dateOnChange = async (dateArray) => {
+    console.log(dateArray)
+    this.props.toggleLoading();
+
+    this.setState({
+      ...this.state,
+      startDate: dateArray[0],
+      endDate: dateArray[1],
+    })
+
+    const params = {
+      ticker: this.state.selectedInstrument,
+      interval: this.state.selectedTimeFrameValue,
+      startDate: dateArray[0].format(dateFormat),
+      endDate: dateArray[1].format(dateFormat),
+      type: this.state.type
+    }
+    await this.fetchChart(params);
+    this.props.toggleLoading();
   }
 
-  onEndChange = (date, dateString) => {
-  }
+
+
+
+
+
   onBuyModal = async (form) => {
     console.log(form)
     const msgIndicator = message.loading('Executing Purchase Order...', 0);
@@ -310,30 +331,35 @@ class Trade extends React.Component {
             </Col>
             <Col>
               <RangePicker defaultValue={[moment(this.state.startDate, dateFormat), moment(this.state.endDate, dateFormat)]}
+                onChange={this.dateOnChange}
                 format={dateFormat} />
             </Col>
           </Row>
           <Divider />
-          <Row>
+          {
+            this.state.chartData.length ?
+              <div>
+                <Row>
 
-            {
-              this.state.chartData.length ? <Col span={24}>
-                < TypeChooser >
-                  {type => < CandleStickChartForDiscontinuousIntraDay type={type} data={this.state.chartData} />}
-                </TypeChooser>
-              </Col>
-                : null}
+                  <Col span={24}>
+                    < TypeChooser >
+                      {type => < CandleStickChartForDiscontinuousIntraDay type={type} data={this.state.chartData} />}
+                    </TypeChooser>
+                  </Col>
 
-          </Row>
-          <Divider />
-          <Row>
-            <Col span={4}>
-              <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
-            </Col>
-            <Col span={4}>
-              <Button size="large" shape="round" className="sell-btn">Sell</Button>
-            </Col>
-          </Row>
+
+                </Row>
+                <Divider />
+
+                <Row>
+                  <Col span={4}>
+                    <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
+                  </Col>
+                </Row>
+              </div>
+              : null}
+
+
 
 
           <CustomModal visible={this.state.buyModalVisible}

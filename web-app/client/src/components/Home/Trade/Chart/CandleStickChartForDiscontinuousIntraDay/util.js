@@ -43,12 +43,17 @@ export function getData(params) {
         // .then(data => csvParse(data.data, parseData(parseDateTime)))
         // .then(data => data.map(x => parseData(parseDateTime)))
         .then(result => {
-            if (result.data.success)
-                return result.data.data.map(obj => {
+            if (result.data.success) {
+                let transformResult = result.data.data.map(obj => {
                     const tempObject = Object.assign({}, obj);
                     tempObject.date = new Date(parseDateTime(obj.date));
                     return tempObject;
                 })
+                return {
+                    success: true,
+                    data: transformResult
+                }
+            }
             else
                 return result.data
         })
