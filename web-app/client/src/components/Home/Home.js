@@ -12,6 +12,29 @@ import { notification } from 'antd';
 
 class Home extends Component {
 
+    async componentDidUpdate(prevProps, prevState) {
+        if (prevProps.user && this.props.user) {
+            if (prevProps.user.openPosition.length !== this.props.user.openPosition.length) {
+                this.props.toggleLoading();
+                let user = await axios.get(backendUrl + '/user/retrieve-user')
+                user = user.data.user;
+
+                user = await this.fetchOpenPositions(user)
+                this.props.fetchUserDetails(user)
+                this.props.toggleLoading();
+            }
+        }
+
+        // if (prevProps.user && prevProps.user.user.openPosition !== this.props.user.openPosition) {
+        // console.log("inside")
+        // let user = await axios.get(backendUrl + '/user/retrieve-user')
+        // user = user.data.user;
+
+        // user = await this.fetchOpenPositions(user)
+        // this.props.fetchUserDetails(user)
+        // }
+    }
+
     async componentDidMount() {
         // this.props.toggleLoading();
         // axios.get(backendUrl + '/user/retrieve-user')
@@ -32,12 +55,13 @@ class Home extends Component {
         //         });
         //     })
 
+
         try {
             this.props.toggleLoading();
             let user = await axios.get(backendUrl + '/user/retrieve-user')
             user = user.data.user;
 
-            console.log(user)
+            // console.log(user)
             // user = await this.fetchTradeHistory(user)
             user = await this.fetchOpenPositions(user)
 
@@ -61,7 +85,7 @@ class Home extends Component {
     fetchOpenPositions = async (user) => {
         let tickers = user.openPosition.map(item => [item.ticker])
         let params = [].concat.apply([], tickers).join()
-        console.log(params)
+        // console.log(params)
 
         const response = await axios.get(tradingUrl + '/getPortfolio', {
             params: {
@@ -72,12 +96,13 @@ class Home extends Component {
         Object.keys(response.data).forEach(ticker => {
             user.openPosition.map(item => {
                 if (item.ticker == ticker) {
+                    // console.log(item)
                     //If current price is lower than what user bought, its negative
                     if (parseFloat(response.data[ticker].currentPrice) < item.openPrice) {
                         item.gain = '-' + ((item.openPrice - parseFloat(response.data[ticker].currentPrice)) / item.openPrice)
                     } else {
                         //Positive Gain
-                        item.gain = (parseFloat(response.data[ticker].currentPrice) / item.openPrice) * 100;
+                        item.gain = ((parseFloat(response.data[ticker].currentPrice) / item.openPrice) - 1) * 100;
                     }
                     item.currentPrice = parseFloat(response.data[ticker].currentPrice)
 
@@ -107,7 +132,7 @@ class Home extends Component {
                         item.gain = '-' + ((item.price - parseFloat(response.data[ticker].currentPrice)) / item.price)
                     } else {
                         //Positive Gain
-                        item.gain = (parseFloat(response.data[ticker].currentPrice) / item.price) * 100;
+                        item.gain = ((parseFloat(response.data[ticker].currentPrice) / item.openPrice) - 1) * 100;
                     }
                     item.currentPrice = parseFloat(response.data[ticker].currentPrice)
                 }
@@ -131,7 +156,7 @@ class Home extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.user,
+        user: state.user.user,
     }
 }
 

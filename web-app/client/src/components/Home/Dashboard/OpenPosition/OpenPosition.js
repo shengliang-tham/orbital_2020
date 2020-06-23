@@ -10,6 +10,7 @@ import { notification } from 'antd';
 
 import * as globalActionTypes from '../../../../store/actions/globalActions';
 import * as userActionTypes from '../../../../store/actions/userActions';
+import Moment from 'react-moment';
 
 const formItemLayout = {
     labelCol: {
@@ -50,6 +51,7 @@ class OpenPosition extends Component {
             title: 'Date',
             dataIndex: 'date',
             key: 'date',
+            render: date => <Moment format="DD/MM/YYYY HH:MM:SS">{date}</Moment>
         },
         {
             title: 'Action',

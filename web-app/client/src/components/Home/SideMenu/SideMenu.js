@@ -66,9 +66,9 @@ class SideMenu extends Component {
                             <Menu.Item key="2" icon={<LineChartOutlined />} onClick={() => this.onClickMenu("2")}>
                                 Trade
                                 </Menu.Item>
-                            <Menu.Item key="3" icon={<HistoryOutlined />}>
+                            {/* <Menu.Item key="3" icon={<HistoryOutlined />}>
                                 Trade History
-                              </Menu.Item>
+                              </Menu.Item> */}
                             {/* <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
                                 <Menu.Item key="4">Change Password</Menu.Item>
                             </SubMenu> */}

@@ -3,6 +3,7 @@ import { Table, Tag, Space } from 'antd';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { tradingUrl } from './../../../../global-variables';
+import Moment from 'react-moment';
 
 const columns = [
     {
@@ -29,6 +30,7 @@ const columns = [
         title: 'Date',
         dataIndex: 'date',
         key: 'date',
+        render: date => <Moment format="DD/MM/YYYY HH:MM:SS">{date}</Moment>
     },
 
 ];
