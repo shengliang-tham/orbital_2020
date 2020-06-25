@@ -3,6 +3,7 @@
 import { tsvParse, csvParse } from "d3-dsv";
 import { timeParse } from "d3-time-format";
 import axios from 'axios'
+import { tradingUrl } from "../../../../../global-variables";
 
 function parseData(parse) {
     return function (d) {
@@ -36,8 +37,9 @@ export function getData(params) {
     //     .then(data => console.log(data))
     //     .then(data => csvParse(data, parseData(parseDateTime)))
     // return promiseMSFT;
+    console.log(tradingUrl)
     console.log(`http://localhost:8000/api/${params.type}OHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
-    const response = axios(`http://localhost:8000/api/${params.type}OHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
+    const response = axios(`${tradingUrl}/${params.type}OHLC?ticker=${params.ticker}&interval=${params.interval}&startDate=${params.startDate}&endDate=${params.endDate}`)
         // .then(response => response.text())
         // .then(data => console.log(data))
         // .then(data => csvParse(data.data, parseData(parseDateTime)))
