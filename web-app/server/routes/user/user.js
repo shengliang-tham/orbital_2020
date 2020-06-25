@@ -223,6 +223,66 @@ router.post('/update-balance', middleware.isAuthenticated, async (req, res) => {
 /**
  * @swagger
  *
+ * /user/withdraw-balance:
+ *   post:
+ *     description: To update users' balance. E.g. Top up
+ *     consumes:
+ *     - "application/json"
+ *     produces:
+ *       - application/json
+ *     security:
+ *      - token: []
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         schema:
+ *          type: object
+ *          required:
+ *            - withdrawAmount
+ *          properties:
+ *            topUpAmount:
+ *              type: number
+ *              minimum: 1
+ *              example: 100
+ *     responses:
+ *        success:
+ *         description: A JSON response containing a boolean variable success and user's data.
+ */
+router.post('/withdraw-balance', middleware.isAuthenticated, async (req, res) => {
+  const { authType } = req.decoded;
+  let user;
+
+  try {
+    if (authType === authTypeEmail) {
+      user = await User.findOneAndUpdate({
+        _id: new ObjectId(req.decoded.id),
+      }, {
+        $inc: { accountBalance: -1 * (req.body.withdrawAmount) },
+      }, { returnOriginal: false });
+    } else {
+      user = await User.findOneAndUpdate({
+        [authType]: req.decoded.id,
+      }, {
+        $inc: { accountBalance: -1 * (req.body.withdrawAmount) },
+      }, { returnOriginal: false });
+    }
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error,
+    });
+  }
+});
+
+
+/**
+ * @swagger
+ *
  * /user/buy-order:
  *   post:
  *     description: Allows user to create a buy order.

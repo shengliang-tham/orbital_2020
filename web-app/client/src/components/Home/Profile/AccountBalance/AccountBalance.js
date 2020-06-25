@@ -18,8 +18,22 @@ class AccountBalance extends Component {
     state = {
         topUpModalVisible: false,
         disabledButtons: false,
+        withdrawModalVisible: false,
         defaultAmount: 1,
-        amount: 1
+        amount: 1,
+        withdrawAmount: 1
+    }
+
+    showWithdrawModal = () => {
+        this.setState({
+            withdrawModalVisible: true,
+        });
+    }
+
+    handleWithdrawModalCancel = () => {
+        this.setState({
+            withdrawModalVisible: false,
+        });
     }
 
     showTopUpModal = () => {
@@ -49,7 +63,50 @@ class AccountBalance extends Component {
         console.log(this.state.amount)
     }
 
-    handleSubmit = async (event) => {
+    onWithdrawChange = (value) => {
+        this.setState({
+            ...this.state,
+            withdrawAmount: value
+        })
+    }
+
+    handleWithdrawSubmit = async (event) => {
+        // Block native form submission.
+        event.preventDefault();
+        console.log(event)
+
+        if (this.props.user.accountBalance < this.state.withdrawAmount) {
+            notification.error({
+                message: 'Error',
+                description: "Not enough funds",
+                placement: 'bottomRight'
+            });
+        } else {
+            const response = await axios.post(backendUrl + '/user/withdraw-balance', {
+                withdrawAmount: this.state.withdrawAmount
+            });
+            console.log(response)
+            if (response.data.success) {
+                notification.success({
+                    message: 'Success',
+                    description: "You have successfully withdraw!",
+                    placement: 'bottomRight'
+                });
+                this.setState({
+                    withdrawModalVisible: false,
+                });
+                this.props.updateBalance(response.data.user)
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: response.data.message,
+                    placement: 'bottomRight'
+                });
+            }
+        }
+    }
+
+    handleTopUpSubmit = async (event) => {
         // Block native form submission.
         event.preventDefault();
 
@@ -170,7 +227,9 @@ class AccountBalance extends Component {
                     <Tooltip placement="bottom" title="Sample Credit Card: 4242 4242 4242 4242" arrowPointAtCenter="true" mouseEnterDelay="0">
                         <Col span={4}><Button type="primary" onClick={this.showTopUpModal} >Top Up</Button></Col>
                     </Tooltip>
-                    <Col span={4}></Col>
+                    <Col span={4}>
+                        <Col span={4}><Button type="primary" onClick={this.showWithdrawModal} >Withdraw Funds</Button></Col>
+                    </Col>
                 </Row>
                 <Divider />
                 <CustomModal visible={this.state.topUpModalVisible}
@@ -182,7 +241,7 @@ class AccountBalance extends Component {
                     disabledCancel={this.state.disabledButtons}
                 >
 
-                    <form id="top-up-form" onSubmit={this.handleSubmit}>
+                    <form id="top-up-form" onSubmit={this.handleTopUpSubmit}>
                         <Row align="middle" justify="center">
                             <Col span={12}> Amount to be top up :</Col>
                             <Col span={12}>
@@ -213,6 +272,33 @@ class AccountBalance extends Component {
                                 },
                             }}
                         />
+                    </form>
+                </CustomModal>
+
+                <CustomModal visible={this.state.withdrawModalVisible}
+                    handleCancel={this.handleWithdrawModalCancel}
+                    title="Withdraw Balance"
+                    formName="withdraw-form"
+                    disabledOk={this.state.disabledButtons}
+                    disabledCancel={this.state.disabledButtons}
+                >
+
+                    <form id="withdraw-form" onSubmit={this.handleWithdrawSubmit}>
+                        <Row align="middle" justify="center">
+                            <Col span={12}> How much to withdraw :</Col>
+                            <Col span={12}>
+                                <InputNumber style={{ width: '100%' }}
+                                    min={this.state.defaultAmount}
+                                    defaultValue={this.state.defaultAmount}
+                                    max={this.props.user ? this.props.user.accountBalance : this.state.defaultAmount}
+                                    formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                    onChange={this.onWithdrawChange}
+                                    size="large"
+                                />
+                            </Col>
+                        </Row>
+                        <Divider />
                     </form>
                 </CustomModal>
             </div>

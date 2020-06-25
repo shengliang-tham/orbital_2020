@@ -253,7 +253,6 @@ class Trade extends React.Component {
 
   onBuyModal = async (form) => {
     console.log(form)
-    const msgIndicator = message.loading('Executing Purchase Order...', 0);
     if (form.totalPrice > this.props.user.accountBalance) {
       notification.error({
         message: 'Error',
@@ -261,6 +260,8 @@ class Trade extends React.Component {
         placement: 'bottomRight'
       });
     } else {
+      const msgIndicator = message.loading('Executing Purchase Order...', 0);
+
       const buyOrder = {
         ...form,
         ticker: this.state.selectedInstrument
