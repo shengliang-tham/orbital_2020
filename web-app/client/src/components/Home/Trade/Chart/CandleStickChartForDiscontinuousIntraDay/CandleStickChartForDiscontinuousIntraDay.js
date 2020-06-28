@@ -76,6 +76,7 @@ class CandleStickChartForDiscontinuousIntraDay extends React.Component {
                 <Chart id={1}
                     yExtents={[d => [d.high, d.low]]}
                     padding={{ top: 40, bottom: 20 }}
+                    style={{ width: '100%', height: '100%' }}
                 >
                     <XAxis axisAt="bottom" orient="bottom" />
                     <YAxis axisAt="right" orient="right" ticks={5} />

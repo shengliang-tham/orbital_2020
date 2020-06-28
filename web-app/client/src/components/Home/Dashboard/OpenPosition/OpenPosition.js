@@ -106,7 +106,7 @@ class OpenPosition extends Component {
                 openPrice: this.state.selectedInstrument.openPrice,
                 closePrice: this.state.selectedInstrument.currentPrice,
                 lotSize: this.state.selectedInstrument.lotSize,
-                totalPrice: this.state.selectedInstrument.currentPrice * this.state.selectedInstrument.lotSize,
+                totalPrice: this.state.selectedInstrument.currentPrice * this.state.selectedInstrument.lotSize * this.state.selectedInstrument.unit,
                 selectedInstrumentId: this.state.selectedInstrument._id,
                 gain: this.state.selectedInstrument.gain
             }

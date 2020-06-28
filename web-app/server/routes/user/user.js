@@ -393,7 +393,6 @@ router.post('/sell-order', middleware.isAuthenticated, async (req, res) => {
       });
     }
 
-
     const transaction = {
       date: new Date(),
       ticker: req.body.ticker,
@@ -401,7 +400,7 @@ router.post('/sell-order', middleware.isAuthenticated, async (req, res) => {
       openPrice: req.body.openPrice,
       closePrice: req.body.closePrice,
       lotSize: req.body.lotSize,
-      totalPrice: req.body.closePrice * req.body.lotSize,
+      totalPrice: req.body.closePrice * req.body.lotSize * req.body.unit,
       gain: req.body.gain,
       status: 'close',
     };
