@@ -17,6 +17,7 @@ import moment from 'moment';
 import { tradingUrl, backendUrl } from '../../../global-variables';
 import axios from 'axios';
 import { timeParse } from "d3-time-format";
+import TradingViewWidget from 'react-tradingview-widget';
 
 const { Option, OptGroup } = Select;
 const { RangePicker } = DatePicker;
@@ -360,7 +361,7 @@ class Trade extends React.Component {
               </div>
               : null}
 
-
+          <TradingViewWidget symbol="NASDAQ:AAPL" />
 
 
           <CustomModal visible={this.state.buyModalVisible}
