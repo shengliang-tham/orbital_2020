@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 
 def instrumentPool():
     temp_dir = {}
-    url = "https://sg.finance.yahoo.com/quote/%5ESTI/components?p=%5ESTI"
+    url = "https://finance.yahoo.com/quote/%5EDJI/components?p=%5EDJI"
     page = requests.get(url)
     page_content = page.content
     # defining HTML Elements to look out for
@@ -34,12 +34,12 @@ def instrumentPool():
     df.columns = ["ticker", "ticker_name"]
     df["instrument"] = "stock"
     print(df)
-
+    
     # Forex
-    df2 = pd.DataFrame([["EUR_USD", "EUR/USD", "forex"],
-                        ["USD_JPY", "USD/JPY", "forex"],
-                        ["GBP_USD", "GBP_USD", "forex"],
-                        ["USD_CHF", "USD/CHF", "forex"]], columns=["ticker", "ticker_name", "instrument"])
+    df2 = pd.DataFrame([["OANDA:EURUSD", "EUR/USD", "forex"],
+                        ["OANDA:USDJPY", "USD/JPY", "forex"],
+                        ["OANDA:GBPUSD", "GBP_USD", "forex"],
+                        ["OANDA:USDCHF", "USD/CHF", "forex"]], columns=["ticker", "ticker_name", "instrument"])
     df = df.append(df2)
     return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
 
