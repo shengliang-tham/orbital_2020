@@ -17,7 +17,6 @@ import moment from 'moment';
 import { tradingUrl, backendUrl } from '../../../global-variables';
 import axios from 'axios';
 import { timeParse } from "d3-time-format";
-import TradingViewWidget from 'react-tradingview-widget';
 import TradingView from './Chart/TradingView/TradingView';
 
 const { Option, OptGroup } = Select;
@@ -43,30 +42,12 @@ const lotSize = 100;
 class Trade extends React.Component {
 
   buyModalRef = React.createRef();
-  // tradingRef = React.createRef();
 
   state = {
     buyModalVisible: false,
-    stocksArray: [{
-      instrument: "stock",
-      ticker: 'BMV-S',
-      ticker_name: 'BMW'
-    }, {
-      instrument: "forex",
-      ticker: 'OANDA:EURUSD',
-      ticker_name: 'EUR/USD'
-    }],
-    // stocksArray: [],
+    stocksArray: [],
     forexArray: [],
-    timeFrame: [{ display: "1 min", value: "1" },
-    { display: "5 min", value: "5" },
-    { display: "15 min", value: "15" },
-    { display: "30 min", value: "30" },
-    { display: "60 min", value: "60" },
-    { display: "Daily", value: "D" },
-    { display: "Weekly", value: "W" }, ,
-    { display: "Monthly", value: "M" }],
-    // timeFrame: [],
+    timeFrame: [],
     chartData: [],
     // chartData: [
     //   {
@@ -97,21 +78,33 @@ class Trade extends React.Component {
     //   }],
     startDate: moment(),
     endDate: moment(),
-    // selectedInstrument: null,
-    selectedInstrument: "OANDA:EURUSD",
-    type: null,
+    selectedInstrument: null,
+    selectedType: null,
     selectedTimeFrame: null,
-    selectedTimeFrameValue: 'D',
-    // selectedTimeFrameValue: null,
-    disabledButtons: false
+    selectedTimeFrameValue: null,
+    disabledButtons: false,
+    currentPrice: []
   }
 
 
 
-  showBuyModal = () => {
-    this.setState({
-      buyModalVisible: true,
-    });
+  showBuyModal = async () => {
+    this.props.toggleLoading();
+    // const todayDate = moment().format(dateFormat);
+    const todayDate = moment('07/02/2020').format(dateFormat)
+    console.log(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=1&startDate=${todayDate}&endDate=${todayDate}`)
+    const response = await axios(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=1&startDate=${todayDate}&endDate=${todayDate}`)
+    console.log(response)
+    if (response.data.success) {
+
+      this.setState({
+        buyModalVisible: true,
+        currentPrice: response.data.data[response.data.data.length - 1]
+      });
+    }
+
+    this.props.toggleLoading();
+    console.log(this.state)
 
   }
 
@@ -125,16 +118,16 @@ class Trade extends React.Component {
     try {
       this.props.toggleLoading();
 
-      // await this.fetchInstruments();
+      await this.fetchInstruments();
       await this.fetchTimeFrame();
 
-      const params = {
-        ticker: this.state.stocksArray[0].ticker,
-        interval: this.state.timeFrame[0].value,
-        startDate: this.state.startDate.format(dateFormat),
-        endDate: this.state.endDate.format(dateFormat),
-        type: this.state.type
-      }
+      // const params = {
+      //   ticker: this.state.stocksArray[0].ticker,
+      //   interval: this.state.timeFrame[0].value,
+      //   startDate: this.state.startDate.format(dateFormat),
+      //   endDate: this.state.endDate.format(dateFormat),
+      //   selectedType: this.state.type
+      // }
 
       // await this.fetchChart(params);
 
@@ -167,7 +160,7 @@ class Trade extends React.Component {
       stocksArray: newstocksArray,
       forexArray: newforexArray,
       selectedInstrument: newstocksArray[0].ticker,
-      type: newstocksArray[0].instrument
+      selectedType: newstocksArray[0].instrument
     })
   }
 
@@ -203,21 +196,33 @@ class Trade extends React.Component {
   }
 
   handleInstrumentChange = async (value, index) => {
+    this.props.toggleLoading();
+
+    let category = this.state.stocksArray.find(stock => stock.ticker === value)
+    let instrumentType;
+    if (category) {
+      instrumentType = "stock"
+    } else {
+      instrumentType = "forex"
+    }
+
     this.setState({
       ...this.state,
-      selectedInstrument: value
+      selectedInstrument: value,
+      selectedType: instrumentType
     })
+    this.props.toggleLoading();
 
-    // console.log(this.tradingRef.current)
   }
 
   handleTimeChange = async (value, index) => {
+    this.props.toggleLoading();
     this.setState({
       ...this.state,
       selectedTimeFrame: value,
       selectedTimeFrameValue: index.value
     })
-    console.log(this.state)
+    this.props.toggleLoading();
 
   }
 
@@ -267,26 +272,26 @@ class Trade extends React.Component {
   //   this.props.toggleLoading();
   // }
 
-  dateOnChange = async (dateArray) => {
-    console.log(dateArray)
-    this.props.toggleLoading();
+  // dateOnChange = async (dateArray) => {
+  //   console.log(dateArray)
+  //   this.props.toggleLoading();
 
-    this.setState({
-      ...this.state,
-      startDate: dateArray[0],
-      endDate: dateArray[1],
-    })
+  //   this.setState({
+  //     ...this.state,
+  //     startDate: dateArray[0],
+  //     endDate: dateArray[1],
+  //   })
 
-    const params = {
-      ticker: this.state.selectedInstrument,
-      interval: this.state.selectedTimeFrameValue,
-      startDate: dateArray[0].format(dateFormat),
-      endDate: dateArray[1].format(dateFormat),
-      type: this.state.type
-    }
-    await this.fetchChart(params);
-    this.props.toggleLoading();
-  }
+  //   const params = {
+  //     ticker: this.state.selectedInstrument,
+  //     interval: this.state.selectedTimeFrameValue,
+  //     startDate: dateArray[0].format(dateFormat),
+  //     endDate: dateArray[1].format(dateFormat),
+  //     type: this.state.type
+  //   }
+  //   await this.fetchChart(params);
+  //   this.props.toggleLoading();
+  // }
 
   onBuyModal = async (form) => {
     console.log(form)
@@ -328,15 +333,15 @@ class Trade extends React.Component {
     this.buyModalRef.setFieldsValue({ totalPrice: lotSize * allValues.currentPrice * allValues.unit })
   }
 
-  setBuyModalRef = element => {
+  setBuyModalRef = async (element) => {
     this.buyModalRef = element
-    // console.log(this.buyModalRef)
     if (this.state.buyModalVisible) {
+
       this.buyModalRef.setFieldsValue({
         unit: 1,
         lotSize: lotSize,
-        currentPrice: this.state.chartData[this.state.chartData.length - 1].open,
-        totalPrice: 100 * this.state.chartData[this.state.chartData.length - 1].open,
+        currentPrice: this.state.currentPrice.open,
+        totalPrice: 100 * this.state.currentPrice.open,
         accountBalance: this.props.user.accountBalance
       })
 
@@ -367,14 +372,14 @@ class Trade extends React.Component {
               </Select>
 
             </Col>
-            <Col>
+            {/* <Col>
               <RangePicker defaultValue={[moment(this.state.startDate, dateFormat), moment(this.state.endDate, dateFormat)]}
                 onChange={this.dateOnChange}
                 format={dateFormat} />
-            </Col>
+            </Col> */}
           </Row>
           <Divider />
-          {
+          {/* {
             this.state.chartData.length ?
               <div>
                 <Row>
@@ -395,9 +400,10 @@ class Trade extends React.Component {
                   </Col>
                 </Row>
               </div>
-              : null}
+              : null} */}
 
           <TradingView instrument={this.state.selectedInstrument} timeframe={this.state.selectedTimeFrameValue} />
+          <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
 
           <CustomModal visible={this.state.buyModalVisible}
             handleOk={this.handleBuyModalOk}

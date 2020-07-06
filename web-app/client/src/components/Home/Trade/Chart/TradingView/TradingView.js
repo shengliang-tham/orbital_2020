@@ -4,18 +4,20 @@ import { ReactDOM } from 'react-dom';
 class TradingView extends Component {
     tradingRef = React.createRef();
 
+    async componentDidMount() {
+        this.tradingRef.appendChild(this.initialiseChart(this.props.instrument, this.props.timeframe));
+    }
+
     componentDidUpdate(prevProps, prevState) {
         console.log(prevProps)
         console.log(prevState)
-        if (prevProps.instrument !== this.props.instrument || prevProps.timeframe !== this.props.instrument) {
+        if (prevProps.instrument !== this.props.instrument || prevProps.timeframe !== this.props.timeframe) {
             this.tradingRef.appendChild(this.initialiseChart(this.props.instrument, this.props.timeframe));
         }
     }
 
-
     setTradingRef = element => {
         this.tradingRef = element;
-        this.tradingRef.appendChild(this.initialiseChart(this.props.instrument, this.props.timeframe));
     }
 
     initialiseChart = (instrument, timeframe) => {
