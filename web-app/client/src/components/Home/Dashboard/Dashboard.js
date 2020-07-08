@@ -12,14 +12,16 @@ class Dashboard extends Component {
         return (
             <div>
                 <Row>
-                    <Col span={16}>
-                        <Col span={22}>
+                    {/* <Col span={16}> */}
+                    <Col sm={24} md={24} lg={16}>
+                        <Col sm={24} md={24} lg={22}>
                             <OpenPosition></OpenPosition>
                             <Divider />
                             <TradeHistory></TradeHistory>
                         </Col>
                     </Col>
-                    <Col span={8}>
+                    <Col sm={24} md={24} lg={8}>
+                        {/* <Col span={8}> */}
                         <Balance></Balance>
                         <Divider />
                         {/* <TopPair></TopPair> */}

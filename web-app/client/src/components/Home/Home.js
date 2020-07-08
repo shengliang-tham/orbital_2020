@@ -99,10 +99,11 @@ class Home extends Component {
                     // console.log(item)
                     //If current price is lower than what user bought, its negative
                     if (parseFloat(response.data[ticker].currentPrice) < item.openPrice) {
-                        item.gain = '-' + ((item.openPrice - parseFloat(response.data[ticker].currentPrice)) / item.openPrice)
+                        item.gain = '-' + ((item.openPrice - parseFloat(response.data[ticker].currentPrice)) / item.openPrice).toFixed(2);
+                        // item.gain = Math.round( item.gain * 100 + Number.EPSILON ) / 100; //Conver
                     } else {
                         //Positive Gain
-                        item.gain = ((parseFloat(response.data[ticker].currentPrice) / item.openPrice) - 1) * 100;
+                        item.gain = (((parseFloat(response.data[ticker].currentPrice) / item.openPrice) - 1) * 100).toFixed(2);
                     }
                     item.currentPrice = parseFloat(response.data[ticker].currentPrice)
 
