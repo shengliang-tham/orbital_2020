@@ -30,7 +30,7 @@ const formItemLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
+    sm: { span: 24 },
   },
 };
 
@@ -403,7 +403,8 @@ class Trade extends React.Component {
               : null} */}
 
           <TradingView instrument={this.state.selectedInstrument} timeframe={this.state.selectedTimeFrameValue} />
-          <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
+          <Divider />
+          <Button size="large" className="buy-btn" onClick={this.showBuyModal}>Buy Instrument</Button>
 
           <CustomModal visible={this.state.buyModalVisible}
             handleOk={this.handleBuyModalOk}
@@ -446,6 +447,7 @@ class Trade extends React.Component {
                 name="accountBalance"
                 label="Account Balance">
                 <InputNumber
+                  style={{ width: '100%' }}
                   formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   parser={value => value.replace(/\$\s?|(,*)/g, '')}
                   disabled={true}
