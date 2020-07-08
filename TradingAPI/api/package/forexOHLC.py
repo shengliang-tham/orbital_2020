@@ -33,6 +33,8 @@ from ..Others.timeConversion import unix_Date, date_Unix
 def forexOHLC(bar_data, token):
     bar = bar_data
     Symbol = bar['ticker']
+    print(Symbol)
+    Symbol = Symbol[:9] + '_' +Symbol[9:]
     resolution = str(bar['interval'])  # 1,5 etc etc
     t_Start = str(date_Unix(bar['startDate']))  # start time
 
