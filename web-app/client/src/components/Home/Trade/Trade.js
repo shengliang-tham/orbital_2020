@@ -146,6 +146,7 @@ class Trade extends React.Component {
 
   fetchInstruments = async () => {
     const instruments = await axios.get(tradingUrl + '/instrument-pool')
+    console.log(instruments)
     const newstocksArray = instruments.data.filter(obj => {
       return obj.instrument === 'stock'
     })
@@ -354,10 +355,10 @@ class Trade extends React.Component {
         <div className="trade">
           <Row>
             <Col>
-              <Select style={{ width: 200 }} onChange={this.handleInstrumentChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
+              <Select style={{ width: '100%' }} onChange={this.handleInstrumentChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
                 <OptGroup label="Stock">
                   {this.state ? this.state.stocksArray
-                    .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker}</Option>) : null}
+                    .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker_name}</Option>) : null}
                 </OptGroup>
                 <OptGroup label="Forex">
                   {this.state ? this.state.forexArray

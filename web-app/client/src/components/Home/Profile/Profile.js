@@ -18,7 +18,7 @@ class Profile extends Component {
         return (
             <div>
                 <Row>
-                    <Col span={12}>
+                    <Col sm={24} md={24} lg={16}>
                         <AccountDetails></AccountDetails>
                         <Divider />
 
