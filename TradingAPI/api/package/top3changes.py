@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 def getTop3():
    temp_dir = {}
    temp_dir2 = {}
-   url = "https://sg.finance.yahoo.com/quote/%5ESTI/components?p=%5ESTI"
+   url = "https://finance.yahoo.com/quote/%5EDJI/components?p=%5EDJI"
    page = requests.get(url)
    page_content = page.content
    ### defining HTML Elements to look out for
