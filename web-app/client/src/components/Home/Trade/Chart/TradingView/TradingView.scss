@@ -1,0 +1,30 @@
+.trading-view {
+	$screen-sm-min: 768px;
+	$screen-md-min: 992px;
+	$screen-lg-min: 1200px;
+
+	#tradingview_2d59c {
+		height: 100px !important;
+	}
+
+	/* Small devices (tablets, 768px and up) */
+	@media (min-width: $screen-sm-min) {
+		#tradingview_2d59c {
+			height: 150px !important;
+		}
+	}
+
+	/* Medium devices (desktops, 992px and up) */
+	@media (min-width: $screen-md-min) {
+		#tradingview_2d59c {
+			height: 300px !important;
+		}
+	}
+
+	/* Large devices (large desktops, 1200px and up) */
+	@media (min-width: $screen-lg-min) {
+		#tradingview_2d59c {
+			height: 500px !important;
+		}
+	}
+}

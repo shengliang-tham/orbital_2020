@@ -30,7 +30,7 @@ const formItemLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
+    sm: { span: 24 },
   },
 };
 
@@ -146,6 +146,7 @@ class Trade extends React.Component {
 
   fetchInstruments = async () => {
     const instruments = await axios.get(tradingUrl + '/instrument-pool')
+    console.log(instruments)
     const newstocksArray = instruments.data.filter(obj => {
       return obj.instrument === 'stock'
     })
@@ -354,10 +355,10 @@ class Trade extends React.Component {
         <div className="trade">
           <Row>
             <Col>
-              <Select style={{ width: 200 }} onChange={this.handleInstrumentChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
+              <Select style={{ width: '100%' }} onChange={this.handleInstrumentChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
                 <OptGroup label="Stock">
                   {this.state ? this.state.stocksArray
-                    .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker}</Option>) : null}
+                    .map((item, index) => <Option key={index} value={item.ticker}>{item.ticker_name}</Option>) : null}
                 </OptGroup>
                 <OptGroup label="Forex">
                   {this.state ? this.state.forexArray
@@ -403,7 +404,8 @@ class Trade extends React.Component {
               : null} */}
 
           <TradingView instrument={this.state.selectedInstrument} timeframe={this.state.selectedTimeFrameValue} />
-          <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
+          <Divider />
+          <Button size="large" className="buy-btn" onClick={this.showBuyModal}>Buy Instrument</Button>
 
           <CustomModal visible={this.state.buyModalVisible}
             handleOk={this.handleBuyModalOk}
@@ -446,6 +448,7 @@ class Trade extends React.Component {
                 name="accountBalance"
                 label="Account Balance">
                 <InputNumber
+                  style={{ width: '100%' }}
                   formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   parser={value => value.replace(/\$\s?|(,*)/g, '')}
                   disabled={true}

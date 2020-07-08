@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ReactDOM } from 'react-dom';
+import './TradingView.scss';
 
 class TradingView extends Component {
     tradingRef = React.createRef();
@@ -23,14 +24,13 @@ class TradingView extends Component {
     initialiseChart = (instrument, timeframe) => {
         const script = document.createElement('script');
         script.innerHTML = `new window.TradingView.widget({
+              "autosize":true,
               "symbol": "${instrument}",
               "interval": "${timeframe}",
               "timezone": "Asia/Singapore",
               "theme": "light",
               "style": "1",
               "locale": "en",
-              "height": 610,
-              "width":1500,
               "toolbar_bg": "#f1f3f6",
               "enable_publishing": false,
               "hide_top_toolbar": true,

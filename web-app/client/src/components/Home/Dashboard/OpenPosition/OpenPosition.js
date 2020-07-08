@@ -36,6 +36,7 @@ class OpenPosition extends Component {
             dataIndex: 'ticker',
             key: 'ticker',
             render: text => <a>{text}</a>,
+            responsive: ['md', 'lg'],
         },
         {
             title: 'Price Bought At',
@@ -108,7 +109,7 @@ class OpenPosition extends Component {
                 lotSize: this.state.selectedInstrument.lotSize,
                 totalPrice: this.state.selectedInstrument.currentPrice * this.state.selectedInstrument.lotSize * this.state.selectedInstrument.unit,
                 selectedInstrumentId: this.state.selectedInstrument._id,
-                gain: this.state.selectedInstrument.gain
+                gain: (Math.round(this.state.selectedInstrument.gain * 100 + Number.EPSILON) / 100)
             }
 
             const response = await axios.post(backendUrl + '/user/sell-order', sellOrder);
