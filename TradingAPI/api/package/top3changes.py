@@ -37,7 +37,7 @@ def getTop3():
    df.columns = ["name","percentageChanged"]
    ## converting negative percentages to postives
    df['percentageChangePos'] = df['percentageChanged'].apply(lambda x: math.sqrt(float(x)*float(x)))
-   df['exchange'] = "STI"
+   df['exchange'] = "DJI"
    df.reset_index(drop=True, inplace=True)
    df2 = df
    ## sort value based on biggest change
