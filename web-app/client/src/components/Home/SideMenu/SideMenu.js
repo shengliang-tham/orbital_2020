@@ -16,6 +16,7 @@ import Profile from '../Profile/Profile';
 import indomieHome from '../../../assets/Images/indomie-home.png'
 import { connect } from 'react-redux'
 import * as actionTypes from '../../../store/actions/authActions';
+import Backtest from '../Backtest/Backtest';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -47,7 +48,10 @@ class SideMenu extends Component {
         let components = (<Dashboard></Dashboard>);
         if (this.state.defaultKey == 2) {
             components = (<Trade></Trade>)
-        } else if (this.state.defaultKey == 4) {
+        } else if (this.state.defaultKey == 3) {
+            components = (<Backtest></Backtest>)
+        }
+        else if (this.state.defaultKey == 4) {
             components = (<Profile></Profile>)
         }
 
@@ -66,9 +70,9 @@ class SideMenu extends Component {
                             <Menu.Item key="2" icon={<LineChartOutlined />} onClick={() => this.onClickMenu("2")}>
                                 Trade
                                 </Menu.Item>
-                            {/* <Menu.Item key="3" icon={<HistoryOutlined />}>
-                                Trade History
-                              </Menu.Item> */}
+                            <Menu.Item key="3" icon={<HistoryOutlined />} onClick={() => this.onClickMenu("3")}>
+                                Back Test
+                              </Menu.Item>
                             {/* <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
                                 <Menu.Item key="4">Change Password</Menu.Item>
                             </SubMenu> */}
