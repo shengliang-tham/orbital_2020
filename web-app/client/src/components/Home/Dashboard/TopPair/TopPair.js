@@ -92,6 +92,12 @@ const mapStateToProps = state => {
     }
 }
 
+const mapDispatchToProps = dispatch => {
+    return {
+        toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
+    }
+}
 
 
-export default connect(mapStateToProps)(TopPair);
+
+export default connect(mapStateToProps, mapDispatchToProps)(TopPair);
