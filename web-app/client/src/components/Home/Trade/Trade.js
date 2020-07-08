@@ -92,7 +92,7 @@ class Trade extends React.Component {
     this.props.toggleLoading();
     // const todayDate = moment().format(dateFormat);
     const todayDate = moment('07/02/2020').format(dateFormat)
-    console.log(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=1&startDate=${todayDate}&endDate=${todayDate}`)
+    console.log(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=${this.state.selectedTimeFrameValue}&startDate=${todayDate}&endDate=${todayDate}`)
     const response = await axios(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=1&startDate=${todayDate}&endDate=${todayDate}`)
     console.log(response)
     if (response.data.success) {
