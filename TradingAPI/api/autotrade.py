@@ -241,7 +241,7 @@ def autotrade_OrderOnly(t_Start,
         if (orderList[-1].closingPrice == 0.0):
             orderList[-1].closeOrder(arr[-1][0],arr[-1][4])
     
-    storedval  = ''
+    storedval  = pd.DataFrame(columns=['Opening Time','Ending Time','Lot Size','Order Type','Profit','Entry Price','Closing Price'])
     for obj in orderList:
-        storedval += str(obj)
-    return storedval        
+        storedval = storedval.append(obj.returnPanda(), ignore_index=True)
+    return json.dumps(json.loads(storedval.to_json(orient='records')), indent=2)    
