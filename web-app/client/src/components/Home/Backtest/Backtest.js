@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Row, Select, DatePicker, Col, InputNumber } from 'antd';
+import { Row, Select, DatePicker, Col, InputNumber, Button } from 'antd';
 import Form from 'antd/lib/form/Form';
+import axios from 'axios';
+import { tradingUrl } from '../../../global-variables';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -10,24 +12,30 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
+  wrapperCol: { offset: 10, span: 16 },
 };
 
+const dateFormat = 'D/MM/YYYY';
 
 class Backtest extends Component {
 
-  handleChange = (value) => {
-    console.log(`selected ${value}`);
-  }
 
-  onFinish = values => {
+  onGenerate = async (values) => {
     console.log('Success:', values);
-  };
 
-  onFinishFailed = errorInfo => {
-    console.log('Failed:', errorInfo);
-  };
+    const response = await axios.get(tradingUrl + '/backtestForex_Summary', {
+      params: {
+        't_Start': values.dates[0].format(dateFormat),
+        't_End': values.dates[1].format(dateFormat),
+        'Symbol': values.ticker,
+        'SLpips': values.pips,
+        'balance': values.amount,
+        'risk': values.risk
+      }
+    })
 
+    console.log(response)
+  };
 
   render() {
 
@@ -40,8 +48,7 @@ class Backtest extends Component {
             {...layout}
             name="basic"
             initialValues={{ remember: true }}
-            onFinish={this.onFinish}
-            onFinishFailed={this.onFinishFailed}
+            onFinish={this.onGenerate}
           >
 
             <Form.Item
@@ -61,7 +68,7 @@ class Backtest extends Component {
                 required: true, message: 'Please select the ticker'
               }]}
             >
-              <Select defaultValue="EUR_USD" style={{ width: 120 }} onChange={this.handleChange}>
+              <Select style={{ width: 120 }} >
                 <Option value="EUR_USD">EUR_USD</Option>
               </Select>
             </Form.Item>
@@ -94,6 +101,12 @@ class Backtest extends Component {
               }]}
             >
               <InputNumber min={1} />
+            </Form.Item>
+
+            <Form.Item {...tailLayout}>
+              <Button type="primary" htmlType="submit">
+                Submit
+             </Button>
             </Form.Item>
           </Form>
 

@@ -10,6 +10,7 @@ import configureMockStore from 'redux-mock-store';
 import * as global from '../../global-variables';
 import * as globalActionTypes from '../../store/actions/globalActions';
 import Login from './Login';
+import { console } from '../../mocks/matchMedia';
 
 let axios = require("axios");
 let MockAdapter = require("axios-mock-adapter");
@@ -46,11 +47,14 @@ describe('Login Component', () => {
 
     it('should dispatch loading upon form submission', () => {
         const formComponent = wrapper.find('form');
+        formComponent.find('#email').instance().value = 'asd@asd.com'
+        formComponent.find('#password').instance().value = 'test'
         formComponent.simulate('submit')
-        mock.onPost(global.backendUrl + '/auth/login', {
-            email: 'asd@asdasd.com',
-            password: 'test'
-        })
+
+        // mock.onPost(global.backendUrl + '/auth/login', {
+        //     email: 'asd@asdasd.com',
+        //     password: 'test'
+        // })
 
         const expectedActions = [{ type: globalActionTypes.TOGGLE_LOADING }];
         expect(store.getActions()).toEqual(expectedActions)
@@ -68,5 +72,17 @@ describe('Login Component', () => {
         expect(wrapper.find('.ant-notification')).toBeTruthy();
         console.log(wrapper.find('.ant-notification').debug())
 
+    })
+
+    it('should display email validation if its empty', () => {
+        const formComponent = wrapper.find('form');
+        formComponent.simulate('submit')
+        expect(wrapper.containsMatchingElement(<div className="invalid-feedback">Please choose a email.</div>)).toBeTruthy()
+    })
+
+    it('should display password validation if its empty', () => {
+        const formComponent = wrapper.find('form');
+        formComponent.simulate('submit')
+        expect(wrapper.containsMatchingElement(<div className="invalid-feedback">Please enter a your password.</div>)).toBeTruthy()
     })
 })
