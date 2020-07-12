@@ -8,7 +8,7 @@ Created on Sun Jun 21 11:46:33 2020
 import time
 import datetime as dt
 from datetime import datetime, timedelta
-
+import pandas as pd
 
 class orderClass:
     def __init__(self, enterdate, entryprice, status, lotSize):
@@ -27,7 +27,11 @@ class orderClass:
             self.gainLoss = round(((self.closingPrice - self.entryprice)/10000) * (100000*self.lotSize),2)
         if (self.status == 'short'):
             self.gainLoss = round(((self.entryprice - self.closingPrice)/10000) * (100000*self.lotSize),2)
-
+    
+    def returnPanda(self):
+        row = pd.DataFrame(columns=['Opening Time','Ending Time','Lot Size','Order Type','Profit','Entry Price','Closing Price'])
+        row.loc[0] = [self.enterdate,self.closingDate,self.lotSize,self.status,self.gainLoss,self.entryprice,self.closingPrice]
+        return row
     # def __str__(self):
     #     startingTime = '"'+ "starting Time"+'"'+": "+ '"'+ self.enterdate+ '",'+'"'+"ending Time"+'"'+": " + '"'+ self.closingDate+'",'
     #     lotsize = '"'+ "Lot Size"+'"'+": "+ '"'+ str(self.lotSize)+'",'
