@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Select, DatePicker, Col, InputNumber, Button } from 'antd';
+import { Row, Select, DatePicker, Col, InputNumber, Button, Timeline, Divider, Popover, Statistic } from 'antd';
 import Form from 'antd/lib/form/Form';
 import axios from 'axios';
 import { tradingUrl } from '../../../global-variables';
 import './Backtest.scss'
 import moment from 'moment';
+import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { connect } from 'react-redux';
+import * as globalActionTypes from '../../../store/actions/globalActions';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -17,12 +20,26 @@ const layout = {
 //   wrapperCol: { offset: 10, span: 16 },
 // };
 
+const popoverTitle = `What is this?`;
+
+const backTestingPopover = `Backtesting is a method for seeing how well a strategy would have done for historical data.
+For indomie autotrading and back testing feature. We are using a crossover moving average straregy
+where the moving average over the span of 50 (MA50) cross the moving average over the span of 100 (MA100) to indicate certain buy/sell signals.
+Based on the your input, the application will generate the results. `;
+const riskPopover = `How much percent of your account do you want to risk per trade? Values range from 1 to 100%. Recommend is < 5%`;
+
+
 const dateFormat = 'DD/MM/YYYY';
 
 class Backtest extends Component {
 
+  state = {
+    backtestData: [],
+    profit: 0
+  }
 
   onGenerate = async (values) => {
+    this.props.toggleLoading();
     console.log('Success:', values);
 
     const startDate = values.dates[0].format(dateFormat)
@@ -40,17 +57,24 @@ class Backtest extends Component {
     })
 
     console.log(response)
+    this.setState({
+      ...this.state,
+      backtestData: response.data
+    })
+
+    this.props.toggleLoading();
   };
 
   render() {
 
     return (
       <div className="back-test">
+
         <Form
           {...layout}
           className="ant-advanced-search-form"
           name="basic"
-          initialValues={{ remember: true, pips: 1, amount: 2000, risk: 2, ticker: 'EUR_USD', dates: [moment('10//7/2020', dateFormat), moment('13/7/2020', dateFormat)] }}
+          initialValues={{ remember: true, pips: 2, amount: 2000, risk: 2, ticker: 'EUR_USD', dates: [moment('10//7/2020', dateFormat), moment('13/7/2020', dateFormat)] }}
           onFinish={this.onGenerate}
         >
           <Row gutter={24}>
@@ -87,6 +111,11 @@ class Backtest extends Component {
                 }]}
               >
                 <InputNumber min={1} />
+                <span className="help">
+                  <Popover content={riskPopover} title={popoverTitle} trigger="hover">
+                    <QuestionCircleOutlined />
+                  </Popover>
+                </span>
               </Form.Item>
             </Col>
             <Col xl={{ span: 8 }} xs={{ span: 24 }}>
@@ -108,94 +137,66 @@ class Backtest extends Component {
                   required: true, message: 'Please input the risk'
                 }]}
               >
-                <InputNumber min={1} />
+                <InputNumber min={1} max={100} />
+                <span className="help">
+                  <Popover content={riskPopover} title={popoverTitle} trigger="hover">
+                    <QuestionCircleOutlined />
+                  </Popover>
+                </span>
               </Form.Item>
+
             </Col>
+
             <Col xl={{ span: 24 }} xs={{ span: 24, offset: 1 }}>
-              <Button type="primary" htmlType="submit">
-                Generate Report
+              <Popover content={backTestingPopover} title={popoverTitle} trigger="hover" placement="bottom">
+                <Button type="primary" htmlType="submit">
+                  Generate Report
              </Button>
+              </Popover>
+
             </Col>
+
           </Row>
         </Form>
-
+        <Divider />
         <Row>
-          {/* <Form
-            {...layout}
-            name="basic"
-            className="ant-advanced-search-form"
-            initialValues={{ remember: true }}
-            onFinish={this.onGenerate}
-          >
-            <Col xl={{ span: 8 }} xs={{ span: 24 }}>
-              <Form.Item
-                label="Date range"
-                name="dates"
-                rules={[{
-                  required: true, message: 'Please select the dates'
-                }]}
-              >
-                <RangePicker />
-              </Form.Item>
+
+          {this.state.backtestData ? this.state.backtestData.map((item, key) =>
+
+            <Col xl={{ span: 6, offset: 1 }} key={key}>
+              <Timeline className="time-line">
+                <Timeline.Item color="CornflowerBlue">Execute Purchase Order {item['Opening Time']}</Timeline.Item>
+                <Timeline.Item color="blue" dot={<InfoCircleOutlined style={{ fontSize: '16px' }} />}>
+                  <p>Entry Price : ${item['Entry Price']}</p>
+                  <p>Closing Price : ${item['Closing Price']}</p>
+                </Timeline.Item>
+                <Timeline.Item color="red">
+                  <p>Profit : {item['Profit']}</p>
+                </Timeline.Item>
+                <Timeline.Item color="CornflowerBlue">Execute Sell Order {item['Ending Time']}</Timeline.Item>
+              </Timeline>
             </Col>
-            <Form.Item
-              label="Select Tickers"
-              name="ticker"
-              rules={[{
-                required: true, message: 'Please select the ticker'
-              }]}
-            >
-              <Select style={{ width: 120 }} >
-                <Option value="EUR_USD">EUR_USD</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Stop Loss (pips)"
-              name="pips"
-              rules={[{
-                required: true, message: 'Please select the pips'
-              }]}
-            >
-              <InputNumber min={1} />
-            </Form.Item>
 
-            <Form.Item
-              label="Amount to trade"
-              name="amount"
-              rules={[{
-                required: true, message: 'Please input the amount'
-              }]}
-            >
-              <InputNumber min={1} />
-            </Form.Item>
-
-            <Form.Item
-              label="Risk"
-              name="risk"
-              rules={[{
-                required: true, message: 'Please input the risk'
-              }]}
-            >
-              <InputNumber min={1} />
-            </Form.Item>
-
-            <Form.Item {...tailLayout}>
-              <Button type="primary" htmlType="submit">
-                Submit
-             </Button>
-            </Form.Item>
-          </Form> */}
-
+          ) : null}
         </Row>
-        <Row>
+        <Divider />
+        {this.state.backTestData ?
 
+          <Row>
+            <Statistic title="Active Users" value={112893} />
+          </Row>
 
-
-        </Row>
-
-      </div>
+          : null}
+      </div >
     );
   }
 }
 
-export default Backtest;
+const mapDispatchToProps = dispatch => {
+  return {
+    toggleLoading: () => { dispatch({ type: globalActionTypes.TOGGLE_LOADING }) },
+  }
+
+}
+
+export default connect(null, mapDispatchToProps)(Backtest);
