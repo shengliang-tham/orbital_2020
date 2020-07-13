@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Select, DatePicker, Col, InputNumber, Button, Timeline, Divider, Popover, Statistic } from 'antd';
+import { Row, Select, DatePicker, Col, InputNumber, Button, Timeline, Divider, Popover, Statistic, Tooltip } from 'antd';
 import Form from 'antd/lib/form/Form';
 import axios from 'axios';
 import { tradingUrl } from '../../../global-variables';
@@ -26,8 +26,10 @@ const backTestingPopover = `Backtesting is a method for seeing how well a strate
 For indomie autotrading and back testing feature. We are using a crossover moving average straregy
 where the moving average over the span of 50 (MA50) cross the moving average over the span of 100 (MA100) to indicate certain buy/sell signals.
 Based on the your input, the application will generate the results. `;
+
 const riskPopover = `How much percent of your account do you want to risk per trade? Values range from 1 to 100%. Recommend is < 5%`;
 
+const pipsPopover = `How much pips (4 decimal place) are u willing to lose`;
 
 const dateFormat = 'DD/MM/YYYY';
 
@@ -103,19 +105,22 @@ class Backtest extends Component {
               </Form.Item>
             </Col>
             <Col xl={{ span: 8 }} xs={{ span: 24 }}>
-              <Form.Item
-                label="Stop Loss (pips)"
-                name="pips"
-                rules={[{
-                  required: true, message: 'Please select the pips'
-                }]}
-              >
-                <InputNumber min={1} />
-                <span className="help">
-                  <Popover content={riskPopover} title={popoverTitle} trigger="hover">
+              <Form.Item label="Stop Loss (pips)">
+                <Form.Item
+                  name="pips"
+                  noStyle
+                  rules={[{
+                    required: true, message: 'Please select the pips'
+                  }]}
+                >
+                  <InputNumber min={1} />
+                </Form.Item>
+
+                <Tooltip title={pipsPopover}>
+                  <span className="help">
                     <QuestionCircleOutlined />
-                  </Popover>
-                </span>
+                  </span>
+                </Tooltip>
               </Form.Item>
             </Col>
             <Col xl={{ span: 8 }} xs={{ span: 24 }}>
@@ -129,30 +134,32 @@ class Backtest extends Component {
                 <InputNumber min={1} />
               </Form.Item>
             </Col>
-            <Col xl={{ span: 8 }} xs={{ span: 24 }}>
-              <Form.Item
-                label="Risk"
-                name="risk"
-                rules={[{
-                  required: true, message: 'Please input the risk'
-                }]}
-              >
-                <InputNumber min={1} max={100} />
-                <span className="help">
-                  <Popover content={riskPopover} title={popoverTitle} trigger="hover">
-                    <QuestionCircleOutlined />
-                  </Popover>
-                </span>
-              </Form.Item>
 
+            <Col xl={{ span: 8 }} xs={{ span: 24 }}>
+              <Form.Item label="Risk">
+                <Form.Item
+                  name="risk"
+                  noStyle
+                  rules={[{
+                    required: true, message: 'Please input the risk'
+                  }]}
+                >
+                  <InputNumber min={1} max={100} />
+                </Form.Item>
+                <Tooltip title={riskPopover}>
+                  <span className="help">
+                    <QuestionCircleOutlined />
+                  </span>
+                </Tooltip>
+              </Form.Item>
             </Col>
 
             <Col xl={{ span: 24 }} xs={{ span: 24, offset: 1 }}>
-              <Popover content={backTestingPopover} title={popoverTitle} trigger="hover" placement="bottom">
+              <Tooltip title={backTestingPopover}>
                 <Button type="primary" htmlType="submit">
                   Generate Report
              </Button>
-              </Popover>
+              </Tooltip>
 
             </Col>
 
