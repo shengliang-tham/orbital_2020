@@ -6,9 +6,12 @@ const path = require('path');
 const asyncify = require('express-asyncify');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const TelegramBot = require('node-telegram-bot-api');
 const config = require('./config/config');
+const User = require('./models/user');
 
 const PORT = process.env.PORT || 5000;
+const telegramToken = '1296018483:AAEVNfj_Q2GDeG9MVyqUCh57yXDXeB9_iyI';
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -29,6 +32,8 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+const bot = new TelegramBot(telegramToken, { polling: true });
 
 /**
  * Importing routes
@@ -104,5 +109,28 @@ mongoose.connect(mongoUrl, {
 });
 
 app.listen(PORT, () => {
+  bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+
+    if (msg.text.includes('/start')) {
+      const userId = msg.text.substring(7);
+      console.log(userId);
+      if (userId) {
+        const user = await User.findOneAndUpdate({
+          _id: userId,
+        }, {
+          $set: {
+            telegramId: msg.from.id,
+          },
+        });
+        bot.sendMessage(chatId, `Hello ${msg.chat.username}, your account has been linked !`);
+      } else {
+        bot.sendMessage(chatId, `Hello ${msg.chat.username}, please click through the application to link your account!`);
+      }
+    }
+    console.log(msg)
+    // send a message to the chat acknowledging receipt of their message
+    // bot.sendMessage(chatId, 'Received your message');
+  });
   console.log(`Server started at ${PORT}`);
 });

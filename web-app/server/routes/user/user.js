@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const middleware = require('../middleware/auth');
 const { authTypeEmail } = require('../auth/authType');
 const User = require('../../models/user');
+const { telegramKey } = require('../../config/config');
 
 /**
  * @swagger
@@ -432,4 +433,31 @@ router.post('/sell-order', middleware.isAuthenticated, async (req, res) => {
     });
   }
 });
+
+router.get('/telegram-activate', middleware.isAuthenticated, async (req, res) => {
+  const { authType } = req.decoded;
+
+  let user;
+
+  try {
+    if (authType === authTypeEmail) {
+      user = await User.findOne({
+        _id: new ObjectId(req.decoded.id),
+      });
+    } else {
+      user = await User.findOne({
+        [authType]: req.decoded.id,
+      });
+    }
+
+    const url = `https://telegram.me/IndomieOrbitalBot?start=${user._id}`;
+    res.json(url);
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error,
+    });
+  }
+});
+
 module.exports = router;

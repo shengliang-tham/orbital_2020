@@ -9,6 +9,7 @@ import axios from 'axios';
 import { backendUrl } from '../../../global-variables'
 import * as globalActionTypes from '../../../store/actions/globalActions'
 import { connect } from "react-redux";
+import Telegram from './Telegram/Telegram';
 
 const stripePromise = loadStripe('pk_test_wN093ZP2n4Buel4ASaVoZPIS');
 
@@ -18,7 +19,7 @@ class Profile extends Component {
         return (
             <div>
                 <Row>
-                    <Col sm={24} md={24} lg={16}>
+                    <Col sm={24} md={24} lg={14}>
                         <AccountDetails></AccountDetails>
                         <Divider />
 
@@ -30,7 +31,12 @@ class Profile extends Component {
                             </ElementsConsumer>
                         </Elements>
                     </Col>
+                    <Col sm={24} md={24} lg={2}></Col>
+                    <Col sm={24} md={24} lg={8}>
+                        <Telegram></Telegram>
+                    </Col>
                 </Row>
+                <Divider />
             </div>
         );
     }
