@@ -65,19 +65,26 @@ class Register extends Component {
       }).then((response) => {
         console.log(response)
         if (response.data.success) {
-          this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
-          localStorage.setItem('token', response.data.token)
-          this.props.saveToken(response.data.token);
+          //   this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
+          //   localStorage.setItem('token', response.data.token)
+          //   this.props.saveToken(response.data.token);
+          //   notification.success({
+          //     message: 'Success',
+          //     description: "You have successfully signed up!!",
+          //     placement: 'bottomRight'
+          //   });
+          //   this.props.history.push("/home");
+          // } else {
+          //   notification.error({
+          //     message: 'Error',
+          //     description: response.data.message,
+          //     placement: 'bottomRight'
+          //   });
+          // }
+
           notification.success({
             message: 'Success',
-            description: "You have successfully signed up!!",
-            placement: 'bottomRight'
-          });
-          this.props.history.push("/home");
-        } else {
-          notification.error({
-            message: 'Error',
-            description: response.data.message,
+            description: "Please go and activate your email before logging in!",
             placement: 'bottomRight'
           });
         }

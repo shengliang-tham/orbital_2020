@@ -8,8 +8,12 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+
 const config = require('../../config/config');
 const User = require('../../models/user');
+const VerificationToken = require('../../models/verificationToken');
 const authTypes = require('./authType');
 
 const frontendUrl = process.env.NODE_ENV === 'production' ? 'https://orbital-2020.herokuapp.com/' : 'http://localhost:3000/';
@@ -139,11 +143,32 @@ router.post('/register', async (req, res) => {
         password: hash,
       });
       newUser = await newUser.save();
-      const token = await signToken(authTypes.authTypeEmail, newUser._id);
+
+      const verificationToken = new VerificationToken({ _userId: newUser._id, token: crypto.randomBytes(16).toString('hex') });
+      await verificationToken.save();
+      const transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: config.sendGrid.username, pass: config.sendGrid.password } });
+      const mailOptions = {
+        from: 'indomie.orbital@gmail.com',
+        to: newUser.email,
+        subject: 'Account Verification Token',
+        text: `${'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/'}${req.headers.host}\/auth/confirmation\/${verificationToken.token}\n`,
+      };
+
+      const response = await transporter.sendMail(mailOptions);
       res.json({
         success: true,
-        token,
       });
+
+      // transporter.sendMail(mailOptions, (err) => {
+      //   if (err) { return res.status(500).send({ msg: err.message }); }
+      //   res.status(200).send('A verification email has been sent to ' + user.email + '.');
+      // });
+
+      // const token = await signToken(authTypes.authTypeEmail, newUser._id);
+      // res.json({
+      //   success: true,
+      //   token,
+      // });
     }
   } catch (error) {
     res.json({
@@ -193,6 +218,13 @@ router.post('/login', async (req, res) => {
         message: 'No such user found',
       });
     } else {
+      if (!user.isVerified) {
+        res.json({
+          success: false,
+          message: 'Please activate your account first!',
+        });
+      }
+
       const samePassword = await bcrypt.compare(req.body.password, user.password);
       if (samePassword) {
         const token = await signToken('email', user._id);
@@ -212,6 +244,27 @@ router.post('/login', async (req, res) => {
       success: false,
       message: error,
     });
+  }
+});
+
+router.get('/confirmation/:token', async (req, res) => {
+  try {
+    const token = await VerificationToken.findOne({ token: req.params.token });
+    if (!token) return res.status(400).send('We were unable to find a valid token. Your token my have expired.');
+
+    const user = await User.findOneAndUpdate({
+      _id: token._userId,
+    }, {
+      $set: {
+        isVerified: true,
+      },
+    }, { returnOriginal: false });
+
+    if (!user) return res.status(400).send('We were unable to find a user for this token.');
+
+    res.status(200).send('The account has been verified. Please log in.');
+  } catch (error) {
+    res.status(500).send({ msg: error.message });
   }
 });
 

@@ -11,6 +11,10 @@ const mongoURL_DEV = 'mongodb://shengliang:asd123asd@ds239936.mlab.com:39936/orb
 const mongoURL = 'mongodb://shengliang:asd123asd@ds029106.mlab.com:29106/orbital';
 
 const telegramKey = '1296018483:AAEVNfj_Q2GDeG9MVyqUCh57yXDXeB9_iyI';
+const sendGrid = {
+  username: 'indomie.orbital@gmail.com',
+  password: '4dY$7C!VTpAs',
+}
 
 module.exports = {
   FACEBOOK,
@@ -18,4 +22,5 @@ module.exports = {
   mongoURL,
   secretKey: 'Orbital2020',
   mongoURL_DEV,
+  sendGrid,
 };
