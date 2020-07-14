@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Select, DatePicker, Col, InputNumber, Button, Timeline, Divider, Popover, Statistic, Tooltip } from 'antd';
+import { Row, Select, DatePicker, Col, InputNumber, Button, Timeline, Divider, Popover, Statistic, Tooltip, Descriptions } from 'antd';
 import Form from 'antd/lib/form/Form';
 import axios from 'axios';
 import { tradingUrl } from '../../../global-variables';
@@ -59,10 +59,18 @@ class Backtest extends Component {
     })
 
     console.log(response)
+
+    // const profit = response.data.reduce((total, item) => parseFloat(total['Profit']) + parseFloat(item['Profit']));
+    const profit = response.data.reduce((total, item) => total + parseFloat(item['Profit']), 0);
+    console.log(profit)
+
     this.setState({
       ...this.state,
-      backtestData: response.data
+      backtestData: response.data,
+      profit: profit
     })
+
+
 
     this.props.toggleLoading();
   };
@@ -76,7 +84,7 @@ class Backtest extends Component {
           {...layout}
           className="ant-advanced-search-form"
           name="basic"
-          initialValues={{ remember: true, pips: 2, amount: 2000, risk: 2, ticker: 'EUR_USD', dates: [moment('10//7/2020', dateFormat), moment('13/7/2020', dateFormat)] }}
+          initialValues={{ remember: true, pips: 2, amount: 2000, risk: 2, ticker: 'EUR_USD', dates: [moment('10/7/2020', dateFormat), moment('13/7/2020', dateFormat)] }}
           onFinish={this.onGenerate}
         >
           <Row gutter={24}>
@@ -187,12 +195,14 @@ class Backtest extends Component {
           ) : null}
         </Row>
         <Divider />
-        {this.state.backTestData ?
-
-          <Row>
-            <Statistic title="Active Users" value={112893} />
-          </Row>
-
+        {this.state.backtestData.length ?
+          // <Row>
+          //   <Statistic title="Total Profit" value={this.state.profit} />
+          // </Row>
+          <Descriptions title="Results" className="result">
+            <Descriptions.Item label="Total Profit">{this.state.profit}</Descriptions.Item>
+            <Descriptions.Item label="Total No. of Transactions">{this.state.backtestData.length}</Descriptions.Item>
+          </Descriptions>
           : null}
       </div >
     );
