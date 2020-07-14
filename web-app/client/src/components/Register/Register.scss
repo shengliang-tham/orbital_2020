@@ -1,6 +1,9 @@
 .Register {
-  .logo{
-    margin-top:5% !important;
+  height: 100%;
+  min-height: 100vh;
+
+  .logo {
+    margin-top: 5% !important;
   }
 
   .ant-form-item {
@@ -21,9 +24,9 @@
   a.ant-btn.ant-btn-primary {
     color: #000 !important;
   }
-  button.ant-btn.ant-btn-primary{
-    background-color: #FACB1B;
-    border-color: #FACB1B;
+  button.ant-btn.ant-btn-primary {
+    background-color: #facb1b;
+    border-color: #facb1b;
     color: #000;
   }
 
@@ -31,7 +34,7 @@
     .ant-form-item {
       width: 70%;
     }
-    button.ant-btn.ant-btn-primary{
+    button.ant-btn.ant-btn-primary {
       margin: 5% auto;
     }
   }

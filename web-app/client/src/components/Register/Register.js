@@ -88,6 +88,13 @@ class Register extends Component {
             placement: 'bottomRight'
           });
         }
+        else {
+          notification.error({
+            message: 'Error',
+            description: response.data.message,
+            placement: 'bottomRight'
+          });
+        }
         this.props.toggleLoading();
 
       })
@@ -242,10 +249,7 @@ class Register extends Component {
             <Col xs={2} sm={4}></Col>
           </Row>
         </Grid>
-
       </div >
-
-
     );
   }
 }
