@@ -23,4 +23,5 @@ module.exports = {
   secretKey: 'Orbital2020',
   mongoURL_DEV,
   sendGrid,
+  telegramKey,
 };

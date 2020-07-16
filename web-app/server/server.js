@@ -11,7 +11,7 @@ const config = require('./config/config');
 const User = require('./models/user');
 
 const PORT = process.env.PORT || 5000;
-const telegramToken = '1296018483:AAEVNfj_Q2GDeG9MVyqUCh57yXDXeB9_iyI';
+const telegramToken = config.telegramKey;
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -41,6 +41,7 @@ const bot = new TelegramBot(telegramToken, { polling: true });
 const auth = require('./routes/auth/auth');
 const user = require('./routes/user/user');
 const stripe = require('./routes/stripe/stripe');
+const telegram = require('./routes/telegram/telegram');
 
 const app = asyncify(express());
 
@@ -54,37 +55,16 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', '*');
   res.header('Access-Control-Allow-Headers', '*');
+  req.telegramBot = bot;
   next();
 });
 
 app.use(bodyParser.json());
 
-/**
- * @swagger
- *
- * /login:
- *   post:
- *     description: Login to the application
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: username
- *         description: Username to use for login.
- *         in: formData
- *         required: true
- *         type: string
- *       - name: password
- *         description: User's password.
- *         in: formData
- *         required: true
- *         type: string
- *     responses:
- *       200:
- *         description: login
- */
 app.use('/auth', auth);
 app.use('/user', user);
 app.use('/stripe', stripe);
+app.use('/telegram', telegram);
 
 let mongoUrl = config.mongoURL;
 
