@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
 const config = require('../../config/config');
 const User = require('../../models/user');
@@ -146,30 +147,22 @@ router.post('/register', async (req, res) => {
 
       const verificationToken = new VerificationToken({ _userId: newUser._id, token: crypto.randomBytes(16).toString('hex') });
       await verificationToken.save();
-      const transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: config.sendGrid.username, pass: config.sendGrid.password } });
-      const mailOptions = {
-        from: 'indomie.orbital@gmail.com',
+
+
+
+      sgMail.setApiKey(config.sendGridHeroku);
+
+      const msg = {
         to: newUser.email,
+        from: 'indomie.orbital@gmail.com',
         subject: 'Account Verification Token',
         text: `${'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/'}${req.headers.host}\/auth/confirmation\/${verificationToken.token}\n`,
       };
+      await sgMail.send(msg);
 
-      const response = await transporter.sendMail(mailOptions);
-      console.log(response);
       res.json({
         success: true,
       });
-
-      // transporter.sendMail(mailOptions, (err) => {
-      //   if (err) { return res.status(500).send({ msg: err.message }); }
-      //   res.status(200).send('A verification email has been sent to ' + user.email + '.');
-      // });
-
-      // const token = await signToken(authTypes.authTypeEmail, newUser._id);
-      // res.json({
-      //   success: true,
-      //   token,
-      // });
     }
   } catch (error) {
     res.json({

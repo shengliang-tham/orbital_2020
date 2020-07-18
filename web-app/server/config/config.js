@@ -12,9 +12,11 @@ const mongoURL = 'mongodb://shengliang:asd123asd@ds029106.mlab.com:29106/orbital
 
 const telegramKey = '1296018483:AAEVNfj_Q2GDeG9MVyqUCh57yXDXeB9_iyI';
 const sendGrid = {
-  username: 'indomie.orbital@gmail.com',
-  password: '4dY$7C!VTpAs',
-}
+  username: 'app172678223@heroku.com',
+  password: 'bcxvl3in0954',
+};
+
+const sendGridHeroku = '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';
 
 module.exports = {
   FACEBOOK,
@@ -24,4 +26,5 @@ module.exports = {
   mongoURL_DEV,
   sendGrid,
   telegramKey,
+  sendGridHeroku
 };
