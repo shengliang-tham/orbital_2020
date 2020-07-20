@@ -30,7 +30,7 @@ class orderClass:
     
     def returnPanda(self):
         row = pd.DataFrame(columns=['Opening Time','Ending Time','Lot Size','Order Type','Profit','Entry Price','Closing Price'])
-        row.loc[0] = [self.enterdate,self.closingDate,self.lotSize,self.status,self.gainLoss,self.entryprice,self.closingPrice]
+        row.loc[0] = [self.enterdate,self.closingDate,self.lotSize,self.status,self.gainLoss,(self.entryprice/1000),(self.closingPrice/1000)]
         return row
     # def __str__(self):
     #     startingTime = '"'+ "starting Time"+'"'+": "+ '"'+ self.enterdate+ '",'+'"'+"ending Time"+'"'+": " + '"'+ self.closingDate+'",'
@@ -42,7 +42,7 @@ class orderClass:
         startingTime = '"'+ "starting Time"+'"'+": "+ '"'+ self.enterdate+ '",'+ "\n"+'"'+"ending Time"+'"'+": " + '"'+ self.closingDate+'",'  +"\n"
         lotsize = '"'+ "Lot Size"+'"'+": "+ '"'+ str(self.lotSize)+'",' +"\n"
         return "{\n"+startingTime +lotsize+ ""+'"'+"Order Type"+'"'+": " + '"'+ self.status+'",'+" \n"+'"'+"Profit"+'"'+": " + '"'+ str(self.gainLoss)+'",' \
-            " \n"+ '"' + "entryPrice" + '"' + ": " + '"' +str(self.entryprice)+ '",' +" \n"+'"'+"closingPrice"+'"'+": "+'"'+ str(self.closingPrice)+'"' +"\n}"
+            " \n"+ '"' + "entryPrice" + '"' + ": " + '"' +str((self.entryprice/1000))+ '",' +" \n"+'"'+"closingPrice"+'"'+": "+'"'+ str((self.closingPrice/1000))+'"' +"\n}"
         
 
     def gainLoss(self):
