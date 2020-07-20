@@ -13,7 +13,42 @@ import requests
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
+import pymongo
+from datetime import datetime, timedelta
+
 # import api.package.helper as h
+#
+#myclient = pymongo.MongoClient("ds239936.mlab.com",39936)
+#db = myclient["orbital-dev"]
+#db.authenticate("shengliang","asd123asd")
+#mycol = db["users"]
+#
+#
+#user = mycol.find()
+#print(user.next())
+#
+# 
+#rabs =[{
+#     "date":  str(datetime.now()),
+#     "ticker": "OANDA:EUR_USD",
+#     "units": 1,
+#     "openPrice": 1.1459,
+#     "lotSize": 20000,
+#     "totalPrice": 1.1459*2000,
+#     "status": "open",
+# }]
+# 
+# 
+#myquery = { "autoTrading": "true" } #check if "True" is correct
+#newvalues = { "$set": { "openPosition": "pee" } }
+# 
+# 
+#x = mycol.update_many(myquery, newvalues)
+# 
+#print(x.modified_count, "documents updated.")
+## =============================================================================
+
+
 
 token = 'brcab6nrh5rap841ir30'
 class dataBLock():
@@ -25,6 +60,9 @@ class dataBLock():
         print(self.fifteenMinArr)
         self.freetoTrade = True
         self.Symbol = Symbol
+        self.SLpips = 8
+        self.risk = 2
+        self.lastPrice = 0.0
         
     def addTimeFrame(self,arr):
         self.timeFrame = self.timeFrame.append(arr, ignore_index=True)
@@ -33,15 +71,14 @@ class dataBLock():
         print("=================Tick Table=========================")
         print(self.timeFrame)
         if (last-first) >= 60:
-            highest = 0.00000    
-            lowest = 99999999999.00000
-            volume = 0.00000
+            highestT = 0.00000    
+            lowestT = 99999999999.00000
             for x in range(0, len(self.timeFrame.index)):
-                if highest < float(self.timeFrame['Price'].iloc[x]):
-                    highest = float(self.timeFrame['Price'].iloc[x])
-                if lowest > float(self.timeFrame['Price'].iloc[x]):
-                    lowest = float(self.timeFrame['Price'].iloc[x])
-            arr = {'Open': str(self.timeFrame['Price'].iloc[0]), 'High':str(highest), 'Low': str(lowest), 'Close':  str(self.timeFrame['Price'].iloc[-1]), 'Time': str(first)}
+                if highestT < float(self.timeFrame['Price'].iloc[x]):
+                    highestT = float(self.timeFrame['Price'].iloc[x])
+                if lowestT > float(self.timeFrame['Price'].iloc[x]):
+                    lowestT = float(self.timeFrame['Price'].iloc[x])
+            arr = {'Open': str(self.timeFrame['Price'].iloc[0]), 'High':str(highestT), 'Low': str(lowestT), 'Close':  str(self.timeFrame['Price'].iloc[-1]), 'Time': str(first)}
             self.addtoMin(arr)
             self.timeFrame = pd.DataFrame(columns=['Time','Price','Volume'])
                 
@@ -54,14 +91,13 @@ class dataBLock():
         if (last-first) >= 900:
              highest = 0.0
              lowest = 99999999999.0
-             volume = 0.0
              for x in range(0, len(self.minteArr.index)):
                 if highest < float(self.minteArr['High'].iloc[x]):
                     highest = float(self.minteArr['High'].iloc[x])
                 if lowest > float(self.minteArr['Low'].iloc[x]):
                     lowest = float(self.minteArr['Low'].iloc[x])
-             arr = {'Open': str(self.minteArr['Open'].iloc[0]), 'High': str(highest), 'Low': str(lowest), 'Close':  str(self.minteArr['Close'].iloc[-1]), 'Time': str(self.unix_Date(first))}
-             self.addtoMin(arr)
+             arr = {'Open': str(round(self.minteArr['Open'].iloc[0]*1000,2)), 'High': str(round(1000*highest,2)), 'Low': str(round(1000*lowest,2)), 'Close':  str(round(self.minteArr['Close'].iloc[-1]*1000,2)), 'Time': str(self.unix_Date(first))}
+             self.addtofifteenMin(arr)
              self.minteArr = pd.DataFrame(columns=['Open','High','Low','Close','Time'])
         
     def addtofifteenMin(self,arr):
@@ -79,24 +115,25 @@ class dataBLock():
         currentMA40 = float(self.fifteenMinArr['MA40'].iloc[-1])
         previousMA10 = float(self.fifteenMinArr['MA10'].iloc[-2])
         currentMA10 = float(self.fifteenMinArr['MA10'].iloc[-1])
+        currentHigh = float(self.fifteenMinArr['High'].iloc[-1])
+        currentLow = float(self.fifteenMinArr['High'].iloc[-1])
         #         ###### Close signal
 #            # if trade is ongoing and is buy
-#            if (freeToTrade == False):
-#                if (abs(orderList[-1].entryprice - currentHigh) >= SLpips):
-#                    orderList[-1].closeOrder(arr[x][0], currentHigh)
-#                    balance += orderList[-1].gainLoss
-#        
-#                    freeToTrade = True
-#                if (abs(orderList[-1].entryprice - currentLow) >= SLpips):
-#                    orderList[-1].closeOrder(arr[x][0], currentLow)
-#                    balance += orderList[-1].gainLoss
-#                    freeToTrade = True
-        if ((currentATR > previousATR) & self.freeToTrade):
+        if (self.freeToTrade == False):
+            if (abs(self.lastPrice - currentHigh) >= self.SLpips):
+               # sell
+                self.freeToTrade = True
+            if (abs(self.lastPrice - currentLow) >= self.SLpips):
+                #sell
+                self.freeToTrade = True
+        if ((currentATR > previousATR) & self.freeToTrade == True):
             if ((previousMA40 < previousMA10) & (currentMA10 <= currentMA40)):
-                 ##SELL
+                
+                 self.lastPrice = float(self.fifteenMinArr['Open'].iloc[-1])
                  self.freeToTrade = False
             if ((previousMA40 > previousMA10) &(currentMA10 >= currentMA40)):
                 ##BUY
+                self.lastPrice = float(self.fifteenMinArr['Open'].iloc[-1])
                 self.freeToTrade = False
     
     def unix_Date(self,ts):
@@ -204,5 +241,5 @@ def startTrading(Symbol):
     
     run(ws)
 
-startTrading('EUR_JPY')
+startTrading('EUR_USD')
 
