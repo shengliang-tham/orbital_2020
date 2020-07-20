@@ -22,6 +22,10 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 10000,
   },
+  autoTrading: {
+    type: Boolean,
+    default: false,
+  },
   transactionHistory: [{
     date: Date,
     ticker: String,

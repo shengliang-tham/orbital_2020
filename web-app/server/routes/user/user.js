@@ -280,6 +280,41 @@ router.post('/withdraw-balance', middleware.isAuthenticated, async (req, res) =>
   }
 });
 
+router.post('/update-autotrade', middleware.isAuthenticated, async (req, res) => {
+  const { authType } = req.decoded;
+  let user;
+
+  try {
+    if (authType === authTypeEmail) {
+      user = await User.findOneAndUpdate({
+        _id: new ObjectId(req.decoded.id),
+      }, {
+        $set: {
+          autoTrading: req.body.autoTrade,
+        },
+      }, { returnOriginal: false });
+    } else {
+      user = await User.findOneAndUpdate({
+        [authType]: req.decoded.id,
+      }, {
+        $set: {
+          autoTrading: req.body.autoTrade,
+        },
+      }, { returnOriginal: false });
+    }
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error,
+    });
+  }
+});
+
 
 /**
  * @swagger
