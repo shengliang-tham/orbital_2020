@@ -8,10 +8,11 @@ import * as userActionTypes from '../../../../store/actions/userActions'
 import { connect } from "react-redux";
 import { backendUrl } from '../../../../global-variables';
 import axios from 'axios';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
-const sampleCreditCard = "Credit Card Number: 4242 4242 4242 4242";
+const sampleCreditCard = `Sample Credit Card Number: 4242 4242 4242 4242. The rest of the details can be random`;
 
 class AccountBalance extends Component {
 
@@ -224,9 +225,13 @@ class AccountBalance extends Component {
                 <Divider />
                 <Row>
                     <Col span={2}></Col>
-                    <Tooltip placement="bottom" title="Sample Credit Card: 4242 4242 4242 4242" arrowPointAtCenter="true" mouseEnterDelay="0">
-                        <Col span={4}><Button type="primary" onClick={this.showTopUpModal} >Top Up</Button></Col>
-                    </Tooltip>
+                    <Col span={4}><Button type="primary" onClick={this.showTopUpModal} >Top Up</Button>
+                        <Tooltip title={sampleCreditCard}>
+                            <span className="help">
+                                <QuestionCircleOutlined />
+                            </span>
+                        </Tooltip>
+                    </Col>
                     <Col span={4}>
                         <Col span={4}><Button type="primary" onClick={this.showWithdrawModal} >Withdraw Funds</Button></Col>
                     </Col>

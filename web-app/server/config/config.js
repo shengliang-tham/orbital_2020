@@ -16,6 +16,12 @@ const sendGrid = {
   password: 'bcxvl3in0954',
 };
 
+const GOOGLE_EMAIL = {
+  clientId: '414732273480-qgk7n94234fi2e3vfo3c50inritqhd93.apps.googleusercontent.com',
+  clientSecret: 'B8PRebcvLEijDF4EtaK9c-SN',
+  refreshToken: '1//04ouQKgmW9ZcnCgYIARAAGAQSNwF-L9Iryu0XlMFnQykZi8Mvl5QuOeF5S-ytMDsNvTnusmlMUpyxegsaMqDXf1cmds_-Uo34HfM',
+};
+
 const sendGridHeroku = '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';
 
 module.exports = {
@@ -26,5 +32,6 @@ module.exports = {
   mongoURL_DEV,
   sendGrid,
   telegramKey,
-  sendGridHeroku
+  sendGridHeroku,
+  GOOGLE_EMAIL,
 };
