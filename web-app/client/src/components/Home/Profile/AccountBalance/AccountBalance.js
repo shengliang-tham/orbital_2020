@@ -124,77 +124,81 @@ class AccountBalance extends Component {
         // each type of element.
         const cardElement = elements.getElement(CardElement);
 
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
-        });
-
-        if (error) {
-            notification.error({
-                message: 'Error',
-                description: error.message,
-                placement: 'bottomRight'
-            });
-            console.log('[error]', error);
-        } else {
-            console.log('[PaymentMethod]', paymentMethod);
-            const msgIndicator = message.loading('Verifying card details...', 0);
-
-            this.setState({
-                ...this.state,
-                disabledButtons: true
-            })
-
-            const response = await axios.post(backendUrl + '/stripe/generate-intent', {
-                email: "",
-                amount: this.state.amount
-            })
-
-            const result = await stripe.confirmCardPayment(response.data.clientSecret, {
-                payment_method: {
-                    card: elements.getElement(CardElement),
-                }
+        try {
+            const { error, paymentMethod } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
             });
 
-            if (result.error) {
-                console.log(result.error)
-                // Show error to your customer (e.g., insufficient funds)
-                console.log(result.error.message);
+            if (error) {
                 notification.error({
                     message: 'Error',
-                    description: result.error.message,
+                    description: error.message,
                     placement: 'bottomRight'
                 });
+                console.log('[error]', error);
             } else {
-                // The payment has been processed!
-                console.log(result)
+                console.log('[PaymentMethod]', paymentMethod);
+                const msgIndicator = message.loading('Verifying card details...', 0);
+
+                this.setState({
+                    ...this.state,
+                    disabledButtons: true
+                })
+
+                const response = await axios.post(backendUrl + '/stripe/generate-intent', {
+                    email: "",
+                    amount: this.state.amount
+                })
+
+                console.log(response)
+
+                const result = await stripe.confirmCardPayment(response.data.clientSecret, {
+                    payment_method: {
+                        card: elements.getElement(CardElement),
+                    }
+                });
+
+                if (result.error) {
+                    console.log(result.error)
+                    // Show error to your customer (e.g., insufficient funds)
+                    console.log(result.error.message);
+                    notification.error({
+                        message: 'Error',
+                        description: result.error.message,
+                        placement: 'bottomRight'
+                    });
+                } else {
+                    // The payment has been processed!
+                    console.log(result)
 
 
-                if (result.paymentIntent.status === 'succeeded') {
+                    if (result.paymentIntent.status === 'succeeded') {
 
-                    //result.paymentIntent.amount
-                    const response = await axios.post(backendUrl + '/user/update-balance', {
-                        topUpAmount: result.paymentIntent.amount
-                    })
+                        //result.paymentIntent.amount
+                        const response = await axios.post(backendUrl + '/user/update-balance', {
+                            topUpAmount: result.paymentIntent.amount
+                        })
 
-                    if (response.data.success) {
-                        notification.success({
-                            message: 'Success',
-                            description: "You have successfully topped up!",
-                            placement: 'bottomRight'
-                        });
+                        if (response.data.success) {
+                            notification.success({
+                                message: 'Success',
+                                description: "You have successfully topped up!",
+                                placement: 'bottomRight'
+                            });
 
-                        this.props.updateBalance(response.data.user)
-                        msgIndicator();
-                        this.setState({
-                            topUpModalVisible: false,
-                        });
-                    } else {
-                        notification.error({
-                            message: 'Error',
-                            description: response.data.message,
-                            placement: 'bottomRight'
-                        });
+                            this.props.updateBalance(response.data.user)
+                            msgIndicator();
+                            this.setState({
+                                topUpModalVisible: false,
+                            });
+                        } else {
+                            notification.error({
+                                message: 'Error',
+                                description: response.data.message,
+                                placement: 'bottomRight'
+                            });
+                        }
                     }
                 }
             }
@@ -204,6 +208,12 @@ class AccountBalance extends Component {
                 ...this.state,
                 disabledButtons: false
             })
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: JSON.stringify(error).message,
+                placement: 'bottomRight'
+            });
         }
     };
 
@@ -253,6 +263,7 @@ class AccountBalance extends Component {
                                 <InputNumber style={{ width: '100%' }}
                                     min={this.state.defaultAmount}
                                     defaultValue={this.state.defaultAmount}
+                                    max={999999.99}
                                     formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                     parser={value => value.replace(/\$\s?|(,*)/g, '')}
                                     onChange={this.onAmountChange}
