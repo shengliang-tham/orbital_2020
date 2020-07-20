@@ -20,7 +20,7 @@ def getTop3():
    page_content = page.content
    ### defining HTML Elements to look out for
    soup = BeautifulSoup(page_content, 'html.parser')
-   tabl = soup.find_all("table", {"class": "W(100%) M(0) BdB Bdc($finLightGray)"})
+   tabl = soup.find_all("table", {"class": "W(100%) M(0) BdB Bdc($seperatorColor)"})
    for t in tabl:
        rows = t.find_all("tr", {"class": "BdT Bdc($seperatorColor) Ta(end) Fz(s)"})
        for row in rows:
@@ -54,6 +54,5 @@ def getTop3():
    #converting percentage change into decimal place
    df2['percentageChanged'] = df2['percentageChanged'].apply(lambda x: '{0:.2f}'.format(decimal.Decimal(x)))
    return json.dumps(json.loads(df2.to_json(orient='records')), indent=2)
-
 
 
