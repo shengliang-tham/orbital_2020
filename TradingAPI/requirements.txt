@@ -1,11 +1,12 @@
-requests==2.23.0
 Flask==1.1.2
-Flask_Cors==3.0.8
 pandas_datareader==0.8.1
-numpy==1.18.5
-Flask_RESTful==0.3.8
 statsmodels==0.11.1
+Flask_Cors==3.0.8
+Flask_RESTful==0.3.8
 pandas==1.0.4
+requests==2.23.0
+numpy==1.18.5
 beautifulsoup4==4.9.1
+pymongo==3.10.1
 scikit_learn==0.23.1
-gunicorn==20.0.4
+websocket_client==0.57.0

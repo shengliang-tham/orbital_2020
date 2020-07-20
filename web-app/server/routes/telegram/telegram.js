@@ -4,7 +4,8 @@ const express = require('express');
 const router = express.Router();
 const User = require('../../models/user');
 
-router.get('/blast-message', async (req, res) => {
+router.post('/blast-message', async (req, res) => {
+
   const users = await User.find({
     telegramId: { $ne: null },
   });
@@ -17,7 +18,7 @@ router.get('/blast-message', async (req, res) => {
   }, []);
 
   for (id of telegramIds) {
-    bot.sendMessage(id, 'Hello there is a buy trading signal happening now !!!!!');
+    bot.sendMessage(id, req.body.message);
   }
 
   res.send('Finishing blasting!!!');
