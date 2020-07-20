@@ -32,10 +32,11 @@ class Bot extends Component {
                     </Col>
                     <Col span={18} >
                         <div className="toggle-text">
-                            Auto Trading Bot is {this.props.user ? this.props.user.autoTrading ? "enabled" : "disabled" : "disabled"}
+                            {/* Auto Trading Bot is {this.props.user ? this.props.user.autoTrading ? "enabled" : "disabled" : "disabled"} */}
+                            Auto Trading Bot
                         </div>
                         <div className="toggle-button">
-                            <Switch checked={this.props.user ? this.props.user.autoTrading : false} onChange={this.onChange} />
+                            <Switch checkedChildren="enabled" unCheckedChildren="disabled" checked={this.props.user ? this.props.user.autoTrading : false} onChange={this.onChange} className="switch" />
                         </div>
                     </Col>
                 </Row>
