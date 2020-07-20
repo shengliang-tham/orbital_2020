@@ -10,12 +10,26 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const sgMail = require('@sendgrid/mail');
+const { google } = require('googleapis');
 
+const { OAuth2 } = google.auth;
 const config = require('../../config/config');
 const User = require('../../models/user');
 const VerificationToken = require('../../models/verificationToken');
 const authTypes = require('./authType');
+
+const oauth2Client = new OAuth2(
+  config.GOOGLE_EMAIL.clientId,
+  config.GOOGLE_EMAIL.clientSecret,
+  'https://developers.google.com/oauthplayground', // Redirect URL
+);
+
+oauth2Client.setCredentials({
+  refresh_token: config.GOOGLE_EMAIL.refreshToken,
+});
+
+const accessToken = oauth2Client.getAccessToken();
+
 
 const frontendUrl = process.env.NODE_ENV === 'production' ? 'https://orbital-2020.herokuapp.com/' : 'http://localhost:3000/';
 
@@ -148,17 +162,26 @@ router.post('/register', async (req, res) => {
       const verificationToken = new VerificationToken({ _userId: newUser._id, token: crypto.randomBytes(16).toString('hex') });
       await verificationToken.save();
 
+      const smtpTransport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: 'indomie.orbital@gmail.com',
+          clientId: config.GOOGLE_EMAIL.clientId,
+          clientSecret: config.GOOGLE_EMAIL.clientSecret,
+          refreshToken: config.GOOGLE_EMAIL.refreshToken,
+          accessToken,
+        },
+      });
 
-
-      sgMail.setApiKey(config.sendGridHeroku);
-
-      const msg = {
+      const mailOptions = {
         to: newUser.email,
         from: 'indomie.orbital@gmail.com',
         subject: 'Account Verification Token',
         text: `${'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/'}${req.headers.host}\/auth/confirmation\/${verificationToken.token}\n`,
       };
-      await sgMail.send(msg);
+
+      await smtpTransport.sendMail(mailOptions);
 
       res.json({
         success: true,
