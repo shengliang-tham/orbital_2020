@@ -20,7 +20,7 @@ def instrumentPool():
     # defining HTML Elements to look out for
     soup = BeautifulSoup(page_content, 'html.parser')
     tabl = soup.find_all(
-        "table", {"class": "W(100%) M(0) BdB Bdc($finLightGray)"})
+        "table", {"class": "W(100%) M(0) BdB Bdc($seperatorColor)"})
     for t in tabl:
         rows = t.find_all(
             "tr", {"class": "BdT Bdc($seperatorColor) Ta(end) Fz(s)"})

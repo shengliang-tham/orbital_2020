@@ -176,15 +176,15 @@ def autotrade_OrderOnly(t_Start,
         df = pd.DataFrame(r_time, columns=['Time'])
         df['Time'] = df['Time'].apply(lambda x: h.unix_Date(x))
         df['High'] = r_High
-        df['High'] = df['High'].apply(lambda x: round(x*1000,2))
+        df['High'] = df['High']
         df['Low'] = r_Low
-        df['Low'] = df['Low'].apply(lambda x: round(x*1000,2))
+        df['Low'] = df['Low']
         df['Close'] = r_Close
-        df['Close_refac'] = df['Close'].apply(lambda x: round(x*1000,2))
+        df['Close_refac'] = df['Close']
         df['MA10'] = df["Close"].ewm(span=10, min_periods=10).mean().apply(lambda x: round(x*1000,2))
         df['MA40'] = df["Close"].ewm(span=40, min_periods=40).mean().apply(lambda x: round(x*1000,2))
         df['Open'] = r_Open
-        df['Open'] = df['Open'].apply(lambda x: round(x*1000,2))
+        df['Open'] = df['Open']
         df = h.ATR(df,14)
         df = df.dropna(inplace=False)
         ######## DATA COLLECTION #################
