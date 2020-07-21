@@ -13,8 +13,9 @@ import { notification } from 'antd';
 class Home extends Component {
 
     async componentDidUpdate(prevProps, prevState) {
+        console.log(prevProps)
         if (prevProps.user && this.props.user) {
-            if (prevProps.user.openPosition.length !== this.props.user.openPosition.length) {
+            if (prevProps.user.openPosition.length !== this.props.user.openPosition.length || prevProps.user.autoTrading !== this.props.user.autoTrading) {
                 this.props.toggleLoading();
                 let user = await axios.get(backendUrl + '/user/retrieve-user')
                 user = user.data.user;
