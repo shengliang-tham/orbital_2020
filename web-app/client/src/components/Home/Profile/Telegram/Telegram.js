@@ -9,7 +9,6 @@ class Telegram extends Component {
 
     onActivateTelegram = async () => {
         const response = await axios.get(backendUrl + '/user/telegram-activate');
-        console.log(response);
         window.open(response.data, "_blank")
     }
 

@@ -74,36 +74,42 @@ class AccountBalance extends Component {
     handleWithdrawSubmit = async (event) => {
         // Block native form submission.
         event.preventDefault();
-        console.log(event)
 
-        if (this.props.user.accountBalance < this.state.withdrawAmount) {
-            notification.error({
-                message: 'Error',
-                description: "Not enough funds",
-                placement: 'bottomRight'
-            });
-        } else {
-            const response = await axios.post(backendUrl + '/user/withdraw-balance', {
-                withdrawAmount: this.state.withdrawAmount
-            });
-            console.log(response)
-            if (response.data.success) {
-                notification.success({
-                    message: 'Success',
-                    description: "You have successfully withdraw!",
-                    placement: 'bottomRight'
-                });
-                this.setState({
-                    withdrawModalVisible: false,
-                });
-                this.props.updateBalance(response.data.user)
-            } else {
+        try {
+            if (this.props.user.accountBalance < this.state.withdrawAmount) {
                 notification.error({
                     message: 'Error',
-                    description: response.data.message,
+                    description: "Not enough funds",
                     placement: 'bottomRight'
                 });
+            } else {
+                const response = await axios.post(backendUrl + '/user/withdraw-balance', {
+                    withdrawAmount: this.state.withdrawAmount
+                });
+                if (response.data.success) {
+                    notification.success({
+                        message: 'Success',
+                        description: "You have successfully withdraw!",
+                        placement: 'bottomRight'
+                    });
+                    this.setState({
+                        withdrawModalVisible: false,
+                    });
+                    this.props.updateBalance(response.data.user)
+                } else {
+                    notification.error({
+                        message: 'Error',
+                        description: response.data.message,
+                        placement: 'bottomRight'
+                    });
+                }
             }
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: JSON.parse(JSON.stringify(error)).message,
+                placement: 'bottomRight'
+            });
         }
     }
 
@@ -136,9 +142,7 @@ class AccountBalance extends Component {
                     description: error.message,
                     placement: 'bottomRight'
                 });
-                console.log('[error]', error);
             } else {
-                console.log('[PaymentMethod]', paymentMethod);
                 const msgIndicator = message.loading('Verifying card details...', 0);
 
                 this.setState({
@@ -151,8 +155,6 @@ class AccountBalance extends Component {
                     amount: this.state.amount
                 })
 
-                console.log(response)
-
                 const result = await stripe.confirmCardPayment(response.data.clientSecret, {
                     payment_method: {
                         card: elements.getElement(CardElement),
@@ -160,9 +162,7 @@ class AccountBalance extends Component {
                 });
 
                 if (result.error) {
-                    console.log(result.error)
                     // Show error to your customer (e.g., insufficient funds)
-                    console.log(result.error.message);
                     notification.error({
                         message: 'Error',
                         description: result.error.message,
@@ -170,8 +170,6 @@ class AccountBalance extends Component {
                     });
                 } else {
                     // The payment has been processed!
-                    console.log(result)
-
 
                     if (result.paymentIntent.status === 'succeeded') {
 
@@ -203,11 +201,11 @@ class AccountBalance extends Component {
                 }
             }
 
-
             this.setState({
                 ...this.state,
                 disabledButtons: false
             })
+
         } catch (error) {
             notification.error({
                 message: 'Error',

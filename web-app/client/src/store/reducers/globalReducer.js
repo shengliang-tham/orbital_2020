@@ -10,9 +10,8 @@ const globalReducer = (state = initialState, { type, payload }) => {
             ...state,
             loading: !state.loading
         }
+        default: return state;
     }
-    return state;
-
 }
 
 export default globalReducer;

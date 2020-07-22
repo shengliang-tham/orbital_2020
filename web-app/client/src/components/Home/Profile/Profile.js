@@ -5,8 +5,6 @@ import AccountBalance from './AccountBalance/AccountBalance';
 
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, ElementsConsumer } from '@stripe/react-stripe-js';
-import axios from 'axios';
-import { backendUrl } from '../../../global-variables'
 import * as globalActionTypes from '../../../store/actions/globalActions'
 import { connect } from "react-redux";
 import Telegram from './Telegram/Telegram';

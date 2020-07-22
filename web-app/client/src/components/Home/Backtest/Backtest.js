@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Select, DatePicker, Col, InputNumber, Button, Timeline, Divider, Popover, Statistic, Tooltip, Descriptions } from 'antd';
+import { Row, Select, DatePicker, Col, InputNumber, Button, Timeline, Divider, Tooltip, Descriptions } from 'antd';
 import Form from 'antd/lib/form/Form';
 import axios from 'axios';
 import { tradingUrl } from '../../../global-variables';
@@ -16,9 +16,6 @@ const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
-// const tailLayout = {
-//   wrapperCol: { offset: 10, span: 16 },
-// };
 
 const popoverTitle = `What is this?`;
 
@@ -42,10 +39,6 @@ class Backtest extends Component {
 
   onGenerate = async (values) => {
     this.props.toggleLoading();
-    console.log('Success:', values);
-
-    const startDate = values.dates[0].format(dateFormat)
-    const endDate = values.dates[1].format(dateFormat)
 
     const response = await axios.get(tradingUrl + '/backtestForex_Summary', {
       params: {
@@ -58,9 +51,6 @@ class Backtest extends Component {
       }
     })
 
-    console.log(response)
-
-    // const profit = response.data.reduce((total, item) => parseFloat(total['Profit']) + parseFloat(item['Profit']));
     const profit = response.data.reduce((total, item) => total + parseFloat(item['Profit']), 0);
     console.log(profit)
 
@@ -69,8 +59,6 @@ class Backtest extends Component {
       backtestData: response.data,
       profit: profit
     })
-
-
 
     this.props.toggleLoading();
   };
@@ -196,9 +184,6 @@ class Backtest extends Component {
         </Row>
         <Divider />
         {this.state.backtestData.length ?
-          // <Row>
-          //   <Statistic title="Total Profit" value={this.state.profit} />
-          // </Row>
           <Descriptions title="Results" className="result">
             <Descriptions.Item label="Total Profit">{this.state.profit}</Descriptions.Item>
             <Descriptions.Item label="Total No. of Transactions">{this.state.backtestData.length}</Descriptions.Item>

@@ -28,7 +28,6 @@ class SideMenu extends Component {
     };
 
     onCollapse = collapsed => {
-        console.log(collapsed);
         this.setState({ collapsed });
     };
 
@@ -73,9 +72,6 @@ class SideMenu extends Component {
                             <Menu.Item key="3" icon={<HistoryOutlined />} onClick={() => this.onClickMenu("3")}>
                                 Back Test
                               </Menu.Item>
-                            {/* <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
-                                <Menu.Item key="4">Change Password</Menu.Item>
-                            </SubMenu> */}
                             <Menu.Item key="4" icon={<UserOutlined />} onClick={() => this.onClickMenu("4")}>
                                 Profile
 
@@ -86,19 +82,14 @@ class SideMenu extends Component {
                         </Menu>
                     </Sider>
                     <Layout className="site-layout">
-                        {/* <Header className="site-layout-background" style={{ padding: 0 }}>
-                        {/* <Image src="./Images/logo.png" className="logo" /> 
-                    </Header> */}
                         <Content style={{ margin: '0 16px' }}>
                             <Breadcrumb style={{ margin: '16px 0' }}>
                                 <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-                                {/* <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
                             </Breadcrumb>
                             <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
                                 {components}
                             </div>
                         </Content>
-                        {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
                     </Layout>
                 </Layout>
             </div>

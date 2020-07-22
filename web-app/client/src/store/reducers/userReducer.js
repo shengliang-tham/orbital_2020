@@ -14,9 +14,8 @@ const globalReducer = (state = initialState, { type, payload }) => {
             ...state,
             user: payload
         }
+        default: return state;
     }
-    return state;
-
 }
 
 export default globalReducer;

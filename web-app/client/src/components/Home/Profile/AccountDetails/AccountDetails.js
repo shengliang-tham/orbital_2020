@@ -3,14 +3,14 @@ import './account-details.scss';
 import React, { Component } from 'react';
 
 import {
-  Button,
-  Col,
-  Divider,
-  Form,
-  Input,
-  message,
-  notification,
-  Row,
+    Button,
+    Col,
+    Divider,
+    Form,
+    Input,
+    message,
+    notification,
+    Row,
 } from 'antd';
 import axios from 'axios';
 import Moment from 'react-moment';
@@ -32,11 +32,6 @@ class AccountDetails extends Component {
             emailValidated: false,
             passwordValidated: false
         }
-
-    }
-
-    componentDidMount() {
-        console.log(this.props.user)
     }
 
     showEmailModal = () => {
@@ -51,15 +46,15 @@ class AccountDetails extends Component {
         });
     };
 
-    onEmailUpdate = values => {
+    onEmailUpdate = async (values) => {
         const msgIndicator = message.loading('Updating Email...', 0);
 
-        axios.post(backendUrl + '/user/update-email', {
-            email: values.email
-        }).then((response) => {
-            console.log(response)
+        try {
+            const response = await axios.post(backendUrl + '/user/update-email', {
+                email: values.email
+            })
+
             if (response.data.success) {
-                console.log(response.data.user)
                 this.props.updateEmail(response.data.user)
                 notification.success({
                     message: 'Success',
@@ -76,15 +71,15 @@ class AccountDetails extends Component {
             this.setState({
                 emailModalVisible: false,
             });
-            msgIndicator();
-        }).catch(error => {
+
+        } catch (error) {
             notification.error({
                 message: 'Error',
-                description: error,
+                description: JSON.parse(JSON.stringify(error)).message,
                 placement: 'bottomRight'
             });
-            msgIndicator();
-        })
+        }
+        msgIndicator();
 
     }
 
@@ -100,16 +95,15 @@ class AccountDetails extends Component {
         });
     };
 
-    onPasswordUpdate = (value) => {
-        console.log(value)
+    onPasswordUpdate = async (value) => {
         const msgIndicator = message.loading('Updating Email...', 0);
 
-        axios.post(backendUrl + '/user/update-password', {
-            password: value.password
-        }).then((response) => {
-            console.log(response)
+        try {
+            const response = await axios.post(backendUrl + '/user/update-password', {
+                password: value.password
+            })
+
             if (response.data.success) {
-                console.log(response.data.user)
                 notification.success({
                     message: 'Success',
                     description: "You have successfully changed your password",
@@ -122,18 +116,20 @@ class AccountDetails extends Component {
                     placement: 'bottomRight'
                 });
             }
+
             this.setState({
                 passwordModalVisible: false,
             });
-            msgIndicator();
-        }).catch(error => {
+        } catch (error) {
             notification.error({
                 message: 'Error',
-                description: error,
+                description: JSON.parse(JSON.stringify(error)).message,
                 placement: 'bottomRight'
             });
-            msgIndicator();
-        })
+        }
+
+        msgIndicator();
+
     }
 
     render() {

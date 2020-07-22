@@ -1,26 +1,17 @@
 import React from 'react';
-import { render } from 'react-dom';
-// import Chart from './chart';
-// import { getData } from './utils';
-import { TypeChooser } from "react-stockcharts/lib/helper";
-import CandleStickChart from './Chart/Candlestick/CandleStickChart';
-import { getData } from './Chart/CandleStickChartForDiscontinuousIntraDay/util';
-import CandleStickChartForDiscontinuousIntraDay from './Chart/CandleStickChartForDiscontinuousIntraDay/CandleStickChartForDiscontinuousIntraDay';
 import { connect } from 'react-redux';
 import * as globalActionTypes from '../../../store/actions/globalActions';
 import * as userActionTypes from '../../../store/actions/userActions';
-import { Select, Row, Col, Divider, notification, DatePicker, Button, Input, InputNumber, message } from 'antd';
+import { Select, Row, Col, Divider, notification, Button, Input, InputNumber, message } from 'antd';
 import './Trade.scss';
 import CustomModal from './../../../UI/Modal/Modal';
 import Form from 'antd/lib/form/Form';
 import moment from 'moment';
 import { tradingUrl, backendUrl } from '../../../global-variables';
 import axios from 'axios';
-import { timeParse } from "d3-time-format";
 import TradingView from './Chart/TradingView/TradingView';
 
 const { Option, OptGroup } = Select;
-const { RangePicker } = DatePicker;
 
 
 const formItemLayout = {
@@ -49,33 +40,6 @@ class Trade extends React.Component {
     forexArray: [],
     timeFrame: [],
     chartData: [],
-    // chartData: [
-    //   {
-    //     "open": 0.765,
-    //     "high": 0.765,
-    //     "low": 0.765,
-    //     "close": 0.765,
-    //     "volume": 0,
-    //     "date": new Date(),
-    //     "RSI": null,
-    //     "MA_20": null,
-    //     "ADX": null,
-    //     "OBV": 0,
-    //     "slope": 0
-    //   },
-    //   {
-    //     "open": 0.765,
-    //     "high": 0.77,
-    //     "low": 0.765,
-    //     "close": 0.765,
-    //     "volume": 193200,
-    //     "date": new Date(),
-    //     "RSI": null,
-    //     "MA_20": null,
-    //     "ADX": null,
-    //     "OBV": -193200,
-    //     "slope": 0
-    //   }],
     startDate: moment(),
     endDate: moment(),
     selectedInstrument: null,
@@ -90,21 +54,26 @@ class Trade extends React.Component {
 
   showBuyModal = async () => {
     this.props.toggleLoading();
-    // const todayDate = moment().format(dateFormat);
-    const todayDate = moment('07/02/2020').format(dateFormat)
-    console.log(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=${this.state.selectedTimeFrameValue}&startDate=${todayDate}&endDate=${todayDate}`)
-    const response = await axios(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=1&startDate=${todayDate}&endDate=${todayDate}`)
-    console.log(response)
-    if (response.data.success) {
+    const todayDate = moment().format(dateFormat);
 
-      this.setState({
-        buyModalVisible: true,
-        currentPrice: response.data.data[response.data.data.length - 1]
+    try {
+      const response = await axios(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=1&startDate=${todayDate}&endDate=${todayDate}`)
+      if (response.data.success) {
+        this.setState({
+          buyModalVisible: true,
+          currentPrice: response.data.data[response.data.data.length - 1]
+        });
+      }
+    } catch (error) {
+
+      notification.error({
+        message: 'Error',
+        description: JSON.stringify(error).message,
+        placement: 'bottomRight'
       });
     }
 
     this.props.toggleLoading();
-    console.log(this.state)
 
   }
 
@@ -121,82 +90,73 @@ class Trade extends React.Component {
       await this.fetchInstruments();
       await this.fetchTimeFrame();
 
-      // const params = {
-      //   ticker: this.state.stocksArray[0].ticker,
-      //   interval: this.state.timeFrame[0].value,
-      //   startDate: this.state.startDate.format(dateFormat),
-      //   endDate: this.state.endDate.format(dateFormat),
-      //   selectedType: this.state.type
-      // }
-
-      // await this.fetchChart(params);
-
-      this.props.toggleLoading();
     } catch (error) {
-      console.log(error)
       notification.error({
         message: 'Error',
         description: JSON.parse(JSON.stringify(error)).message,
         placement: 'bottomRight'
       });
-      this.props.toggleLoading();
     }
+
+    this.props.toggleLoading();
+
   }
 
 
   fetchInstruments = async () => {
-    const instruments = await axios.get(tradingUrl + '/instrument-pool')
-    console.log(instruments)
-    const newstocksArray = instruments.data.filter(obj => {
-      return obj.instrument === 'stock'
-    })
+    try {
 
-    const newforexArray = instruments.data.filter(obj => {
-      return obj.instrument === 'forex'
-    })
+      const instruments = await axios.get(tradingUrl + '/instrument-pool')
+      const newstocksArray = instruments.data.filter(obj => {
+        return obj.instrument === 'stock'
+      })
 
-    console.log(newstocksArray)
-    this.setState({
-      ...this.state,
-      stocksArray: newstocksArray,
-      forexArray: newforexArray,
-      selectedInstrument: newstocksArray[0].ticker,
-      selectedType: newstocksArray[0].instrument
-    })
-  }
+      const newforexArray = instruments.data.filter(obj => {
+        return obj.instrument === 'forex'
+      })
 
-  fetchTimeFrame = async () => {
-    const timeFrame = await axios.get(tradingUrl + '/time-pool')
-    console.log(timeFrame)
-    this.setState({
-      ...this.state,
-      timeFrame: timeFrame.data,
-      selectedTimeFrame: timeFrame.data[0].display,
-      selectedTimeFrameValue: timeFrame.data[0].value,
-    })
-  }
-
-  fetchChart = async (params) => {
-    let chartResponse = await getData(params);
-    console.log(chartResponse)
-    if (chartResponse.success) {
       this.setState({
         ...this.state,
-        chartData: chartResponse.data,
+        stocksArray: newstocksArray,
+        forexArray: newforexArray,
+        selectedInstrument: newstocksArray[0].ticker,
+        selectedType: newstocksArray[0].instrument
       })
-    } else {
-      console.log(chartResponse)
+
+    } catch (error) {
+
       notification.error({
         message: 'Error',
-        description: chartResponse.message,
+        description: JSON.stringify(error).message,
         placement: 'bottomRight'
       });
     }
 
+  }
+
+  fetchTimeFrame = async () => {
+    try {
+
+      const timeFrame = await axios.get(tradingUrl + '/time-pool')
+      this.setState({
+        ...this.state,
+        timeFrame: timeFrame.data,
+        selectedTimeFrame: timeFrame.data[0].display,
+        selectedTimeFrameValue: timeFrame.data[0].value,
+      })
+
+    } catch (error) {
+
+      notification.error({
+        message: 'Error',
+        description: JSON.stringify(error).message,
+        placement: 'bottomRight'
+      });
+    }
 
   }
 
-  handleInstrumentChange = async (value, index) => {
+  handleInstrumentChange = (value, index) => {
     this.props.toggleLoading();
 
     let category = this.state.stocksArray.find(stock => stock.ticker === value)
@@ -216,7 +176,7 @@ class Trade extends React.Component {
 
   }
 
-  handleTimeChange = async (value, index) => {
+  handleTimeChange = (value, index) => {
     this.props.toggleLoading();
     this.setState({
       ...this.state,
@@ -227,104 +187,51 @@ class Trade extends React.Component {
 
   }
 
-  // handleInstrumentChange = async (value, index) => {
-  //   this.props.toggleLoading();
-  //   this.setState({
-  //     ...this.state,
-  //     selectedInstrument: value
-  //   })
-
-  //   let category = this.state.stocksArray.find(stock => stock.ticker === value)
-  //   let instrumentType;
-  //   if (category) {
-  //     instrumentType = "stock"
-  //   } else {
-  //     instrumentType = "forex"
-  //   }
-
-  //   const params = {
-  //     ticker: value,
-  //     interval: this.state.selectedTimeFrameValue,
-  //     startDate: this.state.startDate.format(dateFormat),
-  //     endDate: this.state.endDate.format(dateFormat),
-  //     type: instrumentType
-  //   }
-
-
-  //   await this.fetchChart(params);
-  //   this.props.toggleLoading();
-  // }
-
-  // handleTimeChange = async (value, index) => {
-  //   this.props.toggleLoading();
-  //   this.setState({
-  //     ...this.state,
-  //     selectedTimeFrame: value,
-  //     selectedTimeFrameValue: index.value
-  //   })
-  //   const params = {
-  //     ticker: this.state.selectedInstrument,
-  //     interval: index.value,
-  //     startDate: this.state.startDate.format(dateFormat),
-  //     endDate: this.state.endDate.format(dateFormat),
-  //     type: this.state.type
-  //   }
-  //   await this.fetchChart(params);
-  //   this.props.toggleLoading();
-  // }
-
-  // dateOnChange = async (dateArray) => {
-  //   console.log(dateArray)
-  //   this.props.toggleLoading();
-
-  //   this.setState({
-  //     ...this.state,
-  //     startDate: dateArray[0],
-  //     endDate: dateArray[1],
-  //   })
-
-  //   const params = {
-  //     ticker: this.state.selectedInstrument,
-  //     interval: this.state.selectedTimeFrameValue,
-  //     startDate: dateArray[0].format(dateFormat),
-  //     endDate: dateArray[1].format(dateFormat),
-  //     type: this.state.type
-  //   }
-  //   await this.fetchChart(params);
-  //   this.props.toggleLoading();
-  // }
-
   onBuyModal = async (form) => {
-    console.log(form)
+
     if (form.totalPrice > this.props.user.accountBalance) {
+
       notification.error({
         message: 'Error',
         description: "Not enough funds",
         placement: 'bottomRight'
       });
+
     } else {
-      const msgIndicator = message.loading('Executing Purchase Order...', 0);
 
-      const buyOrder = {
-        ...form,
-        ticker: this.state.selectedInstrument
-      }
+      try {
+        const msgIndicator = message.loading('Executing Purchase Order...', 0);
 
-      const response = await axios.post(backendUrl + '/user/buy-order', buyOrder);
-      if (response.data.success) {
-        notification.success({
-          message: 'Success',
-          description: "Successfully Purchased",
+        const buyOrder = {
+          ...form,
+          ticker: this.state.selectedInstrument
+        }
+        const response = await axios.post(backendUrl + '/user/buy-order', buyOrder);
+
+        if (response.data.success) {
+          notification.success({
+            message: 'Success',
+            description: "Successfully Purchased",
+            placement: 'bottomRight'
+          });
+        }
+
+        msgIndicator();
+
+        this.setState({
+          buyModalVisible: false,
+        });
+        this.props.updateUser(response.data.user);
+
+      } catch (error) {
+
+        notification.error({
+          message: 'Error',
+          description: JSON.stringify(error).message,
           placement: 'bottomRight'
         });
+
       }
-
-
-      msgIndicator();
-      this.setState({
-        buyModalVisible: false,
-      });
-      this.props.updateUser(response.data.user);
 
     }
 
@@ -337,7 +244,6 @@ class Trade extends React.Component {
   setBuyModalRef = async (element) => {
     this.buyModalRef = element
     if (this.state.buyModalVisible) {
-
       this.buyModalRef.setFieldsValue({
         unit: 1,
         lotSize: lotSize,
@@ -353,6 +259,7 @@ class Trade extends React.Component {
     return (
       this.state ?
         <div className="trade">
+
           <Row>
             <Col>
               <Select style={{ width: '100%' }} onChange={this.handleInstrumentChange} placeholder="Select Ticker" value={this.state.selectedInstrument ? this.state.selectedInstrument : null}>
@@ -371,37 +278,10 @@ class Trade extends React.Component {
                 {this.state ? this.state.timeFrame
                   .map((item, index) => <Option key={index} value={item.value}>{item.display}</Option>) : null}
               </Select>
-
             </Col>
-            {/* <Col>
-              <RangePicker defaultValue={[moment(this.state.startDate, dateFormat), moment(this.state.endDate, dateFormat)]}
-                onChange={this.dateOnChange}
-                format={dateFormat} />
-            </Col> */}
           </Row>
+
           <Divider />
-          {/* {
-            this.state.chartData.length ?
-              <div>
-                <Row>
-
-                  <Col span={24}>
-                    < TypeChooser >
-                      {type => < CandleStickChartForDiscontinuousIntraDay type={type} data={this.state.chartData} />}
-                    </TypeChooser>
-                  </Col>
-
-
-                </Row>
-                <Divider />
-
-                <Row>
-                  <Col span={4}>
-                    <Button size="large" shape="round" className="buy-btn" onClick={this.showBuyModal}>Buy</Button>
-                  </Col>
-                </Row>
-              </div>
-              : null} */}
 
           <TradingView instrument={this.state.selectedInstrument} timeframe={this.state.selectedTimeFrameValue} />
           <Divider />
@@ -416,12 +296,6 @@ class Trade extends React.Component {
             disabledCancel={this.state.disabledButtons}
           >
             <Form id='buy-form' onValuesChange={this.onBuyModalChange} onFinish={this.onBuyModal} ref={this.setBuyModalRef}
-              // initialValues={{
-              //   unit: 1,
-              //   lotSize: lotSize,
-              //   currentPrice: this.state.chartData[this.state.chartData.length - 1].open,
-              //   totalPrice: 100 * this.state.chartData[this.state.chartData.length - 1].open,
-              // }}
               {...formItemLayout}>
               <Form.Item
                 name="unit"
@@ -455,11 +329,8 @@ class Trade extends React.Component {
                 />
               </Form.Item>
             </Form>
-
           </CustomModal>
-
         </div >
-
         : null
     )
   }

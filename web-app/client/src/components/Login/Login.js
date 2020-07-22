@@ -28,7 +28,7 @@ class Login extends Component {
 
   state = { validated: false, setValidated: false }
 
-  componentDidMount(props) {
+  componentDidMount() {
     if (this.props.location.state && this.props.location.state.message) {
       notification.error({
         message: 'Error',
@@ -38,56 +38,57 @@ class Login extends Component {
     }
   }
 
-  render() {
+  handleSubmit = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    this.setState({
+      setValidated: true, validated: true
+    })
 
-    let handleSubmit = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      this.setState({
-        setValidated: true, validated: true
-      })
+    const form = event.currentTarget;
 
-      const form = event.currentTarget;
+    if (!(form.elements.email.validationMessage && form.elements.password.validationMessage)) {
+      this.props.toggleLoading();
 
-      console.log(form.elements)
-
-      if (!(form.elements.email.validationMessage && form.elements.password.validationMessage)) {
-        this.props.toggleLoading();
-        axios.post(backendUrl + '/auth/login', {
+      try {
+        const response = await axios.post(backendUrl + '/auth/login', {
           email: form.elements.email.value,
           password: form.elements.password.value
-        }).then((response) => {
+        })
 
-          if (response.data.success) {
-            this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
-            localStorage.setItem('token', response.data.token)
-            this.props.saveToken(response.data.token);
-            notification.success({
-              message: 'Success',
-              description: "You have logged in!",
-              placement: 'bottomRight'
-            });
-            this.props.history.push("/home");
-
-          } else {
-            notification.error({
-              message: 'Error',
-              description: response.data.message,
-              placement: 'bottomRight'
-            });
-          }
-          this.props.toggleLoading();
-        }).catch(error => {
-          notification.error({
-            message: 'Error',
-            description: "Network error",
+        if (response.data.success) {
+          this.props.setAuthType(authActionTypes.SET_AUTH_EMAIL)
+          localStorage.setItem('token', response.data.token)
+          this.props.saveToken(response.data.token);
+          notification.success({
+            message: 'Success',
+            description: "You have logged in!",
             placement: 'bottomRight'
           });
-          this.props.toggleLoading();
+          this.props.history.push("/home");
 
-        })
+        } else {
+          notification.error({
+            message: 'Error',
+            description: response.data.message,
+            placement: 'bottomRight'
+          });
+        }
+
+      } catch (error) {
+        notification.error({
+          message: 'Error',
+          description: JSON.parse(JSON.stringify(error)).message,
+          placement: 'bottomRight'
+        });
       }
-    };
+
+      this.props.toggleLoading();
+
+    }
+  };
+
+  render() {
 
     return (
       <div className="Login" >
@@ -97,7 +98,7 @@ class Login extends Component {
             <Col xs={20} sm={16} md={24} lg={32} >
               <Logo></Logo>
               <Divider></Divider>
-              <Form className="user-input" noValidate validated={this.state.validated} onSubmit={handleSubmit}>
+              <Form className="user-input" noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
                 <Form.Row>
                   <Form.Group as={Col} controlId="email">
                     <InputGroup>

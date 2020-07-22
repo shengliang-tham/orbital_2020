@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Statistic, Row, Col, Divider } from 'antd';
+import { Statistic, Row, Col } from 'antd';
 import './Balance.scss';
 import { connect } from "react-redux";
 

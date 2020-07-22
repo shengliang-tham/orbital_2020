@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './Logo.scss';
-import logo from '../../assets/Images/logo.png'
 import indomieLogo from '../../assets/Images/indomie-logo.png'
 import Grid from "antd/lib/card/Grid";
 import { Row, } from 'antd';

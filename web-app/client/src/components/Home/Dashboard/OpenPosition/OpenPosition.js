@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Tag, Space, Button, InputNumber, Input } from 'antd';
+import { Table, Button, Input } from 'antd';
 import './OpenPosition.scss';
 import { connect } from "react-redux";
 import CustomModal from '../../../../UI/Modal/Modal';
@@ -72,8 +72,6 @@ class OpenPosition extends Component {
             sellModalVisible: true,
             selectedInstrument: instrument
         });
-        console.log(instrument)
-
     }
 
     handleSellModalCancel = () => {
@@ -97,8 +95,6 @@ class OpenPosition extends Component {
         }
     }
     onSellModal = async (form) => {
-        console.log(form)
-
         try {
             const sellOrder = {
                 ...form,
@@ -135,7 +131,7 @@ class OpenPosition extends Component {
         } catch (error) {
             notification.error({
                 message: 'Error',
-                description: error,
+                description: JSON.parse(JSON.stringify(error)).message,
                 placement: 'bottomRight'
             });
         }

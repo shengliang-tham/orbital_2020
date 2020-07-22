@@ -12,7 +12,6 @@ class Bot extends Component {
 
     onChange = async (checked) => {
         this.props.toggleLoading();
-        console.log(`switch to ${checked}`);
         const response = await axios.post(backendUrl + '/user/update-autotrade', {
             autoTrade: checked
         });
@@ -32,7 +31,6 @@ class Bot extends Component {
                     </Col>
                     <Col span={18} >
                         <div className="toggle-text">
-                            {/* Auto Trading Bot is {this.props.user ? this.props.user.autoTrading ? "enabled" : "disabled" : "disabled"} */}
                             Auto Trading Bot
                         </div>
                         <div className="toggle-button">

@@ -55,11 +55,9 @@ class TopPair extends Component {
         this.props.toggleLoading();
         axios.get(tradingUrl + '/getTop3')
             .then(response => {
-                console.log(response);
                 this.setState({
                     topStocks: response.data
                 })
-                this.props.toggleLoading();
             })
             .catch(error => {
                 notification.error({
@@ -67,8 +65,9 @@ class TopPair extends Component {
                     description: JSON.parse(JSON.stringify(error)).message,
                     placement: 'bottomRight'
                 });
-                this.props.toggleLoading();
             })
+        this.props.toggleLoading();
+
     }
 
     render() {
