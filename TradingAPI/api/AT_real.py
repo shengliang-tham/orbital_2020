@@ -54,6 +54,7 @@ class dataBLock():
             columns=['Open', 'High', 'Low', 'Close', 'Time'])
         # change to populate arr
         self.fifteenMinArr = self.popuARR(Symbol)
+        print("=================15 Min Table=========================")
         print(self.fifteenMinArr)
         self.freetoTrade = True
         self.Symbol = Symbol
@@ -94,7 +95,9 @@ class dataBLock():
                     highest = float(self.minteArr['High'].iloc[x])
                 if lowest > float(self.minteArr['Low'].iloc[x]):
                     lowest = float(self.minteArr['Low'].iloc[x])
-            arr = {'Open': str(round(self.minteArr['Open'].iloc[0]*1000, 2)), 'High': str(round(1000*highest, 2)), 'Low': str(
+                    
+            highest = round(1000*highest, 2)
+            arr = {'Open': str(round(self.minteArr['Open'].iloc[0]*1000, 2)), 'High': str(highest), 'Low': str(
                 round(1000*lowest, 2)), 'Close':  str(round(self.minteArr['Close'].iloc[-1]*1000, 2)), 'Time': str(self.unix_Date(first))}
             self.addtofifteenMin(arr)
             self.minteArr = pd.DataFrame(
@@ -214,11 +217,11 @@ class dataBLock():
 
 def startTrading(Symbol):
 
-    def blast_message():
-        print("hello")
-        requests.post('http://localhost:5000/telegram/blast-message', json={
-            'message': "This is a buy signal"
-        })
+    # def blast_message():
+    #     print("hello")
+    #     requests.post('http://localhost:5000/telegram/blast-message', json={
+    #         'message': "This is a buy signal"
+    #     })
 
     def on_message(ws, message):
         if "trade" in message:
@@ -255,8 +258,8 @@ def startTrading(Symbol):
                                     on_error=on_error,
                                     on_close=on_close)
 
-    blast_message()
-    # run(ws)
+    # blast_message()
+    run(ws)
 
 
 startTrading('EUR_USD')
