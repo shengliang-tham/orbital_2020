@@ -34,7 +34,7 @@ def forexOHLC(bar_data, token):
     bar = bar_data
     Symbol = bar['ticker']
     print(Symbol)
-    Symbol = Symbol[:9] + '_' +Symbol[9:]
+    Symbol = Symbol[:9] + '_' + Symbol[9:]
     resolution = str(bar['interval'])  # 1,5 etc etc
     t_Start = str(date_Unix(bar['startDate']))  # start time
 
@@ -77,7 +77,10 @@ def forexOHLC(bar_data, token):
         df["ADX"] = ADX(df, 20)
         df["OBV"] = OBV(df)
         df["slope"] = slope(df)
-        return json.dumps(json.loads(df.to_json(orient='records')), indent=2)
+        return json.dumps({
+            'success': True,
+            'data': json.loads(df.to_json(orient='records'))
+        })
     except:
         return json.dumps({
             'success': False,
