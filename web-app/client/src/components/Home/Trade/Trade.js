@@ -63,6 +63,12 @@ class Trade extends React.Component {
           buyModalVisible: true,
           currentPrice: response.data.data[response.data.data.length - 1]
         });
+      } else {
+        notification.error({
+          message: 'Error',
+          description: response.data.message,
+          placement: 'bottomRight'
+        });
       }
     } catch (error) {
 
