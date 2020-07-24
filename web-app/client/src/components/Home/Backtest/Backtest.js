@@ -40,25 +40,34 @@ class Backtest extends Component {
   onGenerate = async (values) => {
     this.props.toggleLoading();
 
-    const response = await axios.get(tradingUrl + '/backtestForex_Summary', {
-      params: {
-        't_Start': values.dates[0].format(dateFormat),
-        't_End': values.dates[1].format(dateFormat),
-        'Symbol': values.ticker,
-        'SLpips': values.pips,
-        'balance': values.amount,
-        'risk': values.risk
-      }
-    })
+    try {
+      const response = await axios.get(tradingUrl + '/backtestForex_Summary', {
+        params: {
+          't_Start': values.dates[0].format(dateFormat),
+          't_End': values.dates[1].format(dateFormat),
+          'Symbol': values.ticker,
+          'SLpips': values.pips,
+          'balance': values.amount,
+          'risk': values.risk
+        }
+      })
 
-    const profit = response.data.reduce((total, item) => total + parseFloat(item['Profit']), 0);
-    console.log(profit)
+      const profit = response.data.reduce((total, item) => total + parseFloat(item['Profit']), 0);
+      console.log(profit)
 
-    this.setState({
-      ...this.state,
-      backtestData: response.data,
-      profit: profit
-    })
+      this.setState({
+        ...this.state,
+        backtestData: response.data,
+        profit: profit
+      })
+
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: JSON.parse(JSON.stringify(error)).message,
+        placement: 'bottomRight'
+      });
+    }
 
     this.props.toggleLoading();
   };
