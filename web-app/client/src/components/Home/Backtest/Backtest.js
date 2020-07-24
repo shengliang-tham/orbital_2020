@@ -8,6 +8,7 @@ import moment from 'moment';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import * as globalActionTypes from '../../../store/actions/globalActions';
+import { notification } from 'antd';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
