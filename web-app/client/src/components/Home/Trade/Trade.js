@@ -56,6 +56,8 @@ class Trade extends React.Component {
     this.props.toggleLoading();
     const todayDate = moment().format(dateFormat);
 
+    console.log(this.state.selectedType)
+
     try {
       const response = await axios(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=1&startDate=${todayDate}&endDate=${todayDate}`)
       if (response.data.success) {
