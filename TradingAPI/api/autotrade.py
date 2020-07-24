@@ -241,25 +241,10 @@ def autotrade_OrderOnly(t_Start,
                     orderList.append(h.orderClass(
                         arr[x][0], currentOpen, 'long', h.LotSize(balance, risk, SLpips)))
                     freeToTrade = False
-<<<<<<< HEAD
-               
-            ###### BUY SIGNALS ################        
-        
-        if (orderList and orderList[-1].closingPrice == 0.0):
-            orderList[-1].closeOrder(arr[-1][0],arr[-1][4])
-    
-    storedval  = pd.DataFrame(columns=['Opening Time','Ending Time','Lot Size','Order Type','Profit','Entry Price','Closing Price'])
-    for obj in orderList:
-        storedval = storedval.append(obj.returnPanda(), ignore_index=True)
-    return json.dumps(json.loads(storedval.to_json(orient='records')), indent=2)    
-
-
-
-
-=======
 
             ###### BUY SIGNALS ################
-        if (orderList[-1].closingPrice == 0.0):
+
+        if (orderList and orderList[-1].closingPrice == 0.0):
             orderList[-1].closeOrder(arr[-1][0], arr[-1][4])
 
     storedval = pd.DataFrame(columns=['Opening Time', 'Ending Time',
@@ -267,4 +252,3 @@ def autotrade_OrderOnly(t_Start,
     for obj in orderList:
         storedval = storedval.append(obj.returnPanda(), ignore_index=True)
     return json.dumps(json.loads(storedval.to_json(orient='records')), indent=2)
->>>>>>> b6de57b61079c20a7cc6143b0961f8f2ed88cafa
