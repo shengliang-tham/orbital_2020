@@ -47,7 +47,7 @@ class Trade extends React.Component {
     selectedTimeFrame: null,
     selectedTimeFrameValue: null,
     disabledButtons: false,
-    currentPrice: []
+    currentPrice: null
   }
 
 
@@ -63,7 +63,7 @@ class Trade extends React.Component {
       if (response.data.success) {
         this.setState({
           buyModalVisible: true,
-          currentPrice: response.data.data[response.data.data.length - 1]
+          currentPrice: response.data.data
         });
       } else {
         notification.error({
@@ -255,8 +255,8 @@ class Trade extends React.Component {
       this.buyModalRef.setFieldsValue({
         unit: 1,
         lotSize: lotSize,
-        currentPrice: this.state.currentPrice.open,
-        totalPrice: 100 * this.state.currentPrice.open,
+        currentPrice: this.state.currentPrice,
+        totalPrice: 100 * this.state.currentPrice,
         accountBalance: this.props.user.accountBalance
       })
 
