@@ -30,7 +30,6 @@ def autotrade(t_Start,
     t_End = h.date_Unix(t_End)
     first = True
     a = np.array([])
-    
     while (t_End > currentTime):
         if tempEnd > t_End:
             tempEnd = t_End
