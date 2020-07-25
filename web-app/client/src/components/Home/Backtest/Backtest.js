@@ -107,6 +107,9 @@ class Backtest extends Component {
               >
                 <Select style={{ width: 120 }} >
                   <Option value="EUR_USD">EUR_USD</Option>
+                  <Option value="USD_JPY">USD_JPY</Option>
+                  <Option value="GBP_USD">GBP_USD</Option>
+                  <Option value="USD_CHF">USD_CHF</Option>
                 </Select>
               </Form.Item>
             </Col>
