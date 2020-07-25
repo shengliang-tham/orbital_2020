@@ -42,6 +42,8 @@ class Home extends Component {
             this.props.toggleLoading();
             let user = await axios.get(backendUrl + '/user/retrieve-user')
             user = user.data.user;
+            console.log(user)
+
             user = await this.fetchOpenPositions(user)
 
             if (!user.facebookId && !user.googleId) {
@@ -51,7 +53,7 @@ class Home extends Component {
             this.props.toggleLoading();
 
         } catch (error) {
-
+            console.log(error)
             notification.error({
                 message: 'Error',
                 description: JSON.stringify(error).message,
@@ -67,39 +69,48 @@ class Home extends Component {
         console.log(tickers)
         let params = [].concat.apply([], tickers).join()
 
-        try {
-            const response = await axios.get(tradingUrl + '/getPortfolio', {
-                params: {
-                    tickers: params
-                }
-            })
-
-            console.log(response)
-
-            Object.keys(response.data).forEach(ticker => {
-                user.openPosition.map(item => {
-                    if (item.ticker === ticker) {
-                        //If current price is lower than what user bought, its negative
-                        if (parseFloat(response.data[ticker].currentPrice) < item.openPrice) {
-                            item.gain = '-' + ((item.openPrice - parseFloat(response.data[ticker].currentPrice)) / item.openPrice).toFixed(2);
-                        } else {
-                            //Positive Gain
-                            item.gain = (((parseFloat(response.data[ticker].currentPrice) / item.openPrice) - 1) * 100).toFixed(2);
-                        }
-                        item.currentPrice = parseFloat(response.data[ticker].currentPrice)
+        if (params.length > 0) {
+            try {
+                const response = await axios.get(tradingUrl + '/getPortfolio', {
+                    params: {
+                        tickers: params
                     }
-                    return item
                 })
-            })
 
-            return user;
-        } catch (error) {
-            notification.error({
-                message: 'Error',
-                description: JSON.stringify(error).message,
-                placement: 'bottomRight'
-            });
+                console.log(response)
+                console.log(user)
+
+                Object.keys(response.data).forEach(ticker => {
+                    user.openPosition.map(item => {
+                        if (item.ticker === ticker) {
+                            //If current price is lower than what user bought, its negative
+                            if (parseFloat(response.data[ticker].currentPrice) < item.openPrice) {
+                                item.gain = '-' + ((item.openPrice - parseFloat(response.data[ticker].currentPrice)) / item.openPrice).toFixed(2);
+                            } else {
+                                //Positive Gain
+                                item.gain = (((parseFloat(response.data[ticker].currentPrice) / item.openPrice) - 1) * 100).toFixed(2);
+                            }
+                            item.currentPrice = parseFloat(response.data[ticker].currentPrice)
+                        }
+                        return item
+                    })
+                })
+
+                return user;
+            } catch (error) {
+                notification.error({
+                    message: 'Error',
+                    description: JSON.stringify(error).message,
+                    placement: 'bottomRight'
+                });
+            }
         }
+
+        else {
+            return user;
+        }
+
+
 
     }
 

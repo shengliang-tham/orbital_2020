@@ -51,23 +51,22 @@ const data = [
 
 class TopPair extends Component {
 
-    componentDidMount() {
-        this.props.toggleLoading();
-        axios.get(tradingUrl + '/getTop3')
-            .then(response => {
-                this.setState({
-                    topStocks: response.data
-                })
-            })
-            .catch(error => {
-                notification.error({
-                    message: 'Error',
-                    description: JSON.parse(JSON.stringify(error)).message,
-                    placement: 'bottomRight'
-                });
-            })
+    async componentDidMount() {
         this.props.toggleLoading();
 
+        try {
+            const response = await axios.get(tradingUrl + '/getTop3')
+            this.setState({
+                topStocks: response.data
+            })
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: JSON.parse(JSON.stringify(error)).message,
+                placement: 'bottomRight'
+            });
+        }
+        this.props.toggleLoading();
     }
 
     render() {
