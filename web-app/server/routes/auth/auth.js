@@ -32,6 +32,7 @@ const accessToken = oauth2Client.getAccessToken();
 
 
 const frontendUrl = process.env.NODE_ENV === 'production' ? 'https://orbital-2020.herokuapp.com/' : 'http://localhost:3000/';
+const socialMediaCallback = process.env.NODE_ENV === 'production' ? 'https://orbital-2020.herokuapp.com' : 'http://localhost:5000';
 
 passport.serializeUser((user, cb) => {
   cb(null, user);
@@ -59,7 +60,7 @@ const signToken = async (authType, id) => jwt.sign({
 passport.use(new FacebookStrategy({
   clientID: config.FACEBOOK.clientID,
   clientSecret: config.FACEBOOK.clientSecret,
-  callbackURL: '/auth/facebook/callback',
+  callbackURL: `${socialMediaCallback}/auth/facebook/callback`,
   profileFields: ['id', 'email'],
 }, async (accessToken, refreshToken, profile, cb) => {
   const facebookUser = await User.findOne({ facebookId: profile.id });
@@ -96,7 +97,6 @@ passport.use(new GoogleStrategy({
 router.use(passport.initialize());
 
 router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
-
 router.get('/facebook/callback', passport.authenticate('facebook'), async (req, res) => {
   const { user } = req;
   const token = await signToken(authTypes.authTypeFacebook, user.facebookId);

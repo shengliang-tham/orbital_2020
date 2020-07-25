@@ -64,6 +64,7 @@ class Home extends Component {
 
     fetchOpenPositions = async (user) => {
         let tickers = user.openPosition.map(item => [item.ticker])
+        console.log(tickers)
         let params = [].concat.apply([], tickers).join()
 
         try {
@@ -72,6 +73,8 @@ class Home extends Component {
                     tickers: params
                 }
             })
+
+            console.log(response)
 
             Object.keys(response.data).forEach(ticker => {
                 user.openPosition.map(item => {

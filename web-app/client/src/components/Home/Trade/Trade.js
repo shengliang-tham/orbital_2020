@@ -60,6 +60,7 @@ class Trade extends React.Component {
 
     try {
       const response = await axios(`${tradingUrl}/${this.state.selectedType}OHLC?ticker=${this.state.selectedInstrument}&interval=1&startDate=${todayDate}&endDate=${todayDate}`)
+      console.log(response)
       if (response.data.success) {
         this.setState({
           buyModalVisible: true,
