@@ -162,6 +162,7 @@ def autotrade_OrderOnly(t_Start,
     # print(t_End)
     tempEnd = currentTime + timeManager
     t_End = h.date_Unix(t_End)
+    orderList = []
     while (t_End > currentTime):
         if tempEnd > t_End:
             tempEnd = t_End
