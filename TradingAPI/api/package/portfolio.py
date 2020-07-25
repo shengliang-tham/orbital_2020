@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jan  4 11:58:37 2020
+Created on Sat July 4 11:58:37 2020
 
 @author: User
 Description: 
@@ -13,25 +13,17 @@ import pandas as pd
 # define the number of stocks
 
 
-def getResults(bar):
+def getResults(bar, token):
+    print(bar)
     tickers = bar.split(',')
     financial_dir = {}
     for ticker in tickers:
         # getting balance sheet data from yahoo finance for the given ticker
         temp_dir = {}
-        url = "https://sg.finance.yahoo.com/quote/"+ticker
-        page = requests.get(url)
-        page_content = page.content
-        soup = BeautifulSoup(page_content, 'html.parser')
-        tabl = soup.find_all(
-            "div", {"class": "My(6px) Pos(r) smartphone_Mt(6px)"})
-        # print(tabl)
-        for t in tabl:
-            rows = t.find_all(
-                "span", {"class": "Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)"})
-            # print(rows)
-            for row in rows:
-                temp_dir["currentPrice"] = row.get_text()
+        URL= 'https://finnhub.io/api/v1/quote?symbol='+ticker+'&token='+token
+        page = requests.get(URL)
+        r_json = page.json()
+        temp_dir["currentPrice"] = r_json['c']
         financial_dir[ticker] = temp_dir
 
     # storing information into a pandas dataframe
@@ -40,7 +32,3 @@ def getResults(bar):
     tickers = combined_fin.columns
 
     return json.dumps(financial_dir)
-    # return json.dumps(json.loads(financial_dir.to_json(orient='records')), indent=2)
-
-
-print(getResults('Z74.SI,AJBU.SI'))

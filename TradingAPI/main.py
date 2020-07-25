@@ -85,7 +85,7 @@ def getTop3():
 def portfolio():
     bar = request.args.to_dict()
     tickers = bar["tickers"]
-    return pf.getResults(tickers)
+    return pf.getResults(tickers, token)
 
 
 @app.route('/api/backtestForex', methods=['GET'])
