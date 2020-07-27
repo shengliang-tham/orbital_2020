@@ -22,22 +22,21 @@ myclient = pymongo.MongoClient("ds239936.mlab.com", 39936)
 db = myclient["orbital-dev"]
 db.authenticate("shengliang", "asd123asd")
 mycol = db["users"]
+openingPrice = 1.1459
 
 rabs = [{
     "date":  str(datetime.now()),
     "ticker": "OANDA:EUR_USD",
     "units": 1,
-    "openPrice": 1.1459,
+    "openPrice": openingPrice,
     "lotSize": 20000,
-    "totalPrice": 1.1459*2000,
+    "totalPrice": openingPrice*20000,
     "status": "open",
 }]
 
 
 myquery = {"autoTrading": True}  # check if "True" is correct
 newvalues = {"$push": {"openPosition": rabs}}
-
-
 x = mycol.update_many(myquery, newvalues)
 
 print(x, "documents updated.")
