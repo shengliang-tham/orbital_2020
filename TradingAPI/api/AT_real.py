@@ -123,6 +123,8 @@ class dataBLock():
         currentLow = float(self.fifteenMinArr['High'].iloc[-1])
         #         ###### Close signal
 #            # if trade is ongoing and is buy
+        openingPrice = self.lastPrice
+        
         if (self.freeToTrade == False):
             if (abs(self.lastPrice - currentHigh) >= self.SLpips):
                # sell
@@ -132,11 +134,14 @@ class dataBLock():
                 self.freeToTrade = True
         if ((currentATR > previousATR) & self.freeToTrade == True):
             if ((previousMA40 < previousMA10) & (currentMA10 <= currentMA40)):
-
+                self.blast_message()
+                x = mycol.update_many(myquery, newvalues)
                 self.lastPrice = float(self.fifteenMinArr['Open'].iloc[-1])
                 self.freeToTrade = False
             if ((previousMA40 > previousMA10) & (currentMA10 >= currentMA40)):
                 # BUY
+                self.blast_message()
+                x = mycol.update_many(myquery, newvalues)
                 self.lastPrice = float(self.fifteenMinArr['Open'].iloc[-1])
                 self.freeToTrade = False
 
@@ -146,7 +151,7 @@ class dataBLock():
         return datetimeCURR
 
     def date_Unix(self, s):
-        return int(time.mktime(dt.datetime.strptime(s, "%d/%m/%Y").timetuple()))
+        return int(time.mktime(datetime.strptime(s, "%d/%m/%Y").timetuple()))
 
     def popuARR(self, Symbol):
         currentTime = int(time.time()-43200)
@@ -210,17 +215,17 @@ class dataBLock():
             lotSize = 0.01
         return lotSize
     ######## Lot Calculation #################
+    
+    def blast_message():
+        requests.post('http://localhost:5000/telegram/blast-message', json={
+            'message': rabs
+        })
 
 # timeFrame = autotrade("EUR_USD",8,3000,3,token) works
 
 
 def startTrading(Symbol):
 
-    # def blast_message():
-    #     print("hello")
-    #     requests.post('http://localhost:5000/telegram/blast-message', json={
-    #         'message': "This is a buy signal"
-    #     })
 
     def on_message(ws, message):
         if "trade" in message:
