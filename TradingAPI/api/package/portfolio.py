@@ -29,8 +29,7 @@ def getResults(bar, token):
         # storing information into a pandas dataframe
         combined_fin = pd.DataFrame(financial_dir)
         combined_fin.dropna(axis=1, inplace=True)
-        tickers = combined_fin.columns
-    
+        tickers = combined_fin.columns    
         return json.dumps(financial_dir)
     except: 
-        return json.dumps()
+        return json.dumps(financial_dir)
